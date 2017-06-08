@@ -2,6 +2,7 @@
 #define ZBASICTYPES
 
 enum BaseTypes {
+	Unknown,
     Int,
     Double,
     Boolean,
