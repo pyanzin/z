@@ -10,6 +10,7 @@ class ZIntConst : public ZExpr {
 public:
     ZIntConst(int value) {
         _value = value;
+		setType(Int);
     }
 
     llvm::Value* ZIntConst::codegen(llvm::Function * func) override {

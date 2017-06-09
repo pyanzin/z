@@ -3,6 +3,6 @@
 
 class ZAst {
 public:
-    void accept(ZVisitor* visitor);
+    virtual void accept(ZVisitor* visitor);
 };
 

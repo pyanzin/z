@@ -20,6 +20,11 @@ public:
         return _name;
     }
 
+	virtual void accept(ZVisitor* visitor)
+    {
+		visitor->visit(this);
+    }
+
 private:
     BaseTypes _type;
     char* _name;

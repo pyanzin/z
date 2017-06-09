@@ -44,50 +44,50 @@
     <ClInclude Include="ZLexer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Utils.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ZArg.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ZBinOp.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ZBlock.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ZExpr.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ZFunc.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ZIntConst.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="ZLexeme.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ZVar.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ZBasicTypes.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SymbolEntry.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SymbolStorage.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SymbolTable.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ZAst.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ZVisitor.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZVar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZIntConst.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZFunc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZExpr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZBlock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZBinOp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZBasicTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZAst.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZArg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SymbolTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SymbolStorage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SymbolEntry.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
