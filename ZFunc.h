@@ -15,24 +15,24 @@ public:
         _body = body;
     }
 
-    void generateDef(Module* module) {
-        auto args = std::vector<Type*>();
-        for (auto arg : _args)
-            args.push_back(toLlvmType(arg->getType()));
+    //void generateDef(Module* module) {
+    //    auto args = std::vector<Type*>();
+    //    for (auto arg : _args)
+    //        args.push_back(toLlvmType(arg->getType()));
 
-        auto funcType = FunctionType::get(toLlvmType(_returnType), args, false);
-        auto func = Function::Create(funcType, Function::ExternalLinkage, _name->c_str(), module);
+    //    auto funcType = FunctionType::get(toLlvmType(_returnType), args, false);
+    //    auto func = Function::Create(funcType, Function::ExternalLinkage, _name->c_str(), module);
 
-        unsigned i = 0;
-        for (auto& arg : func->args())
-            arg.setName(_args[i++]->getName());
+    //    unsigned i = 0;
+    //    for (auto& arg : func->args())
+    //        arg.setName(_args[i++]->getName());
 
-        BasicBlock* block = BasicBlock::Create(getGlobalContext(), "entry", func);
-        builder.SetInsertPoint(block);
+    //    BasicBlock* block = BasicBlock::Create(getGlobalContext(), "entry", func);
+    //    builder.SetInsertPoint(block);
 
-        auto ret = _body->codegen(func);
-        builder.CreateRet(ret);
-    }
+    //    auto ret = _body->codegen(func);
+    //    builder.CreateRet(ret);
+    //}
 
 private:
     std::string* _name;

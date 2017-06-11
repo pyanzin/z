@@ -15,7 +15,7 @@ char ZLexer::getNextChar() {
 };
 
 ZLexeme ZLexer::getNextToken() {
-  _value = "";
+  _value = new std::string;
   char ch;
   while (isspace(ch = getNextChar()))
     ;
@@ -42,7 +42,7 @@ ZLexeme ZLexer::getNextToken() {
     backtrackBy(1);
     return EQUAL;
   case '"': {
-    std::string s;
+    std::string* s = new std::string;
     while ((ch = getNextChar()) != '"')
       s += ch;
     _value = s;
@@ -62,7 +62,7 @@ ZLexeme ZLexer::getNextToken() {
     if (isKeyword)
       return _keywords[id];
 
-    _value = id;
+    _value = new std::string(id);
 
     return IDENT;
   }

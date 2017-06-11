@@ -7,7 +7,7 @@
 
 using namespace llvm;
 
-IRBuilder<> builder(getGlobalContext());
+//IRBuilder<> builder(getGlobalContext());
 
 enum BinOps {
     Sum,
@@ -16,19 +16,19 @@ enum BinOps {
     Div
 };
 
-Type* toLlvmType(BaseTypes ztype) {
-    switch (ztype)
-    {
-    case Int:
-        return IntegerType::get(getGlobalContext(), 32);
-    case Double:
-        break;
-    case Boolean:
-        return IntegerType::get(getGlobalContext(), 1);
-    case String:
-    default:
-        return nullptr;
-    }
-}
+//Type* toLlvmType(BaseTypes ztype) {
+//    switch (ztype)
+//    {
+//    case Int:
+//        return IntegerType::get(getGlobalContext(), 32);
+//    case Double:
+//        break;
+//    case Boolean:
+//        return IntegerType::get(getGlobalContext(), 1);
+//    case String:
+//    default:
+//        return nullptr;
+//    }
+//}
 
 #endif

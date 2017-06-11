@@ -6,7 +6,8 @@ enum BaseTypes {
     Int,
     Double,
     Boolean,
-    String
+    String,
+    None
 };
 
 #endif

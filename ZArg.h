@@ -6,7 +6,7 @@
 
 class ZArg : public ZAst {
 public:
-    ZArg(BaseTypes type, char* name)
+    ZArg(BaseTypes type, std::string* name)
     {
         _type = type;
         _name = name;
@@ -16,7 +16,7 @@ public:
         return _type;
     }
 
-    char* getName() {
+    std::string* getName() {
         return _name;
     }
 
@@ -27,7 +27,7 @@ public:
 
 private:
     BaseTypes _type;
-    char* _name;
+    std::string* _name;
 };
 
 #endif

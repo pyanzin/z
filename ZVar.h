@@ -10,11 +10,11 @@ public:
         _name = name;
     }
 
-    llvm::Value* codegen(llvm::Function* func) override {
-        for (auto& arg : func->args())
-            if (arg.getName() == _name)
-                return &(cast<Value>(arg));        
-    }
+    //llvm::Value* codegen(llvm::Function* func) override {
+    //    for (auto& arg : func->args())
+    //        if (arg.getName() == _name)
+    //            return &(cast<Value>(arg));        
+    //}
 
 private:
     std::string _name;

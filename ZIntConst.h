@@ -13,10 +13,6 @@ public:
 		setType(Int);
     }
 
-    llvm::Value* ZIntConst::codegen(llvm::Function * func) override {
-        return llvm::ConstantInt::get(llvm::getGlobalContext(), llvm::APInt::APInt(32, _value));
-    }
-
 private:
     int _value;
 };
