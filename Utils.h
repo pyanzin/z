@@ -1,8 +1,6 @@
-﻿#ifndef ZUTILS
-#define ZUTILS
+﻿#pragma once
 
 #include "ZBasicTypes.h"
-#include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/DerivedTypes.h>
 
 using namespace llvm;
@@ -16,19 +14,4 @@ enum BinOps {
     Div
 };
 
-//Type* toLlvmType(BaseTypes ztype) {
-//    switch (ztype)
-//    {
-//    case Int:
-//        return IntegerType::get(getGlobalContext(), 32);
-//    case Double:
-//        break;
-//    case Boolean:
-//        return IntegerType::get(getGlobalContext(), 1);
-//    case String:
-//    default:
-//        return nullptr;
-//    }
-//}
-
-#endif
+Type* toLlvmType(BaseTypes ztype);

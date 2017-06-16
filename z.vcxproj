@@ -27,19 +27,19 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -148,10 +148,12 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="LlvmPass.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SymbolEntry.cpp" />
     <ClCompile Include="SymbolStorage.cpp" />
     <ClCompile Include="SymbolTable.cpp" />
+    <ClCompile Include="Utils.cpp" />
     <ClCompile Include="ZAst.cpp" />
     <ClCompile Include="ZLexer.cpp" />
     <ClCompile Include="ZModule.cpp" />
@@ -159,6 +161,7 @@
     <ClCompile Include="ZVisitor.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="LlvmPass.h" />
     <ClInclude Include="SymbolEntry.h" />
     <ClInclude Include="SymbolStorage.h" />
     <ClInclude Include="SymbolTable.h" />

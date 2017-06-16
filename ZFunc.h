@@ -7,7 +7,7 @@
 #include "Utils.h"
 #include "ZArg.h"
 
-class ZFunc {
+class ZFunc : public ZAst {
 public:
     ZFunc(std::string* name, BaseTypes returnType, std::vector<ZArg*>& args, ZExpr* body) : _args(args) {
         _name = name;
@@ -34,7 +34,7 @@ public:
     //    builder.CreateRet(ret);
     //}
 
-private:
+//private:
     std::string* _name;
     BaseTypes _returnType;
     std::vector<ZArg*> _args;

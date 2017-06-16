@@ -6,9 +6,14 @@
 #include <iostream>
 #include "ZLexer.h"
 #include "ZParser.h"
+#include "llvm/IR/IRBuilder.h"
+#include "llvm/Support/raw_ostream.h"
+
 
 
 using namespace llvm;
+
+Module* makeLLVMModule();
 
 int main()
 {
@@ -17,7 +22,7 @@ int main()
     //auto args = std::vector<ZArg*>() = { new ZArg(Int, "x"), new ZArg(Int, "y") };
     //auto myFunc = new ZFunc(new std::string("MyFunc"), Int, args, new ZBinOp(new ZVar("x"), new ZVar("y"), Sum));
 
-    Module* mod = new Module("test", context);
+    //Module* mod = new Module("test", context);
 
     //myFunc->generateDef(mod);
 
@@ -40,6 +45,8 @@ int main()
 
     builder.CreateRet(result);
   */
+
+	auto mod = makeLLVMModule();
     verifyModule(*mod);
 
     mod->dump();
@@ -92,3 +99,55 @@ int main()
 //{
 //	char size;
 //};
+
+Module* makeLLVMModule() {
+	Module* mod = new Module("test", getGlobalContext());
+
+	Constant* c = mod->getOrInsertFunction("gcd",
+		IntegerType::get(getGlobalContext(), 32),
+		IntegerType::get(getGlobalContext(), 32),
+		IntegerType::get(getGlobalContext(), 32),
+		NULL);
+	Function* gcd = cast<Function>(c);
+
+	Function::arg_iterator args = gcd->arg_begin();
+	Value* x = args++;
+	x->setName("x");
+	Value* y = args++;
+	y->setName("y");
+
+	BasicBlock* entry = BasicBlock::Create(getGlobalContext(), "entry", gcd);
+	BasicBlock* ret = BasicBlock::Create(getGlobalContext(), "return", gcd);
+	BasicBlock* cond_false = BasicBlock::Create(getGlobalContext(), "cond_false", gcd);
+	BasicBlock* cond_true = BasicBlock::Create(getGlobalContext(), "cond_true", gcd);
+	BasicBlock* cond_false_2 = BasicBlock::Create(getGlobalContext(), "cond_false", gcd);
+
+	IRBuilder<> builder(entry);
+	Value* xEqualsY = builder.CreateICmpEQ(x, y, "tmp");
+	builder.CreateCondBr(xEqualsY, ret, cond_false);
+
+	builder.SetInsertPoint(ret);
+	builder.CreateRet(x);
+
+	builder.SetInsertPoint(cond_false);
+	Value* xLessThanY = builder.CreateICmpULT(x, y, "tmp");
+	builder.CreateCondBr(xLessThanY, cond_true, cond_false_2);
+
+	builder.SetInsertPoint(cond_true);
+	Value* yMinusX = builder.CreateSub(y, x, "tmp");
+	std::vector<Value*> args1;
+	args1.push_back(x);
+	args1.push_back(yMinusX);
+	Value* recur_1 = builder.CreateCall(gcd, args1, "tmp");
+	builder.CreateRet(recur_1);
+
+	builder.SetInsertPoint(cond_false_2);
+	Value* xMinusY = builder.CreateSub(x, y, "tmp");
+	std::vector<Value*> args2;
+	args2.push_back(xMinusY);
+	args2.push_back(y);
+	Value* recur_2 = builder.CreateCall(gcd, args2, "tmp");
+	builder.CreateRet(recur_2);
+
+	return mod;
+}

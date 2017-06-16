@@ -16,6 +16,10 @@ public:
     //            return &(cast<Value>(arg));        
     //}
 
+	std::string& getName() {
+		return _name;
+    }
+
 private:
     std::string _name;
 };

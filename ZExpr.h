@@ -1,9 +1,7 @@
-﻿#ifndef ZEXPR
-#define ZEXPR
+﻿#pragma once
 
+#include "ZBasicTypes.h"
 #include "ZAst.h"
-
-class ZFunc;
 
 class ZExpr : public ZAst {
 public:
@@ -20,5 +18,3 @@ public:
 private:
 	BaseTypes _type = Unknown;
 };
-
-#endif

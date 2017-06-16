@@ -1,5 +1,4 @@
-﻿#ifndef ZBASICTYPES
-#define ZBASICTYPES
+﻿#pragma once
 
 enum BaseTypes {
 	Unknown,
@@ -10,4 +9,4 @@ enum BaseTypes {
     None
 };
 
-#endif
+

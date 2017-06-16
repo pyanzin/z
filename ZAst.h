@@ -1,5 +1,6 @@
 #pragma once
-#include "ZVisitor.h"
+
+class ZVisitor;
 
 class ZAst {
 public:

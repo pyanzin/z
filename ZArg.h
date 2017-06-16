@@ -1,8 +1,8 @@
-﻿#ifndef ZARG
-#define ZARG
+﻿#pragma once
 
 #include "ZBasicTypes.h"
 #include "ZAst.h"
+#include "ZVisitor.h"
 
 class ZArg : public ZAst {
 public:
@@ -29,5 +29,3 @@ private:
     BaseTypes _type;
     std::string* _name;
 };
-
-#endif
