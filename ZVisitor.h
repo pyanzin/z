@@ -16,5 +16,5 @@ public:
 
 	virtual void visit(ZModule* module) { }
 
-	virtual void visit(ZVar* zmodule) { }
+	virtual void visit(ZId* zmodule) { }
 };

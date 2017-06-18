@@ -9,8 +9,6 @@ public:
         _type = type;
     }
 
-
-
 private:
     BaseTypes _type;
     const std::string& _name;

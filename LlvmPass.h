@@ -39,7 +39,7 @@ public:
 		}
 	}
 
-	virtual void visit(ZVar* zvar) override {
+	virtual void visit(ZId* zvar) override {
 		for (auto bb = _func->begin(); bb != _func->end(); ++bb) {
 			for (auto inst = bb->begin(); inst != bb->end(); ++inst)
 				if (inst->getName() == zvar->getName())

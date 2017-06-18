@@ -6,6 +6,9 @@
 //#include "ZArg.h"
 #include "ZFunc.h"
 #include "ZBlock.h"
+#include "ZCall.h"
+#include "ZVarDef.h"
+#include "ZString.h"
 
 class SymbolTable;
 class ZArg;
@@ -69,9 +72,68 @@ public:
     ZBlock* parseBlock() {
         std::vector<ZAst*>* stmts = new std::vector<ZAst*>;
 
-        //parseStatement
+        while (!consume(CLOSE_BRACE)) {
+            ZAst* stmt = parseStatement();
+            reqConsume(SEMICOLON);
+            stmts->push_back(stmt);
+        }
 
         return new ZBlock(stmts);
+    }
+
+    ZAst* parseStatement() {
+        int pos = _lexer.getPos();
+        if (consume(VAR)) {
+            _lexer.backtrackTo(pos);
+            return parseVarDef();
+        }
+
+        return parseExpr();
+    }
+
+    ZVarDef* parseVarDef() {
+        reqConsume(VAR);
+        std::string* name = reqVal(IDENT);
+        reqConsume(COLON);
+        BaseTypes type = parseType();
+        // TODO: add optional init expr
+        // TODO:: add symbol table stuff
+        return new ZVarDef(*name, type);
+    }
+
+    ZExpr* parseExpr() {
+        return parseString();
+    }
+
+    ZCall* parseCall() {
+        // TODO: use expr here
+        ZExpr* callee = parseId();
+        reqConsume(OPEN_PAREN);
+
+        std::vector<ZExpr*>* args = new std::vector<ZExpr*>();
+        while (!consume(CLOSE_PAREN)) {
+            ZExpr* arg = parseExpr();
+            consume(COMMA);
+            args->push_back(arg);
+        }
+
+        return new ZCall(callee, *args);
+    }
+
+    ZId* parseId() {
+        std::string* name = val(IDENT);
+        if (!name)
+            return nullptr;
+
+        return new ZId(*name);
+    }
+
+    ZString* parseString() {
+        std::string* value = val(STRING_LIT);
+        if (!value)
+            return nullptr;
+
+        return new ZString(*value);
     }
 
     void reqConsume(ZLexeme lexeme) {

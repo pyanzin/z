@@ -4,9 +4,9 @@
 #include <llvm/IR/Value.h>
 #include "ZExpr.h"
 
-class ZVar : public ZExpr {
+class ZId : public ZExpr {
 public:
-    ZVar(std::string name) {
+    ZId(std::string name) {
         _name = name;
     }
 
