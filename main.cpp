@@ -51,7 +51,7 @@ int main()
 
     //mod->dump();
 
-    std::string src = "def main(): None = {print(\"hallo\");}";
+    std::string src = "def main(): None = {print();}";
 
     ZLexer lexer(src);
 
@@ -63,7 +63,9 @@ int main()
 
     SymbolTable table;
     ZParser parser(lexer, table);
-    ZFunc* func = parser.parseFunc();
+    auto mod = parser.parseModule();
+
+	mod->dump(std::cout, 0);
 
     getchar();
 

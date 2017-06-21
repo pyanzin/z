@@ -5,20 +5,25 @@
 
 class ZCall : public ZExpr {
 public:
-    ZCall(ZAst* callee, std::vector<ZExpr*>& args) {
-        _callee = callee;
-        _args = args;
-    }
-
-    ZAst* getCallee() {
-        return _callee;
+    ZCall(ZAst* callee, std::vector<ZExpr*>& args) : args(args){
+		this->callee = callee;
     }
 
     std::vector<ZExpr*>& getArgs() {
-        return _args;
+        return args;
     }
 
-private:
-    ZAst* _callee;
-    std::vector<ZExpr*> _args;
+    ZAst* callee;
+    std::vector<ZExpr*>& args;
+
+	void dump(std::ostream& stream, unsigned depth) override {
+		unsigned d = 0;
+		while (d++ < depth)
+			stream << "    ";
+
+		stream << "call\n";
+		callee->dump(stream, depth + 1);
+		for (ZExpr* expr : args)
+			expr->dump(stream, depth + 1);		
+	};
 };

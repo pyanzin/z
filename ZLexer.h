@@ -31,43 +31,7 @@ public:
     void reset() {
         _pos = 0;
     }
-
-    std::string toString(ZLexeme lexeme) {
-        switch (lexeme) {
-            case IDENT:
-                return "IDENT";
-            case DEF:
-                return "DEF";
-            case VAR:
-                return "VAR";
-            case STRING_LIT:
-                return "STRING_LIT";
-            case OPEN_PAREN:
-                return "OPEN_PAREN";
-            case CLOSE_PAREN:
-                return "CLOSE_PAREN";
-            case COLON:
-                return "COLON";
-            case SEMICOLON:
-                return "SEMICOLON";
-            case EQUAL:
-                return "EQUAL";
-            case DOUBLE_EQUAL:
-                return "DOUBLE_EQUAL";
-            case OPEN_BRACE:
-                return "OPEN_BRACE";
-            case CLOSE_BRACE:
-                return "CLOSE_BRACE";
-            case FAT_ARROW:
-                return "FAT_ARROW";
-            case COMMA:
-                return "COMMA";
-            case INPUT_END:
-                return "INPUT_END";
-            
-        }
-
-    };
+    
 private:
     char getNextChar();
     std::string _src;

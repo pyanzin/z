@@ -6,9 +6,7 @@
 
 class ZId : public ZExpr {
 public:
-    ZId(std::string name) {
-        _name = name;
-    }
+    ZId(std::string& name) : _name(name) { }
 
     //llvm::Value* codegen(llvm::Function* func) override {
     //    for (auto& arg : func->args())
@@ -20,8 +18,16 @@ public:
 		return _name;
     }
 
+	void dump(std::ostream& stream, unsigned depth) override {
+		unsigned d = 0;
+		while (d++ < depth)
+			stream << "    ";
+
+		stream << "id(" << _name.c_str() << ")\n";
+    }
+
 private:
-    std::string _name;
+    std::string& _name;
 };
 
 #endif

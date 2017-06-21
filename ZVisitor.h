@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "ZVar.h"
+#include "ZId.h"
 
 class ZFunc;
 class ZAst;

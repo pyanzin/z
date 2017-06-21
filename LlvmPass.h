@@ -5,7 +5,7 @@
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/DerivedTypes.h>
 #include "ZFunc.h"
-#include "ZVar.h"
+#include "ZId.h"
 #include "ZModule.h"
 #include "Utils.h"
 
@@ -40,16 +40,13 @@ public:
 	}
 
 	virtual void visit(ZId* zvar) override {
-		for (auto bb = _func->begin(); bb != _func->end(); ++bb) {
-			for (auto inst = bb->begin(); inst != bb->end(); ++inst)
-				if (inst->getName() == zvar->getName())
-					;
-		}
+		
 	}
 
 private:
-	llvm::Module* _module;
-	llvm::Function* _func;
+	Module* _module;
+	Function* _func;
+	std::map<std::string, Value*> _currentValues;
 
 	//IRBuilder<>& _builder;
 };

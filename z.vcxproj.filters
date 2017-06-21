@@ -39,29 +39,29 @@
     <ClCompile Include="ZVisitor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ZParser.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ZModule.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="LlvmPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ZCall.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ZVarDef.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="SymbolRef.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="ZModule.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ZParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="ZString.cpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ZVarDef.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ZCall.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -72,9 +72,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ZVisitor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ZVar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ZIntConst.h">
@@ -132,6 +129,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ZString.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZId.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

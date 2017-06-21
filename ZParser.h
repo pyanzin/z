@@ -25,9 +25,8 @@ public:
     }
 
     ZModule* parseModule() {
-
-
-        ZModule* module = new ZModule;
+		auto modName = new std::string("test"); // TODO: user real mod name
+        ZModule* module = new ZModule(*modName);
         ZFunc* func;
         while (func = parseFunc())
             module->addFunction(func);
@@ -36,7 +35,10 @@ public:
     }
 
     ZFunc* parseFunc() {
-        reqConsume(DEF);
+		if (!consume(DEF))
+			return nullptr;
+	    
+	    (DEF);
         std::string* name = reqVal(IDENT);
         reqConsume(OPEN_PAREN);
 
@@ -72,6 +74,8 @@ public:
     ZBlock* parseBlock() {
         std::vector<ZAst*>* stmts = new std::vector<ZAst*>;
 
+		reqConsume(OPEN_BRACE);
+
         while (!consume(CLOSE_BRACE)) {
             ZAst* stmt = parseStatement();
             reqConsume(SEMICOLON);
@@ -102,7 +106,10 @@ public:
     }
 
     ZExpr* parseExpr() {
-        return parseString();
+		int pos = _lexer.getPos();
+
+		return parseCall();
+        //return parseString();
     }
 
     ZCall* parseCall() {
@@ -138,7 +145,7 @@ public:
 
     void reqConsume(ZLexeme lexeme) {
         if (!consume(lexeme))
-            error("Expected: " + _lexer.toString(lexeme) + ", but found: " + _lexer.toString(_lexer.getNextToken()));
+            error("Expected: " + toString(lexeme) + ", but found: " + toString(_lexer.getNextToken()));
     }
 
     bool consume(ZLexeme lexeme) {
@@ -164,7 +171,7 @@ public:
         if (value)
             return value;
         else
-            error("Expected: " + _lexer.toString(lexeme) + ", but found: " + _lexer.toString(_lexer.getNextToken()));
+            error("Expected: " + toString(lexeme) + ", but found: " + toString(_lexer.getNextToken()));
 
     }
 

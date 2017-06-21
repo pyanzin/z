@@ -34,6 +34,20 @@ public:
     //    builder.CreateRet(ret);
     //}
 
+	void dump(std::ostream& stream, unsigned depth) override {
+		unsigned d = 0;
+		while (d++ < depth)
+			stream << "    ";
+
+		stream << "func " << _name->c_str() << "(";
+		for (ZArg* arg : _args) {
+			stream << arg->getName() << ": " << toLlvmType(arg->getType()) << ", ";
+		}
+
+		stream << ")\n";
+		_body->dump(stream, depth + 1);
+    }
+
 //private:
     std::string* _name;
     BaseTypes _returnType;

@@ -2,6 +2,9 @@
 
 #include "ZBasicTypes.h"
 #include <llvm/IR/DerivedTypes.h>
+//#include "ZLexeme.h"
+
+enum ZLexeme;
 
 using namespace llvm;
 
@@ -15,3 +18,5 @@ enum BinOps {
 };
 
 Type* toLlvmType(BaseTypes ztype);
+
+std::string toString(ZLexeme lexeme);
