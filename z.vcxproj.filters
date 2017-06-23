@@ -45,9 +45,6 @@
     <ClCompile Include="Utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SymbolRef.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="ZModule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -63,6 +60,12 @@
     <ClCompile Include="ZCall.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SymbolRef.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ZStringLit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ZLexer.h">
@@ -72,9 +75,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ZVisitor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ZIntConst.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ZFunc.h">
@@ -132,6 +132,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ZId.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZStringLit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZIntLit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

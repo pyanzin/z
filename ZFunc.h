@@ -35,9 +35,7 @@ public:
     //}
 
 	void dump(std::ostream& stream, unsigned depth) override {
-		unsigned d = 0;
-		while (d++ < depth)
-			stream << "    ";
+		dumpTab(stream, depth);
 
 		stream << "func " << _name->c_str() << "(";
 		for (ZArg* arg : _args) {

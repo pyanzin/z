@@ -3,6 +3,7 @@
 
 #include <llvm/IR/Value.h>
 #include "ZExpr.h"
+#include "Utils.h"
 
 class ZId : public ZExpr {
 public:
@@ -19,11 +20,9 @@ public:
     }
 
 	void dump(std::ostream& stream, unsigned depth) override {
-		unsigned d = 0;
-		while (d++ < depth)
-			stream << "    ";
+		dumpTab(stream, depth);
 
-		stream << "id(" << _name.c_str() << ")\n";
+		stream << "id(" << _name.c_str() << ") : "<< toString(getType()) << "\n";
     }
 
 private:

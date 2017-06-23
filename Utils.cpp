@@ -2,6 +2,7 @@
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/DerivedTypes.h>
 #include "ZLexeme.h"
+#include "ZBinOp.h"
 
 llvm::Type* toLlvmType(BaseTypes ztype) {
 	switch (ztype)
@@ -53,4 +54,35 @@ std::string toString(ZLexeme lexeme) {
 
 	}
 
-};
+}
+
+
+std::string toString(BaseTypes type) {
+	switch (type) {
+	case Boolean:
+		return "Boolean";
+	case Int:
+		return "Int";
+	case Double:
+		return "Double";
+	case String:
+		return "String";
+	case BaseTypes::None:
+		return "None";
+	case Unknown:
+		return "Unknown";
+	}
+}
+
+std::string toString(BinOps op) {
+	switch (op) {
+	case BinOps::Sum:
+		return "Sum";
+	case BinOps::Sub:
+		return "Sub";
+	case BinOps::Mul:
+		return "Mul";
+	case BinOps::Div:
+		return "Div";
+	}
+}

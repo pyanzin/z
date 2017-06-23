@@ -2,6 +2,7 @@
 #define ZBINOP
 #include "Utils.h"
 #include "ZExpr.h"
+#include "ZVisitor.h"
 
 class ZBinOp : public ZExpr {
 public:
@@ -35,6 +36,13 @@ public:
 		_a->accept(visitor);
 		_b->accept(visitor);
 		visitor->visit(this);
+	}
+
+	void dump(std::ostream& stream, unsigned depth) override {
+		dumpTab(stream, depth);
+		stream << toString(_op) << " : " << toString(getType()) << "\n";
+		_a->dump(stream, depth + 1);
+		_b->dump(stream, depth + 1);
 	}
 
 private:

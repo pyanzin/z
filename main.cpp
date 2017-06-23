@@ -39,7 +39,7 @@ int main()
 
     builder.SetInsertPoint(bb);
 
-    auto ast = new ZBinOp(new ZIntConst(23), new ZIntConst(19), Sum);
+    auto ast = new ZBinOp(new ZIntLit(23), new ZIntLit(19), Sum);
 
     auto result = ast->codegen();
 

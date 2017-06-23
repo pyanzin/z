@@ -2,6 +2,7 @@
 #include "ZExpr.h"
 #include <string>
 #include <vector>
+#include "Utils.h"
 
 class ZCall : public ZExpr {
 public:
@@ -17,11 +18,9 @@ public:
     std::vector<ZExpr*>& args;
 
 	void dump(std::ostream& stream, unsigned depth) override {
-		unsigned d = 0;
-		while (d++ < depth)
-			stream << "    ";
+		dumpTab(stream, depth);
 
-		stream << "call\n";
+		stream << "call : " << toString(getType()) << "\n";
 		callee->dump(stream, depth + 1);
 		for (ZExpr* expr : args)
 			expr->dump(stream, depth + 1);		

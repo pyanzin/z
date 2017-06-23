@@ -18,9 +18,7 @@ public:
     }
 
 	void dump(std::ostream& stream, unsigned depth) override {
-		unsigned d = 0;
-		while (d++ < depth)
-			stream << "    ";
+		dumpTab(stream, depth);
 
 		stream << "module " << name.c_str() << "\n";
 		for (ZFunc* func : functions)

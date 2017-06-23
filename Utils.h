@@ -20,3 +20,7 @@ enum BinOps {
 Type* toLlvmType(BaseTypes ztype);
 
 std::string toString(ZLexeme lexeme);
+
+std::string toString(BaseTypes type);
+
+std::string toString(BinOps op);
