@@ -15,7 +15,11 @@ enum ZLexeme {
     CLOSE_BRACE,
     FAT_ARROW,
     COMMA,
-    INPUT_END
+    PLUS,
+    MINUS,
+    ASTERISK,
+    SLASH,
+    INPUT_END,
 };
 
 #endif

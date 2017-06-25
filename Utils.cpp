@@ -49,6 +49,14 @@ std::string toString(ZLexeme lexeme) {
 		return "FAT_ARROW";
 	case COMMA:
 		return "COMMA";
+    case PLUS:
+        return "PLUS";
+    case MINUS:
+        return "MINUS";
+    case ASTERISK:
+        return "ASTERISK";
+    case SLASH:
+        return "SLASH";
 	case INPUT_END:
 		return "INPUT_END";
 

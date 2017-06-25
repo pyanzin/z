@@ -2,6 +2,7 @@
 #include "ZAst.h"
 #include <string>
 #include "ZBasicTypes.h"
+#include "ZStringLit.h"
 
 class ZVarDef : public ZAst {
 public:
@@ -16,7 +17,7 @@ public:
 	void dump(std::ostream& stream, unsigned depth) override {
 		dumpTab(stream, depth);
 
-		stream << "var " << _name << "\n";
+		stream << "var " << _name << " : " << toString(_type) << "\n";
 	}
 
 private:

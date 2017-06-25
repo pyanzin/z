@@ -9,6 +9,8 @@
 #include "ZCall.h"
 #include "ZVarDef.h"
 #include "ZString.h"
+#include "ZAssign.h"
+#include "ZBinOp.h"
 
 class SymbolTable;
 class ZArg;
@@ -101,21 +103,53 @@ public:
         reqConsume(COLON);
         BaseTypes type = parseType();
         // TODO: add optional init expr
-        // TODO:: add symbol table stuff
+        // TODO: add symbol table stuff
         return new ZVarDef(*name, type);
     }
 
     ZExpr* parseExpr() {
-		int pos = _lexer.getPos();
-
-		return parseCall();
-        //return parseString();
+        return parseAssign();           
+        
     }
 
-    ZCall* parseCall() {
+    ZExpr* parseAssign() {
+        int pos = _lexer.getPos();
+
+        ZExpr* left = parseId();
+
+        if (left && consume(EQUAL))
+            return new ZAssign(left, parseAssign());
+        
+        _lexer.backtrackTo(pos);
+        return parseBinOp();
+    }
+
+    ZExpr* parseBinOp() {
+        int pos = _lexer.getPos();
+        ZExpr* left = parseId();
+        
+        if (consume(PLUS)) 
+            return new ZBinOp(left, parseExpr(), BinOps::Sum);
+        else if (consume(MINUS))
+            return new ZBinOp(left, parseExpr(), BinOps::Sub);
+        else if (consume(ASTERISK))
+            return new ZBinOp(left, parseExpr(), BinOps::Mul);     
+        else if (consume(SLASH))
+            return new ZBinOp(left, parseExpr(), BinOps::Div);
+
+        _lexer.backtrackTo(pos);
+        return parseCall();
+    }
+
+    ZExpr* parseCall() {
+        int pos = _lexer.getPos();
         // TODO: use expr here
+        
         ZExpr* callee = parseId();
-        reqConsume(OPEN_PAREN);
+        if (!consume(OPEN_PAREN)) {
+            _lexer.backtrackTo(pos);
+            return parseId();
+        }
 
         std::vector<ZExpr*>* args = new std::vector<ZExpr*>();
         while (!consume(CLOSE_PAREN)) {
@@ -127,10 +161,10 @@ public:
         return new ZCall(callee, *args);
     }
 
-    ZId* parseId() {
+    ZExpr* parseId() {
         std::string* name = val(IDENT);
         if (!name)
-            return nullptr;
+            return parseString();
 
         return new ZId(*name);
     }
