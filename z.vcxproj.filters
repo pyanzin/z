@@ -51,9 +51,6 @@
     <ClCompile Include="ZParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ZString.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ZVarDef.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

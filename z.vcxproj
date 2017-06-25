@@ -161,7 +161,6 @@
     <ClCompile Include="ZLexer.cpp" />
     <ClCompile Include="ZModule.cpp" />
     <ClCompile Include="ZParser.cpp" />
-    <ClCompile Include="ZString.cpp" />
     <ClCompile Include="ZStringLit.cpp" />
     <ClCompile Include="ZVarDef.cpp" />
     <ClCompile Include="ZVisitor.cpp" />
