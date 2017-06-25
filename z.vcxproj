@@ -187,7 +187,6 @@
     <ClInclude Include="ZLexer.h" />
     <ClInclude Include="ZModule.h" />
     <ClInclude Include="ZParser.h" />
-    <ClInclude Include="ZString.h" />
     <ClInclude Include="ZId.h" />
     <ClInclude Include="ZStringLit.h" />
     <ClInclude Include="ZVarDef.h" />

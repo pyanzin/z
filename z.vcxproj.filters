@@ -131,9 +131,6 @@
     <ClInclude Include="SymbolRef.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ZString.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ZId.h">
       <Filter>Header Files</Filter>
     </ClInclude>

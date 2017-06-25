@@ -169,12 +169,12 @@ public:
         return new ZId(*name);
     }
 
-    ZString* parseString() {
+    ZExpr* parseString() {
         std::string* value = val(STRING_LIT);
         if (!value)
             return nullptr;
 
-        return new ZString(*value);
+        return new ZStringLit(*value);
     }
 
     void reqConsume(ZLexeme lexeme) {
