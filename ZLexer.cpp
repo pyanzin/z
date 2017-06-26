@@ -52,7 +52,7 @@ ZLexeme ZLexer::getNextToken() {
     case '"': {
         std::string* s = new std::string;
         while ((ch = getNextChar()) != '"')
-            s += ch;
+            (*s) += ch;
         _value = s;
         return STRING_LIT;
     }

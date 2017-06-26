@@ -1,7 +1,5 @@
-﻿#ifndef ZVAR
-#define ZVAR
+﻿#pragma once
 
-#include <llvm/IR/Value.h>
 #include "ZExpr.h"
 #include "Utils.h"
 
@@ -28,5 +26,3 @@ public:
 private:
     std::string& _name;
 };
-
-#endif

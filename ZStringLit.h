@@ -10,7 +10,7 @@ public:
 
 	void dump(std::ostream& stream, unsigned depth) override {
 		dumpTab(stream, depth);
-		stream << "string(\'" << _value.c_str() << "\') : " << toString(getType()) << "\n";
+		stream << "string(\'" << _value << "\') : " << toString(getType()) << "\n";
 	}
 
 	std::string& _value;

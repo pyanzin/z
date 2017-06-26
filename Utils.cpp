@@ -77,7 +77,7 @@ std::string toString(BaseTypes type) {
 		return "String";
 	case BaseTypes::None:
 		return "None";
-	case Unknown:
+	default:
 		return "Unknown";
 	}
 }
