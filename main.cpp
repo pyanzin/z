@@ -51,7 +51,7 @@ int main()
 
     //mod->dump();
 
-    std::string src = "def main(): None = {var x: Int; x = read(); print(\"hi \" + x);}";
+    std::string src = "def main(): None = {var x: Int; x = (1 + 24) * 100; print(\"hi \" + x);}";
 
     ZLexer lexer(src);
 

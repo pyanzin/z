@@ -10,6 +10,7 @@
 #include "ZVarDef.h"
 #include "ZAssign.h"
 #include "ZBinOp.h"
+#include "ZIntLit.h"
 
 class SymbolTable;
 class ZArg;
@@ -171,9 +172,23 @@ public:
     ZExpr* parseString() {
         std::string* value = val(STRING_LIT);
         if (!value)
-            return nullptr;
+            return parseNumber();
 
         return new ZStringLit(*value);
+    }
+
+	ZExpr* parseNumber() {
+		if (consume(OPEN_PAREN)) {
+			ZExpr* expr = parseExpr();
+			reqConsume(CLOSE_PAREN);
+			return expr;
+		}
+
+		std::string* value = val(INT_LIT);
+		if (!value)
+			return nullptr;
+
+		return new ZIntLit(std::stoi((*value).c_str()));
     }
 
     void reqConsume(ZLexeme lexeme) {

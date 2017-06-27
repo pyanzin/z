@@ -5,6 +5,7 @@ enum ZLexeme {
     DEF,
     VAR,
     STRING_LIT,
+	INT_LIT,
     OPEN_PAREN,
     CLOSE_PAREN,
     COLON,
@@ -19,7 +20,7 @@ enum ZLexeme {
     MINUS,
     ASTERISK,
     SLASH,
-    INPUT_END,
+    INPUT_END
 };
 
 #endif

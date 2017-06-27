@@ -75,5 +75,15 @@ ZLexeme ZLexer::getNextToken() {
         return IDENT;
     }
 
+	if (isdigit(ch)) {
+		std::string value;
+		value += ch;
+		while (isalnum(ch = getNextChar()))
+			value += ch;
+		backtrackBy(1);
+		_value = new std::string(value);
+		return INT_LIT;
+	}
+
     throw std::string("Unable to recognize a token starting with: " + ch);
 }

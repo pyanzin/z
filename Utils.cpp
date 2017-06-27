@@ -85,12 +85,12 @@ std::string toString(BaseTypes type) {
 std::string toString(BinOps op) {
 	switch (op) {
 	case BinOps::Sum:
-		return "Sum";
+		return "+";
 	case BinOps::Sub:
-		return "Sub";
+		return "-";
 	case BinOps::Mul:
-		return "Mul";
+		return "*";
 	case BinOps::Div:
-		return "Div";
+		return "/";
 	}
 }
