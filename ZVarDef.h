@@ -10,6 +10,10 @@ public:
         _type = type;
     }
 
+	virtual void accept(ZVisitor* visitor) {
+		visitor->visit(this);
+	}
+
     std::string& getName() {
         return _name;
     }

@@ -11,6 +11,7 @@
 #include "ZAssign.h"
 #include "ZBinOp.h"
 #include "ZIntLit.h"
+#include "ZId.h"
 
 class SymbolTable;
 class ZArg;

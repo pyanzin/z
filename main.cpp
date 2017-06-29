@@ -8,7 +8,7 @@
 #include "ZParser.h"
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/Support/raw_ostream.h"
-
+#include "TypingPass.h"
 
 
 using namespace llvm;
@@ -51,7 +51,7 @@ int main()
 
     //mod->dump();
 
-    std::string src = "def main(): None = {var x: Int; x = (1 + 24) * 100; print(\"hi \" + x);}";
+    std::string src = "def main(params: String): None = {var x: Int; x = (1 + 24) * 100; print(\"hi \" + x);}";
 
     ZLexer lexer(src);
 
@@ -63,8 +63,14 @@ int main()
 
     SymbolTable table;
     ZParser parser(lexer, table);
-    auto mod = parser.parseModule();
 
+    auto mod = parser.parseModule();
+	mod->dump(std::cout, 0);
+
+	getchar();
+
+	TypingPass typingPass;
+	typingPass.visit(mod);
 	mod->dump(std::cout, 0);
 
     getchar();

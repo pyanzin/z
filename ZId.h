@@ -13,6 +13,10 @@ public:
     //            return &(cast<Value>(arg));        
     //}
 
+	virtual void accept(ZVisitor* visitor) {
+		visitor->visit(this);
+	}
+
 	std::string& getName() {
 		return _name;
     }

@@ -10,6 +10,10 @@ public:
         _expressions = *expressions;
     }
 
+	void accept(ZVisitor* visitor) override {
+		visitor->visit(this);
+	}
+
     //llvm::Value* codegen(llvm::Function * func) override = 0;
 
 	void dump(std::ostream& stream, unsigned depth) override {
@@ -20,7 +24,6 @@ public:
 			stmt->dump(stream, depth + 1);
 	}
 
-private:
     std::vector<ZAst*> _expressions;
 };
 

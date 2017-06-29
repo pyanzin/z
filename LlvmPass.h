@@ -27,7 +27,7 @@ public:
 		auto zargs = zfunc->_args;
 		unsigned i = 0;
 		for (auto& arg : _func->args())
-			arg.setName(zargs[i++]->getName()->c_str());
+			arg.setName(zargs[i++]->getName().c_str());
 
 		zfunc->_body->accept(this);
 	}

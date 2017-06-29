@@ -16,8 +16,8 @@ public:
         return _type;
     }
 
-    std::string* getName() {
-        return _name;
+    std::string getName() {
+        return *_name;
     }
 
 	virtual void accept(ZVisitor* visitor)

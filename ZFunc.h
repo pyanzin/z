@@ -15,6 +15,10 @@ public:
         _body = body;
     }
 
+	void accept(ZVisitor* visitor) {
+		visitor->visit(this);
+    }
+
     //void generateDef(Module* module) {
     //    auto args = std::vector<Type*>();
     //    for (auto arg : _args)
@@ -39,7 +43,7 @@ public:
 
 		stream << "func " << _name->c_str() << "(";
 		for (ZArg* arg : _args) {
-			stream << arg->getName() << ": " << toLlvmType(arg->getType()) << ", ";
+			stream << arg->getName() << ": " << toString(arg->getType()) << ", ";
 		}
 
 		stream << ")\n";

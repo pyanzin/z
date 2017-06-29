@@ -9,6 +9,10 @@ public:
         _right = right;
     }
 
+	void accept(ZVisitor* visitor) override {
+		visitor->visit(this);
+    }
+
     ZExpr* _left;
     ZExpr* _right;
 

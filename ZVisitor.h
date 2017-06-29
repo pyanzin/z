@@ -1,20 +1,37 @@
 ﻿#pragma once
-#include "ZId.h"
+#include <string>
 
 class ZFunc;
 class ZAst;
 class ZArg;
 class ZModule;
+class ZBlock;
+class ZBinOp;
+class ZId;
+class ZAssign;
+class ZCall;
 
 class ZVisitor {
 public:
-    ZAst* visit(ZAst* ast);
+	virtual void visit(ZAst* zast) { }
 
-    ZAst* visit(ZArg* ast);
+	virtual void visit(ZModule* zmodule) { }
 
-	virtual void visit(ZFunc* func) { }
+	virtual void visit(ZFunc* zfunc) { }
 
-	virtual void visit(ZModule* module) { }
+	virtual void visit(ZArg* zarg) { }
 
-	virtual void visit(ZId* zmodule) { }
+	virtual void visit(ZBlock* zblock) { }
+
+	virtual void visit(ZAssign* zassign) { }		
+
+	virtual void visit(ZBinOp* zbinop) { }
+
+	virtual void visit(ZCall* zcall) { }
+
+	virtual void visit(ZId* zid) { }
+
+	void error(std::string& text) {
+		throw std::exception(text.c_str());
+	}
 };

@@ -10,6 +10,10 @@ public:
 		this->callee = callee;
     }
 
+	virtual void accept(ZVisitor* visitor) {
+		visitor->visit(this);
+	}
+
     std::vector<ZExpr*>& getArgs() {
         return args;
     }

@@ -14,6 +14,10 @@ public:
 		setType(Int);
     }
 
+	virtual void accept(ZVisitor* visitor) {
+		visitor->visit(this);
+    }
+
 	void dump(std::ostream& stream, unsigned depth) override {
 		dumpTab(stream, depth);
 		stream << "int(" << _value << ") : " << toString(getType()) << "\n";
