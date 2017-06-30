@@ -24,7 +24,7 @@ public:
 	void dump(std::ostream& stream, unsigned depth) override {
 		dumpTab(stream, depth);
 
-		stream << "id(" << _name.c_str() << ") : "<< toString(getType()) << "\n";
+		stream << "id(" << _name.c_str() << ") : "<< getType()->toString() << "\n";
     }
 
 private:

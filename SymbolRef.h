@@ -10,6 +10,10 @@ public:
         _entryNumber = entryNumber;
     }
 
+	SymbolEntry* getEntry() {
+	    //_storage->
+    }
+
 private:
     SymbolStorage* _storage;
     int _entryNumber;

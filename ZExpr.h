@@ -1,20 +1,22 @@
 ﻿#pragma once
 
-#include "ZBasicTypes.h"
 #include "ZAst.h"
+#include "SymbolEntry.h"
+
+class ZType;
 
 class ZExpr : public ZAst {
 public:
     //virtual llvm::Value* codegen(llvm::Function * func) = 0;
 
-	BaseTypes getType()	{
+	ZType* getType() {
 		return _type;
 	}
 
-	void setType(BaseTypes type) {
+	void setType(ZType* type) {
 		_type = type;
 	}
 
 private:
-	BaseTypes _type = Unknown;
+	ZType* _type = Unknown;
 };

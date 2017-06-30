@@ -1,23 +1,20 @@
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/IR/LLVMContext.h"
 #include "llvm/IR/Module.h"
-#include "llvm/IR/Verifier.h"
 #include <cstdio>
 #include <iostream>
 #include "ZLexer.h"
 #include "ZParser.h"
-#include "llvm/IR/IRBuilder.h"
-#include "llvm/Support/raw_ostream.h"
 #include "TypingPass.h"
 
 
-using namespace llvm;
+//using namespace llvm;
 
-Module* makeLLVMModule();
+llvm::Module* makeLLVMModule();
 
 int main()
 {
-    LLVMContext& context = getGlobalContext();
+	llvm::LLVMContext& context = llvm::getGlobalContext();
 
     //auto args = std::vector<ZArg*>() = { new ZArg(Int, "x"), new ZArg(Int, "y") };
     //auto myFunc = new ZFunc(new std::string("MyFunc"), Int, args, new ZBinOp(new ZId("x"), new ZId("y"), Sum));

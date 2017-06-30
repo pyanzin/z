@@ -4,21 +4,6 @@
 #include "ZLexeme.h"
 #include "ZBinOp.h"
 
-llvm::Type* toLlvmType(BaseTypes ztype) {
-	switch (ztype)
-	{
-	case Int:
-		return llvm::IntegerType::get(llvm::getGlobalContext(), 32);
-	case Double:
-		break;
-	case Boolean:
-		return llvm::IntegerType::get(llvm::getGlobalContext(), 1);
-	case String:
-	default:
-		return nullptr;
-	}
-}
-
 std::string toString(ZLexeme lexeme) {
 	switch (lexeme) {
 	case IDENT:
@@ -62,24 +47,6 @@ std::string toString(ZLexeme lexeme) {
 
 	}
 
-}
-
-
-std::string toString(BaseTypes type) {
-	switch (type) {
-	case Boolean:
-		return "Boolean";
-	case Int:
-		return "Int";
-	case Double:
-		return "Double";
-	case String:
-		return "String";
-	case BaseTypes::None:
-		return "None";
-	default:
-		return "Unknown";
-	}
 }
 
 std::string toString(BinOps op) {

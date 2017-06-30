@@ -2,7 +2,7 @@
 #define ZBLOCK
 
 #include "ZExpr.h"
-#include <llvm/IR/Value.h>
+#include <vector>
 
 class ZBlock : public ZExpr {
 public:
@@ -10,9 +10,7 @@ public:
         _expressions = *expressions;
     }
 
-	void accept(ZVisitor* visitor) override {
-		visitor->visit(this);
-	}
+	void accept(ZVisitor* visitor) override;
 
     //llvm::Value* codegen(llvm::Function * func) override = 0;
 

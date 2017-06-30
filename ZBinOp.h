@@ -12,9 +12,7 @@ public:
 		_op = op;
 	}
 
-	void accept(ZVisitor* visitor) override {
-		visitor->visit(this);
-	}
+	void accept(ZVisitor* visitor) override;
 
 	//Value* codegen(llvm::Function * func) override {
 	//	switch (_op)
@@ -36,12 +34,7 @@ public:
 	ZExpr* getRight() { return _b; }
 	BinOps getOp() { return _op; }
 
-	void dump(std::ostream& stream, unsigned depth) override {
-		dumpTab(stream, depth);
-		stream << toString(_op) << " : " << toString(getType()) << "\n";
-		_a->dump(stream, depth + 1);
-		_b->dump(stream, depth + 1);
-	}
+	void dump(std::ostream& stream, unsigned depth) override;
 
 private:
 	ZExpr* _a;

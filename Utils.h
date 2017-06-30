@@ -1,12 +1,9 @@
-﻿#pragma once
-
-#include "ZBasicTypes.h"
-#include <llvm/IR/DerivedTypes.h>
-//#include "ZLexeme.h"
+﻿#ifndef UTILS_H
+#define UTILS_H
+#include <string>
 
 enum ZLexeme;
-
-using namespace llvm;
+enum BinOps;
 
 //IRBuilder<> builder(getGlobalContext());
 
@@ -17,10 +14,8 @@ enum BinOps {
     Div
 };
 
-Type* toLlvmType(BaseTypes ztype);
-
 std::string toString(ZLexeme lexeme);
 
-std::string toString(BaseTypes type);
-
 std::string toString(BinOps op);
+
+#endif

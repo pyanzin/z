@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "ZExpr.h"
-#include "Utils.h"
+#include "ZBasicTypes.h"
 
 class ZStringLit : public ZExpr {
 public:
@@ -8,13 +8,11 @@ public:
 		setType(String);
 	}
 
-	virtual void accept(ZVisitor* visitor) {
-		visitor->visit(this);
-	}
+	virtual void accept(ZVisitor* visitor);
 
 	void dump(std::ostream& stream, unsigned depth) override {
 		dumpTab(stream, depth);
-		stream << "string(\'" << _value << "\') : " << toString(getType()) << "\n";
+		stream << "string(\'" << _value << "\') : " << getType()->toString() << "\n";
 	}
 
 	std::string& _value;

@@ -4,13 +4,13 @@
 
 class SymbolEntry {
 public:
-    SymbolEntry(BaseTypes type, const std::string& name, const std::string& value = nullptr)
+	SymbolEntry(ZType* type, const std::string& name, const std::string& value = nullptr)
         : _name(name), _value(value){
         _type = type;
     }
 
 private:
-    BaseTypes _type;
+	ZType* _type;
     const std::string& _name;
     const std::string& _value;
 };

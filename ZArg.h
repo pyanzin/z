@@ -1,18 +1,19 @@
 ﻿#pragma once
 
-#include "ZBasicTypes.h"
 #include "ZAst.h"
-#include "ZVisitor.h"
+
+class ZVisitor;
+class ZType;
 
 class ZArg : public ZAst {
 public:
-    ZArg(BaseTypes type, std::string* name)
+    ZArg(ZType* type, std::string* name)
     {
         _type = type;
         _name = name;
     }
 
-    BaseTypes getType() {
+	ZType* getType() {
         return _type;
     }
 
@@ -20,12 +21,9 @@ public:
         return *_name;
     }
 
-	virtual void accept(ZVisitor* visitor)
-    {
-		visitor->visit(this);
-    }
+	virtual void accept(ZVisitor* visitor);
 
 private:
-    BaseTypes _type;
+	ZType* _type;
     std::string* _name;
 };

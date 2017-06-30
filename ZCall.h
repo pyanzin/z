@@ -2,7 +2,7 @@
 #include "ZExpr.h"
 #include <string>
 #include <vector>
-#include "Utils.h"
+#include "ZBasicTypes.h"
 
 class ZCall : public ZExpr {
 public:
@@ -10,9 +10,7 @@ public:
 		this->callee = callee;
     }
 
-	virtual void accept(ZVisitor* visitor) {
-		visitor->visit(this);
-	}
+	void accept(ZVisitor* visitor) override;
 
     std::vector<ZExpr*>& getArgs() {
         return args;
@@ -24,7 +22,7 @@ public:
 	void dump(std::ostream& stream, unsigned depth) override {
 		dumpTab(stream, depth);
 
-		stream << "call : " << toString(getType()) << "\n";
+		stream << "call : " << getType()->toString() << "\n";
 		callee->dump(stream, depth + 1);
 		for (ZExpr* expr : args)
 			expr->dump(stream, depth + 1);		

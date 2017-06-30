@@ -15,7 +15,7 @@ public:
         storage = storage->getParent();
     }
 
-    void add(BaseTypes type, std::string& name, const std::string& value = nullptr) {
+	void add(ZType* type, std::string& name, const std::string& value = nullptr) {
         storage->add(new SymbolEntry(type, name, value));
     }
 

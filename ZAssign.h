@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "ZExpr.h"
-#include "ZStringLit.h"
+#include "ZBasicTypes.h"
 
 class ZAssign : public ZExpr {
 public:
@@ -9,16 +9,14 @@ public:
         _right = right;
     }
 
-	void accept(ZVisitor* visitor) override {
-		visitor->visit(this);
-    }
+	void accept(ZVisitor* visitor) override;
 
     ZExpr* _left;
     ZExpr* _right;
 
     void dump(std::ostream& stream, unsigned depth) override {
         dumpTab(stream, depth);
-        stream << "assign : " << toString(getType()) << "\n";
+        stream << "assign : " << getType()->toString() << "\n";
         _left->dump(stream, depth + 1);
         _right->dump(stream, depth + 1);
     }

@@ -24,7 +24,7 @@ public:
         _types["String"] = String;
         _types["Bool"] = Boolean;
         _types["Double"] = Double;
-        _types["None"] = BaseTypes::None;
+		_types["None"] = None;
     }
 
     ZModule* parseModule() {
@@ -37,160 +37,36 @@ public:
         return module;
     }
 
-    ZFunc* parseFunc() {
-		if (!consume(DEF))
-			return nullptr;
-	    
-	    (DEF);
-        std::string* name = reqVal(IDENT);
-        reqConsume(OPEN_PAREN);
+	ZFunc* parseFunc();
 
-        std::vector<ZArg*>* args = new std::vector<ZArg*>();
-        while (!consume(CLOSE_PAREN)) {
-            args->push_back(parseArg());
-            consume(COMMA);
-        }
+	ZArg* parseArg();
 
-        reqConsume(COLON);
-
-        BaseTypes retType = parseType();
-
-        reqConsume(EQUAL);
-
-        ZBlock* body = parseBlock();
-
-        return new ZFunc(name, retType, *args, body);
-    }
-
-    ZArg* parseArg() {
-        std::string* name = reqVal(IDENT);
-        reqConsume(COLON);
-        BaseTypes type = parseType();
-
-        return new ZArg(type, name);
-    }
-
-    BaseTypes parseType() {
+	ZType* parseType() {
         return _types[*reqVal(IDENT)];
     }
 
-    ZBlock* parseBlock() {
-        std::vector<ZAst*>* stmts = new std::vector<ZAst*>;
+	ZBlock* parseBlock();
 
-		reqConsume(OPEN_BRACE);
+	ZAst* parseStatement();
 
-        while (!consume(CLOSE_BRACE)) {
-            ZAst* stmt = parseStatement();
-            reqConsume(SEMICOLON);
-            stmts->push_back(stmt);
-        }
-
-        return new ZBlock(stmts);
-    }
-
-    ZAst* parseStatement() {
-        int pos = _lexer.getPos();
-        if (consume(VAR)) {
-            _lexer.backtrackTo(pos);
-            return parseVarDef();
-        }
-
-        return parseExpr();
-    }
-
-    ZVarDef* parseVarDef() {
-        reqConsume(VAR);
-        std::string* name = reqVal(IDENT);
-        reqConsume(COLON);
-        BaseTypes type = parseType();
-        // TODO: add optional init expr
-        // TODO: add symbol table stuff
-        return new ZVarDef(*name, type);
-    }
+	ZVarDef* parseVarDef();
 
     ZExpr* parseExpr() {
         return parseAssign();           
         
     }
 
-    ZExpr* parseAssign() {
-        int pos = _lexer.getPos();
+	ZExpr* parseAssign();
 
-        ZExpr* left = parseId();
+	ZExpr* parseBinOp();
 
-        if (left && consume(EQUAL))
-            return new ZAssign(left, parseAssign());
-        
-        _lexer.backtrackTo(pos);
-        return parseBinOp();
-    }
+	ZExpr* parseCall();
 
-    ZExpr* parseBinOp() {
-        int pos = _lexer.getPos();
-        ZExpr* left = parseId();
-        
-        if (consume(PLUS)) 
-            return new ZBinOp(left, parseExpr(), BinOps::Sum);
-        else if (consume(MINUS))
-            return new ZBinOp(left, parseExpr(), BinOps::Sub);
-        else if (consume(ASTERISK))
-            return new ZBinOp(left, parseExpr(), BinOps::Mul);     
-        else if (consume(SLASH))
-            return new ZBinOp(left, parseExpr(), BinOps::Div);
+	ZExpr* parseId();
 
-        _lexer.backtrackTo(pos);
-        return parseCall();
-    }
+	ZExpr* parseString();
 
-    ZExpr* parseCall() {
-        int pos = _lexer.getPos();
-        // TODO: use expr here
-        
-        ZExpr* callee = parseId();
-        if (!consume(OPEN_PAREN)) {
-            _lexer.backtrackTo(pos);
-            return parseId();
-        }
-
-        std::vector<ZExpr*>* args = new std::vector<ZExpr*>();
-        while (!consume(CLOSE_PAREN)) {
-            ZExpr* arg = parseExpr();
-            consume(COMMA);
-            args->push_back(arg);
-        }
-
-        return new ZCall(callee, *args);
-    }
-
-    ZExpr* parseId() {
-        std::string* name = val(IDENT);
-        if (!name)
-            return parseString();
-
-        return new ZId(*name);
-    }
-
-    ZExpr* parseString() {
-        std::string* value = val(STRING_LIT);
-        if (!value)
-            return parseNumber();
-
-        return new ZStringLit(*value);
-    }
-
-	ZExpr* parseNumber() {
-		if (consume(OPEN_PAREN)) {
-			ZExpr* expr = parseExpr();
-			reqConsume(CLOSE_PAREN);
-			return expr;
-		}
-
-		std::string* value = val(INT_LIT);
-		if (!value)
-			return nullptr;
-
-		return new ZIntLit(std::stoi((*value).c_str()));
-    }
+	ZExpr* parseNumber();
 
     void reqConsume(ZLexeme lexeme) {
         if (!consume(lexeme))
@@ -232,5 +108,5 @@ private:
     ZLexer _lexer;
     SymbolTable _symTable;
 
-    std::map<std::string, BaseTypes> _types;
+	std::map<std::string, ZType*> _types;
 };

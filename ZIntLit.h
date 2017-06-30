@@ -20,7 +20,7 @@ public:
 
 	void dump(std::ostream& stream, unsigned depth) override {
 		dumpTab(stream, depth);
-		stream << "int(" << _value << ") : " << toString(getType()) << "\n";
+		stream << "int(" << _value << ") : " << getType()->toString() << "\n";
 	}
 
 private:
