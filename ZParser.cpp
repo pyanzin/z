@@ -64,9 +64,13 @@ ZVarDef* ZParser::parseVarDef() {
 	std::string* name = reqVal(IDENT);
 	reqConsume(COLON);
 	ZType* type = parseType();
-	// TODO: add optional init expr
-	// TODO: add symbol table stuff
-	return new ZVarDef(*name, type);
+    
+    ZExpr* initExpr = nullptr;
+
+    if (consume(EQUAL))
+        initExpr = parseExpr();
+
+	return new ZVarDef(*name, type, initExpr);
 }
 
 ZExpr* ZParser::parseAssign() {

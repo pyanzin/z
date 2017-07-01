@@ -48,7 +48,11 @@ int main()
 
     //mod->dump();
 
-    std::string src = "def main(params: String): None = {var x: Int; x = (1 + 24) * 100; print(\"hi \" + x);}";
+    std::string src = "def main(params: String): None = {"
+        "var name: String = readLine();"
+        "var age: Int = toInt(readLine());"
+        "print(\"hi \" + name);}"
+        "print(\"you will die in approx. \" + (75 - age))";
 
     ZLexer lexer(src);
 
