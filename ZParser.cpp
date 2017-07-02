@@ -22,6 +22,14 @@ ZFunc* ZParser::parseFunc() {
 
 	reqConsume(EQUAL);
 
+    std::vector<ZType*>* argTypes = new std::vector<ZType*>();
+    for (ZArg* arg : *args)
+        argTypes->push_back(arg->getType());
+
+    ZType* funcType = new ZFuncType(retType, *argTypes);
+
+    _symTable.add(funcType, name);
+
 	ZBlock* body = parseBlock();
 
 	return new ZFunc(name, retType, *args, body);
@@ -36,6 +44,7 @@ ZArg* ZParser::parseArg() {
 }
 
 ZBlock* ZParser::parseBlock() {
+    _symTable.enter();
 	std::vector<ZAst*>* stmts = new std::vector<ZAst*>;
 
 	reqConsume(OPEN_BRACE);
@@ -45,6 +54,8 @@ ZBlock* ZParser::parseBlock() {
 		reqConsume(SEMICOLON);
 		stmts->push_back(stmt);
 	}
+
+    _symTable.exit();
 
 	return new ZBlock(stmts);
 }
@@ -69,6 +80,8 @@ ZVarDef* ZParser::parseVarDef() {
 
     if (consume(EQUAL))
         initExpr = parseExpr();
+
+    _symTable.add(type, name);
 
 	return new ZVarDef(*name, type, initExpr);
 }
@@ -123,11 +136,11 @@ ZExpr* ZParser::parseCall() {
 }
 
 ZExpr* ZParser::parseId() {
-	std::string* name = val(IDENT);
+    std::string* name = val(IDENT);
 	if (!name)
 		return parseString();
-
-	return new ZId(*name);
+    SymbolRef* ref = _symTable.add(nullptr, name);
+	return new ZId(*name, *ref);
 }
 
 ZExpr* ZParser::parseString() {

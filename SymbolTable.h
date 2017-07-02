@@ -2,6 +2,7 @@
 #include <string>
 #include "ZBasicTypes.h"
 #include "SymbolStorage.h"
+#include "SymbolRef.h"
 
 class SymbolTable {
 public:
@@ -15,8 +16,9 @@ public:
         storage = storage->getParent();
     }
 
-	void add(ZType* type, std::string& name, const std::string& value = nullptr) {
-        storage->add(new SymbolEntry(type, name, value));
+	SymbolRef* add(ZType* type, std::string* name) {
+        int id = storage->add(new SymbolEntry(type, *name));
+        return new SymbolRef(storage, id);
     }
 
 private:

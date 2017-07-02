@@ -7,6 +7,7 @@
 #include "ZBlock.h"
 #include "ZCall.h"
 #include "ZBinOp.h"
+#include "ZId.h"
 
 void TypingPass::visit(ZModule* zmodule) {
 	for (ZFunc* zf : zmodule->getFunctions())
@@ -55,4 +56,10 @@ void TypingPass::visit(ZBinOp* zbinop) {
 
 	error("Unable to apply operation " + toString(zbinop->getOp()) + " for "
 		+ left->getType()->toString() + " and " + right->getType()->toString());
+}
+
+void TypingPass::visit(ZId* zid) {
+    SymbolEntry* definition = zid->getRef().findDefinedBefore(zid->getName());
+    if (definition)
+        zid->setType(definition->getType());
 }

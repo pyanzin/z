@@ -15,7 +15,5 @@ public:
 
 	void visit(ZBinOp* zbinop) override;
 
-	void visit(ZId* zid) override {
-
-	}
+    void visit(ZId* zid) override;
 };

@@ -2,10 +2,11 @@
 
 #include "ZExpr.h"
 #include "Utils.h"
+#include "SymbolRef.h"
 
 class ZId : public ZExpr {
 public:
-    ZId(std::string& name) : _name(name) { }
+    ZId(std::string& name, SymbolRef& ref) : _name(name), _ref(ref) { }
 
     //llvm::Value* codegen(llvm::Function* func) override {
     //    for (auto& arg : func->args())
@@ -21,6 +22,10 @@ public:
 		return _name;
     }
 
+    SymbolRef& getRef() {
+        return _ref;
+    }
+
 	void dump(std::ostream& stream, unsigned depth) override {
 		dumpTab(stream, depth);
 
@@ -29,4 +34,5 @@ public:
 
 private:
     std::string& _name;
+    SymbolRef& _ref;
 };

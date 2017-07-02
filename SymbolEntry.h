@@ -4,13 +4,19 @@
 
 class SymbolEntry {
 public:
-	SymbolEntry(ZType* type, const std::string& name, const std::string& value = nullptr)
-        : _name(name), _value(value){
+	SymbolEntry(ZType* type, std::string& name) : _name(name) {
         _type = type;
     }
 
+    ZType* getType() {
+        return _type;
+	}
+
+    std::string& getName() {
+        return _name;
+	}
+
 private:
 	ZType* _type;
-    const std::string& _name;
-    const std::string& _value;
+    std::string& _name;
 };

@@ -12,8 +12,7 @@
 
 llvm::Module* makeLLVMModule();
 
-int main()
-{
+int main() {
 	llvm::LLVMContext& context = llvm::getGlobalContext();
 
     //auto args = std::vector<ZArg*>() = { new ZArg(Int, "x"), new ZArg(Int, "y") };
@@ -51,8 +50,8 @@ int main()
     std::string src = "def main(params: String): None = {"
         "var name: String = readLine();"
         "var age: Int = toInt(readLine());"
-        "print(\"hi \" + name);}"
-        "print(\"you will die in approx. \" + (75 - age))";
+        "print(\"hi \" + name);"
+        "print(\"you will die in approx. \" + (75 - age));}";
 
     ZLexer lexer(src);
 
