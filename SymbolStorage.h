@@ -37,6 +37,7 @@ public:
 				if (name == entry.second->getName())
 					return entry.second;
 			}
+			id = storage->_parentNumber;
         } while (storage = storage->getParent());
 
         return nullptr;

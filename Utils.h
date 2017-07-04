@@ -5,8 +5,6 @@
 enum ZLexeme;
 enum BinOps;
 
-//IRBuilder<> builder(getGlobalContext());
-
 enum BinOps {
     Sum,
     Sub,

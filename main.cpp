@@ -6,6 +6,7 @@
 #include "ZLexer.h"
 #include "ZParser.h"
 #include "TypingPass.h"
+#include "LlvmPass.h"
 
 
 //using namespace llvm;
@@ -13,45 +14,47 @@
 llvm::Module* makeLLVMModule();
 
 int main() {
-	llvm::LLVMContext& context = llvm::getGlobalContext();
+	//auto args = std::vector<ZArg*>() = { new ZArg(Int, "x"), new ZArg(Int, "y") };
+	//auto myFunc = new ZFunc(new std::string("MyFunc"), Int, args, new ZBinOp(new ZId("x"), new ZId("y"), Sum));
 
-    //auto args = std::vector<ZArg*>() = { new ZArg(Int, "x"), new ZArg(Int, "y") };
-    //auto myFunc = new ZFunc(new std::string("MyFunc"), Int, args, new ZBinOp(new ZId("x"), new ZId("y"), Sum));
+	//Module* mod = new Module("test", context);
 
-    //Module* mod = new Module("test", context);
+	//myFunc->generateDef(mod);
 
-    //myFunc->generateDef(mod);
+	/*Function* sum = cast<Function>(c);
+	sum->setCallingConv(CallingConv::C);
 
-    /*Function* sum = cast<Function>(c);
-    sum->setCallingConv(CallingConv::C);
+	Function::arg_iterator args = sum->arg_begin();
+	Argument* x = (args++).getNodePtrUnchecked();
+	x->setName("x");
+	auto y = args.getNodePtrUnchecked();
+	y->setName("y");
 
-    Function::arg_iterator args = sum->arg_begin();
-    Argument* x = (args++).getNodePtrUnchecked();
-    x->setName("x");
-    auto y = args.getNodePtrUnchecked();
-    y->setName("y");
+	auto bb = BasicBlock::Create(getGlobalContext(), "entry", sum);
 
-    auto bb = BasicBlock::Create(getGlobalContext(), "entry", sum);
+	builder.SetInsertPoint(bb);
 
-    builder.SetInsertPoint(bb);
+	auto ast = new ZBinOp(new ZIntLit(23), new ZIntLit(19), Sum);
 
-    auto ast = new ZBinOp(new ZIntLit(23), new ZIntLit(19), Sum);
+	auto result = ast->codegen();
 
-    auto result = ast->codegen();
-
-    builder.CreateRet(result);
-  */
+	builder.CreateRet(result);
+	*/
 
 	//auto mod = makeLLVMModule();
-    //verifyModule(*mod);
+	//verifyModule(*mod);
 
-    //mod->dump();
+	//mod->dump();
 
 	std::string src = "def main(params: String): None = {"
 		"var name: String = readLine();"
-        "var age: Int = toInt(readLine());"
-        "print(\"hi \" + name);"
-        "print(\"you will die in approx. \" + (75 - age));}";
+		"var age: Int = toInt(readLine());"
+		"print(\"hi \" + name);"
+		"print(\"you will die in approx. \" + (75 - age));}";
+
+	//std::string src = "def sum(a: Int, b: Int): Int = {"
+	//	"a + b;"
+	//	"} ";
 
     ZLexer lexer(src);
 
@@ -81,6 +84,14 @@ int main() {
 	mod->dump(std::cout, 0);
 
     getchar();
+
+	LlvmPass llvmPass;
+
+	llvmPass.visit(mod);
+
+	llvmPass.getModule()->dump();
+
+	getchar();
 
     return 0;
 }

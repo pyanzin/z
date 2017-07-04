@@ -11,8 +11,11 @@ void ZFunc::dump(std::ostream& stream, unsigned depth) {
 	dumpTab(stream, depth);
 
 	stream << "func " << _name->c_str() << "(";
-	for (ZArg* arg : _args) {
-		stream << arg->getName() << ": " << arg->getType()->toString() << ", ";
+	for (auto i = _args.begin(); i < _args.end(); ++i) {
+		bool isLast = i == _args.end() - 1;
+		stream << *((*i)->getName()) << ": " << (*i)->getType()->toString();
+		if (!isLast)
+			stream << ", ";
 	}
 
 	stream << ")\n";

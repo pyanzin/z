@@ -8,6 +8,7 @@
 #include "ZCall.h"
 #include "ZBinOp.h"
 #include "ZId.h"
+#include "ZArg.h"
 
 void TypingPass::visit(ZModule* zmodule) {
 	for (ZFunc* zf : zmodule->getFunctions())
@@ -15,6 +16,8 @@ void TypingPass::visit(ZModule* zmodule) {
 }
 
 void TypingPass::visit(ZFunc* zfunc) {
+	for (auto arg : zfunc->_args)
+		arg->accept(this);
 	zfunc->_body->accept(this);
 }
 

@@ -23,8 +23,10 @@ ZFunc* ZParser::parseFunc() {
 	reqConsume(EQUAL);
 
     std::vector<ZType*>* argTypes = new std::vector<ZType*>();
-    for (ZArg* arg : *args)
-        argTypes->push_back(arg->getType());
+	for (ZArg* arg : *args) {
+		argTypes->push_back(arg->getType());
+		_symTable.add(arg->getType(), arg->getName());
+	}
 
     ZType* funcType = new ZFuncType(retType, *argTypes);
 

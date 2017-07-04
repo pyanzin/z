@@ -27,6 +27,8 @@ ZLexeme ZLexer::getNextToken() {
         return CLOSE_PAREN;
     case ':':
         return COLON;
+	case ',':
+		return COMMA;
     case ';':
         return SEMICOLON;
     case '{':
