@@ -47,8 +47,8 @@ int main() {
 
     //mod->dump();
 
-    std::string src = "def main(params: String): None = {"
-        "var name: String = readLine();"
+	std::string src = "def main(params: String): None = {"
+		"var name: String = readLine();"
         "var age: Int = toInt(readLine());"
         "print(\"hi \" + name);"
         "print(\"you will die in approx. \" + (75 - age));}";
@@ -59,9 +59,16 @@ int main() {
     //while ((lexeme = lexer.getNextToken()) != INPUT_END)
     //    printf("%d %s\n", (int)lexeme, lexer.getValue()->c_str());
 
-    
+	ZType* readLineType = new ZFuncType(String, std::vector<ZType*>());
+	ZType* toIntType = new ZFuncType(Int, std::vector<ZType*>() = { String });
+	ZType* printType = new ZFuncType(Int, std::vector<ZType*>() = { String });
 
     SymbolTable table;
+
+	table.add(readLineType, new std::string("readLine"));
+	table.add(toIntType, new std::string("toInt"));
+	table.add(printType, new std::string("print"));
+
     ZParser parser(lexer, table);
 
     auto mod = parser.parseModule();

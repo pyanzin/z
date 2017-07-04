@@ -21,6 +21,11 @@ public:
         return new SymbolRef(storage, id);
     }
 
+	SymbolRef* makeRef() {
+		int id = storage->incrementNumber();
+		return new SymbolRef(storage, id);
+    }
+
 private:
     SymbolStorage* storage;
 };

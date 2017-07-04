@@ -39,13 +39,23 @@ public:
         _argTypes = argTypes;
     }
 
-    virtual llvm::Type* toLlvmType() {
+    llvm::Type* toLlvmType() override {
         return nullptr;
     };
 
-    virtual std::string& toString() {
-        return std::string();
+    std::string& toString() override {
+		std::string* res = new std::string("(");
+		for (auto argType : _argTypes) {
+			*res += argType->toString() + ", ";
+		}
+
+		*res += ") => " + _retType->toString();
+		return *res;
     };
+
+	ZType* getRetType() {
+		return _retType;
+	}
 
 private:
     ZType* _retType;

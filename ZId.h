@@ -14,7 +14,7 @@ public:
     //            return &(cast<Value>(arg));        
     //}
 
-	virtual void accept(ZVisitor* visitor) {
+	virtual void accept(ZVisitor* visitor) override {
 		visitor->visit(this);
 	}
 
@@ -29,7 +29,7 @@ public:
 	void dump(std::ostream& stream, unsigned depth) override {
 		dumpTab(stream, depth);
 
-		stream << "id(" << _name.c_str() << ") : "<< getType()->toString() << "\n";
+		stream << "id(" << _name << ") : "<< getType()->toString() << "\n";
     }
 
 private:

@@ -30,11 +30,14 @@ public:
     SymbolEntry* findDefinedBefore(int id, std::string& name) {
         SymbolStorage* storage = this;
         do {
-            auto entries = this->_entries;
-            for (int i = 0; i < id; ++i)
-                if (name == entries[i]->getName())
-                    return entries[i];
-        } while (storage->getParent());
+            auto entries = storage->_entries;
+			for (auto entry : entries) {
+				if (entry.first >= id)
+					break;
+				if (name == entry.second->getName())
+					return entry.second;
+			}
+        } while (storage = storage->getParent());
 
         return nullptr;
     }
@@ -42,14 +45,14 @@ public:
     std::map<int, SymbolEntry*>& getEntries() {
         return _entries;
     }
+
+	int incrementNumber() {
+		return _number++;
+	}
 private:
     int _number;
     SymbolStorage* _parent;
     int _parentNumber;
-
-    int incrementNumber() {
-        return _number++;
-    }
 
     std::map<int, SymbolEntry*> _entries;
 };

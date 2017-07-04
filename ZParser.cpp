@@ -139,7 +139,7 @@ ZExpr* ZParser::parseId() {
     std::string* name = val(IDENT);
 	if (!name)
 		return parseString();
-    SymbolRef* ref = _symTable.add(nullptr, name);
+    SymbolRef* ref = _symTable.makeRef();
 	return new ZId(*name, *ref);
 }
 

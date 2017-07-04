@@ -6,7 +6,7 @@
 
 class ZCall : public ZExpr {
 public:
-    ZCall(ZAst* callee, std::vector<ZExpr*>& args) : args(args){
+    ZCall(ZExpr* callee, std::vector<ZExpr*>& args) : args(args){
 		this->callee = callee;
     }
 
@@ -16,7 +16,7 @@ public:
         return args;
     }
 
-    ZAst* callee;
+    ZExpr* callee;
     std::vector<ZExpr*>& args;
 
 	void dump(std::ostream& stream, unsigned depth) override {

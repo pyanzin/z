@@ -27,6 +27,10 @@ public:
             _initExpr->dump(stream, depth + 1);
 	}
 
+	ZExpr* getInitExpr() {
+		return _initExpr;
+    }
+
 private:
     std::string& _name;
     ZType* _type;

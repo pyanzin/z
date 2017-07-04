@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "ZVisitor.h"
+#include "ZVarDef.h"
 
 class TypingPass : public ZVisitor {
 public:
@@ -8,6 +9,8 @@ public:
 	void visit(ZFunc* zfunc) override;
 
 	void visit(ZBlock* zblock) override;
+
+	void visit(ZVarDef* zvardef) override;
 
 	void visit(ZAssign* zassign) override;
 

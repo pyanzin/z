@@ -31,8 +31,12 @@ void TypingPass::visit(ZAssign* zassign) {
 }
 
 void TypingPass::visit(ZCall* zcall) {
+	zcall->callee->accept(this);
 	for (ZExpr* arg : zcall->getArgs())
 		arg->accept(this);
+
+	ZType* retType = static_cast<ZFuncType*>(zcall->callee->getType())->getRetType();
+	zcall->setType(retType);
 }
 
 void TypingPass::visit(ZBinOp* zbinop) {
@@ -62,4 +66,8 @@ void TypingPass::visit(ZId* zid) {
     SymbolEntry* definition = zid->getRef().findDefinedBefore(zid->getName());
     if (definition)
         zid->setType(definition->getType());
+}
+
+void TypingPass::visit(ZVarDef* zvardef) {
+	zvardef->getInitExpr()->accept(this);
 }

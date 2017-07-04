@@ -10,6 +10,7 @@ class ZBinOp;
 class ZId;
 class ZAssign;
 class ZCall;
+class ZVarDef;
 
 class ZVisitor {
 public:
@@ -22,6 +23,8 @@ public:
 	virtual void visit(ZArg* zarg) { }
 
 	virtual void visit(ZBlock* zblock) { }
+
+	virtual void visit(ZVarDef* zvardef) { }
 
 	virtual void visit(ZAssign* zassign) { }		
 
