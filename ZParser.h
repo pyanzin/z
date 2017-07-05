@@ -22,7 +22,7 @@ public:
         : _lexer(lexer), _symTable(symTable) {
         _types["Int"] = Int;
         _types["String"] = String;
-        _types["Bool"] = Boolean;
+        _types["Boolean"] = Boolean;
         _types["Double"] = Double;
 		_types["None"] = None;
     }

@@ -121,6 +121,16 @@ ZExpr* ZParser::parseBinOp() {
 		return new ZBinOp(left, parseExpr(), BinOps::Mul);
 	else if (consume(SLASH))
 		return new ZBinOp(left, parseExpr(), BinOps::Div);
+	else if (consume(DOUBLE_EQUAL))
+		return new ZBinOp(left, parseExpr(), BinOps::Equal);
+	else if (consume(LESS))
+		return new ZBinOp(left, parseExpr(), BinOps::Less);
+	else if (consume(LESS_OR_EQUAL))
+		return new ZBinOp(left, parseExpr(), BinOps::LessOrEqual);
+	else if (consume(MORE))
+		return new ZBinOp(left, parseExpr(), BinOps::More);
+	else if (consume(MORE_OR_EQUAL))
+		return new ZBinOp(left, parseExpr(), BinOps::MoreOrEqual);
 
 	_lexer.backtrackTo(pos);
 	return parseCall();

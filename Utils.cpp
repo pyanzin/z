@@ -59,5 +59,15 @@ std::string toString(BinOps op) {
 		return "*";
 	case BinOps::Div:
 		return "/";
+	case BinOps::Equal:
+		return "==";	
+	case BinOps::Less:
+			return "<";
+	case BinOps::LessOrEqual:
+		return "<=";
+	case BinOps::More:
+		return ">";
+	case BinOps::MoreOrEqual:
+		return ">=";
 	}
 }

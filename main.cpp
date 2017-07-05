@@ -52,9 +52,9 @@ int main() {
 	//	"print(\"hi \" + name);"
 	//	"print(\"you will die in approx. \" + (75 - age));}";
 
-	std::string src = "def sum(a: Int, b: Int): Int = {"
+	std::string src = "def sum(a: Int, b: Int): Boolean = {"
 		"var x: Int = sum(a-1, b);"
-		"return x * x;"
+		"return x == (a - b);"
 		"} ";
 
     ZLexer lexer(src);

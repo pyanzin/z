@@ -60,6 +60,11 @@ void TypingPass::visit(ZBinOp* zbinop) {
 		return;
 	}
 
+	if (zbinop->getOp() >= BinOps::Equal && zbinop->getOp() <= BinOps::MoreOrEqual) {
+		zbinop->setType(Boolean);
+		return;
+	}
+
 	// todo: doubles, ints and combinations
 
 	error("Unable to apply operation " + toString(zbinop->getOp()) + " for "

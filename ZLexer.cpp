@@ -43,6 +43,18 @@ ZLexeme ZLexer::getNextToken() {
         return ASTERISK;
     case '/':
         return SLASH;
+	case '<':
+		ch = getNextChar();
+		if (ch == '=')
+			return LESS_OR_EQUAL;
+		backtrackBy(1);
+		return LESS;
+	case '>':
+		ch = getNextChar();
+		if (ch == '=')
+			return MORE_OR_EQUAL;
+		backtrackBy(1);
+		return MORE;
     case '=':
         ch = getNextChar();
         if (ch == '=')

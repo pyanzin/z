@@ -9,7 +9,12 @@ enum BinOps {
     Sum,
     Sub,
     Mul,
-    Div
+    Div,
+	Equal,
+	Less,
+	LessOrEqual,
+	More,
+	MoreOrEqual
 };
 
 std::string toString(ZLexeme lexeme);
