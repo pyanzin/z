@@ -9,6 +9,7 @@
 #include "ZBinOp.h"
 #include "ZId.h"
 #include "ZArg.h"
+#include "ZReturn.h"
 
 void TypingPass::visit(ZModule* zmodule) {
 	for (ZFunc* zf : zmodule->getFunctions())
@@ -22,7 +23,7 @@ void TypingPass::visit(ZFunc* zfunc) {
 }
 
 void TypingPass::visit(ZBlock* zblock) {
-	for (ZAst* stmt : zblock->_expressions)
+	for (ZAst* stmt : zblock->getStatements())
 		stmt->accept(this);
 }
 
@@ -69,6 +70,10 @@ void TypingPass::visit(ZId* zid) {
     SymbolEntry* definition = zid->getRef().findDefinedBefore(zid->getName());
     if (definition)
         zid->setType(definition->getType());
+}
+
+void TypingPass::visit(ZReturn* zreturn) {
+	zreturn->getExpr()->accept(this);
 }
 
 void TypingPass::visit(ZVarDef* zvardef) {

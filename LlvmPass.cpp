@@ -10,6 +10,7 @@
 #include "ZVarDef.h"
 #include "ZIntLit.h"
 #include "ZCall.h"
+#include "ZReturn.h"
 //#include "llvm/IR/IRBuilder.h"
 
 void LlvmPass::visit(ZModule* zmodule) {
@@ -20,7 +21,7 @@ void LlvmPass::visit(ZModule* zmodule) {
 }
 
 void LlvmPass::visit(ZBlock* zblock) {
-	for (ZAst* stmt : zblock->_expressions)
+	for (ZAst* stmt : zblock->getStatements())
 		stmt->accept(this);
 }
 
@@ -31,6 +32,11 @@ void LlvmPass::visit(ZBinOp* zbinop) {
 void LlvmPass::visit(ZVarDef* zvardef) {
 	llvm::Value* init = getValue(zvardef->getInitExpr());
 	_currentValues[zvardef->getName()] = init;
+}
+
+void LlvmPass::visit(ZReturn* zreturn) {
+	auto retValue = getValue(zreturn->getExpr());
+	_builder->CreateRet(retValue);
 }
 
 LlvmPass::LlvmPass() {

@@ -84,6 +84,9 @@
     <ClCompile Include="ZBinOp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ZReturn.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ZLexer.h">
@@ -159,6 +162,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TypingPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZReturn.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

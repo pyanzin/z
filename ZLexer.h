@@ -42,6 +42,9 @@ private:
     void init() {
         _keywords.insert(std::make_pair("def", DEF));
         _keywords.insert(std::make_pair("var", VAR));
+		_keywords.insert(std::make_pair("return", RETURN));
+		_keywords.insert(std::make_pair("while", WHILE));
+		_keywords.insert(std::make_pair("IF", IF));
     }
 };
 

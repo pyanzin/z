@@ -18,7 +18,7 @@ public:
 	void visit(ZBlock* zblock) override;
 
 	void visit(ZVarDef* zvardef) override;
-
+	void visit(ZReturn* zreturn) override;
 	void visit(ZBinOp* zbinop) override;
 
 	llvm::Value* getValue(ZExpr* zexpr);

@@ -47,6 +47,8 @@ public:
 
 	ZBlock* parseBlock();
 
+	ZAst* parseReturn();
+
 	ZAst* parseStatement();
 
 	ZVarDef* parseVarDef();

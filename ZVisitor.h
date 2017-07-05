@@ -11,6 +11,7 @@ class ZId;
 class ZAssign;
 class ZCall;
 class ZVarDef;
+class ZReturn;
 
 class ZVisitor {
 public:
@@ -33,6 +34,8 @@ public:
 	virtual void visit(ZCall* zcall) { }
 
 	virtual void visit(ZId* zid) { }
+
+	virtual void visit(ZReturn* zreturn) { }
 
 	void error(std::string& text) {
 		throw std::exception(text.c_str());

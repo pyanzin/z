@@ -167,6 +167,7 @@
     <ClCompile Include="ZLexer.cpp" />
     <ClCompile Include="ZModule.cpp" />
     <ClCompile Include="ZParser.cpp" />
+    <ClCompile Include="ZReturn.cpp" />
     <ClCompile Include="ZStringLit.cpp" />
     <ClCompile Include="ZVarDef.cpp" />
     <ClCompile Include="ZVisitor.cpp" />
@@ -194,6 +195,7 @@
     <ClInclude Include="ZModule.h" />
     <ClInclude Include="ZParser.h" />
     <ClInclude Include="ZId.h" />
+    <ClInclude Include="ZReturn.h" />
     <ClInclude Include="ZStringLit.h" />
     <ClInclude Include="ZVarDef.h" />
     <ClInclude Include="ZVisitor.h" />

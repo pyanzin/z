@@ -53,7 +53,8 @@ int main() {
 	//	"print(\"you will die in approx. \" + (75 - age));}";
 
 	std::string src = "def sum(a: Int, b: Int): Int = {"
-		"var x: Int = sum(a-1, b);"		
+		"var x: Int = sum(a-1, b);"
+		"return x * x;"
 		"} ";
 
     ZLexer lexer(src);
