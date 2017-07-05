@@ -54,7 +54,7 @@ int main() {
 
 	std::string src = "def sum(a: Int, b: Int): Boolean = {"
 		"var x: Int = sum(a-1, b);"
-		"return x == (a - b);"
+		"return x == a;"
 		"} ";
 
     ZLexer lexer(src);

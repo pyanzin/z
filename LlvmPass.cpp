@@ -101,6 +101,8 @@ llvm::Value* LlvmPass::getValue(ZBinOp* zbinop) {
 		return _builder->CreateMul(getValue(zbinop->getLeft()), getValue(zbinop->getRight()));
 	case Div:
 		return _builder->CreateSDiv(getValue(zbinop->getLeft()), getValue(zbinop->getRight()));
+	case Equal:
+		return _builder->CreateICmpEQ(getValue(zbinop->getLeft()), getValue(zbinop->getRight()));
 	default:
 		return nullptr;
 	}

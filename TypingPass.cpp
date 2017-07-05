@@ -55,13 +55,13 @@ void TypingPass::visit(ZBinOp* zbinop) {
 		return;
 	}
 
-	if (left->getType() == Int && right->getType() == Int) {
-		zbinop->setType(Int);
+	if (zbinop->getOp() >= BinOps::Equal && zbinop->getOp() <= BinOps::MoreOrEqual) {
+		zbinop->setType(Boolean);
 		return;
 	}
 
-	if (zbinop->getOp() >= BinOps::Equal && zbinop->getOp() <= BinOps::MoreOrEqual) {
-		zbinop->setType(Boolean);
+	if (left->getType() == Int && right->getType() == Int) {
+		zbinop->setType(Int);
 		return;
 	}
 
