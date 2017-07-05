@@ -23,6 +23,10 @@ public:
 		stream << "int(" << _value << ") : " << getType()->toString() << "\n";
 	}
 
+	int getValue() {
+		return _value;
+    }
+
 private:
     int _value;
 };

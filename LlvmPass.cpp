@@ -8,6 +8,8 @@
 #include "ZId.h"
 #include "ZBinOp.h"
 #include "ZVarDef.h"
+#include "ZIntLit.h"
+#include "ZCall.h"
 //#include "llvm/IR/IRBuilder.h"
 
 void LlvmPass::visit(ZModule* zmodule) {
@@ -23,24 +25,12 @@ void LlvmPass::visit(ZBlock* zblock) {
 }
 
 void LlvmPass::visit(ZBinOp* zbinop) {
-	//switch (zbinop->getOp())
-	//{
-	//case Sum:
-	//	return _builder->CreateAdd(zbinop->getLeft()->codegen(_func), _b->codegen(_func));
-	//case Sub:
-	//	return builder.CreateSub(_a->codegen(func), _b->codegen(func));
-	//case Mul:
-	//	return builder.CreateMul(_a->codegen(func), _b->codegen(func));
-	//case Div:
-	//	return builder.CreateSDiv(_a->codegen(func), _b->codegen(func));
-	//default:
-	//	return nullptr;
-	//}
+	getValue(zbinop);
 }
 
 void LlvmPass::visit(ZVarDef* zvardef) {
-		
-	
+	llvm::Value* init = getValue(zvardef->getInitExpr());
+	_currentValues[zvardef->getName()] = init;
 }
 
 LlvmPass::LlvmPass() {
@@ -65,10 +55,60 @@ void LlvmPass::visit(ZFunc* zfunc) {
 		_currentValues[*zarg->getName()] = &arg;
 	}
 
+	_currentValues[*zfunc->_name] = _func;
+
 	zfunc->_body->accept(this);
+}
+
+
+llvm::Value* LlvmPass::getValue(ZExpr* zexpr) {
+	ZCall* zcall = dynamic_cast<ZCall*>(zexpr);
+	if (zcall)
+		return getValue(zcall);
+
+	ZId* zid = dynamic_cast<ZId*>(zexpr);
+	if (zid)
+		return getValue(zid);
+
+	ZBinOp* zbinop = dynamic_cast<ZBinOp*>(zexpr);
+	if (zbinop)
+		return getValue(zbinop);
+
+	ZIntLit* zintlit = dynamic_cast<ZIntLit*>(zexpr);
+	if (zintlit)
+		return getValue(zintlit);
 }
 
 llvm::Value* LlvmPass::getValue(ZId* zid) {
 	return _currentValues[zid->getName()];
 }
 
+llvm::Value* LlvmPass::getValue(ZBinOp* zbinop) {
+	llvm::BasicBlock* bb = llvm::BasicBlock::Create(llvm::getGlobalContext(), "", _func);
+	_builder->SetInsertPoint(bb);
+	switch (zbinop->getOp()) {
+	case Sum:
+		return _builder->CreateAdd(getValue(zbinop->getLeft()), getValue(zbinop->getRight()));
+	case Sub:
+		return _builder->CreateSub(getValue(zbinop->getLeft()), getValue(zbinop->getRight()));
+	case Mul:
+		return _builder->CreateMul(getValue(zbinop->getLeft()), getValue(zbinop->getRight()));
+	case Div:
+		return _builder->CreateSDiv(getValue(zbinop->getLeft()), getValue(zbinop->getRight()));
+	default:
+		return nullptr;
+	}
+}
+
+llvm::Value* LlvmPass::getValue(ZIntLit* zintlit) {
+	return llvm::ConstantInt::get(llvm::getGlobalContext(), llvm::APInt::APInt(32, zintlit->getValue()));
+}
+
+llvm::Value* LlvmPass::getValue(ZCall* zcall) {
+	auto callee = getValue(zcall->callee);
+
+	auto args = new std::vector<llvm::Value*>();
+	for (auto arg : zcall->getArgs())
+		args->push_back(getValue(arg));
+	return _builder->CreateCall(callee, *args, "");
+}

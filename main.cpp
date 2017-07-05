@@ -46,15 +46,15 @@ int main() {
 
 	//mod->dump();
 
-	std::string src = "def main(params: String): None = {"
-		"var name: String = readLine();"
-		"var age: Int = toInt(readLine());"
-		"print(\"hi \" + name);"
-		"print(\"you will die in approx. \" + (75 - age));}";
+	//std::string src = "def main(params: String): None = {"
+	//	"var name: String = readLine();"
+	//	"var age: Int = toInt(readLine());"
+	//	"print(\"hi \" + name);"
+	//	"print(\"you will die in approx. \" + (75 - age));}";
 
-	//std::string src = "def sum(a: Int, b: Int): Int = {"
-	//	"a + b;"
-	//	"} ";
+	std::string src = "def sum(a: Int, b: Int): Int = {"
+		"var x: Int = sum(a-1, b);"		
+		"} ";
 
     ZLexer lexer(src);
 
@@ -64,7 +64,7 @@ int main() {
 
 	ZType* readLineType = new ZFuncType(String, std::vector<ZType*>());
 	ZType* toIntType = new ZFuncType(Int, std::vector<ZType*>() = { String });
-	ZType* printType = new ZFuncType(Int, std::vector<ZType*>() = { String });
+	ZType* printType = new ZFuncType(None, std::vector<ZType*>() = { String });
 
     SymbolTable table;
 

@@ -2,6 +2,9 @@
 #include <llvm/IR/Module.h>
 #include "ZVisitor.h"
 #include <llvm/IR/IRBuilder.h>
+#include "ZIntLit.h"
+
+class ZExpr;
 
 class LlvmPass : public ZVisitor
 {
@@ -18,7 +21,13 @@ public:
 
 	void visit(ZBinOp* zbinop) override;
 
+	llvm::Value* getValue(ZExpr* zexpr);
+
 	llvm::Value* getValue(ZId* zvar);
+
+	llvm::Value* getValue(ZBinOp* zbinop);
+	llvm::Value* getValue(ZIntLit* zintlit);
+	llvm::Value* getValue(ZCall* zcall);
 
 	llvm::Module* getModule() {
 		return _module;
