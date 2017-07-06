@@ -52,8 +52,15 @@ int main() {
 	//	"print(\"hi \" + name);"
 	//	"print(\"you will die in approx. \" + (75 - age));}";
 
-	std::string src = "def sum(a: Int, b: Int): Boolean = {"
-		"if (a < b) { return a; } else { return b; };"
+	std::string src = "def gcd(x: Int, y: Int): Int = {"
+		"if (x == y) {            "
+		"	return x;			  "
+		"};					      "
+		"if (x < y) {	          "
+		"	return gcd(x, y - x); "
+		"} else {			      "
+		"	return gcd(x - y, y); "
+		"};					      "
 		"}";
 
     ZLexer lexer(src);

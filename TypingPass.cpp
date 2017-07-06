@@ -88,7 +88,7 @@ void TypingPass::visit(ZIf* zif) {
 	// todo: check if condition type equals bool
 
 	zif->getBody()->accept(this);
-	if (zif->getCondition())
+	if (zif->getElseBody())
 		zif->getElseBody()->accept(this);
 }
 
