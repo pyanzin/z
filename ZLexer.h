@@ -44,7 +44,8 @@ private:
         _keywords.insert(std::make_pair("var", VAR));
 		_keywords.insert(std::make_pair("return", RETURN));
 		_keywords.insert(std::make_pair("while", WHILE));
-		_keywords.insert(std::make_pair("IF", IF));
+		_keywords.insert(std::make_pair("if", IF));
+		_keywords.insert(std::make_pair("else", ELSE));
     }
 };
 

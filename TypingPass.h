@@ -2,6 +2,8 @@
 #include "ZVisitor.h"
 #include "ZVarDef.h"
 
+class ZIf;
+
 class TypingPass : public ZVisitor {
 public:
 	void visit(ZModule* zmodule) override;
@@ -22,4 +24,5 @@ public:
 
 	void visit(ZReturn* zreturn) override;
 
+	void visit(ZIf* zif) override;
 };

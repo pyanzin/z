@@ -10,6 +10,7 @@
 #include "ZId.h"
 #include "ZArg.h"
 #include "ZReturn.h"
+#include "ZIf.h"
 
 void TypingPass::visit(ZModule* zmodule) {
 	for (ZFunc* zf : zmodule->getFunctions())
@@ -79,8 +80,20 @@ void TypingPass::visit(ZId* zid) {
 
 void TypingPass::visit(ZReturn* zreturn) {
 	zreturn->getExpr()->accept(this);
+	// todo: check if return stmt type equals func return type
+}
+
+void TypingPass::visit(ZIf* zif) {
+	zif->getCondition()->accept(this);
+	// todo: check if condition type equals bool
+
+	zif->getBody()->accept(this);
+	if (zif->getCondition())
+		zif->getElseBody()->accept(this);
 }
 
 void TypingPass::visit(ZVarDef* zvardef) {
 	zvardef->getInitExpr()->accept(this);
+
+	// todo: check for duplicated defs and that var type conforms init expr
 }

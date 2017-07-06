@@ -45,8 +45,12 @@ public:
 
     std::string& toString() override {
 		std::string* res = new std::string("(");
-		for (auto argType : _argTypes) {
-			*res += argType->toString() + ", ";
+		bool isLast = false;
+		for (auto i = _argTypes.begin(); i != _argTypes.end(); ++i) {
+			isLast = i == _argTypes.end() - 1;
+			*res += (*i)->toString();
+			if (!isLast)
+				*res += ", ";
 		}
 
 		*res += ") => " + _retType->toString();

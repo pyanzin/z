@@ -49,13 +49,14 @@ public:
 
 	ZAst* parseReturn();
 
+	ZAst* parseIf();
+
 	ZAst* parseStatement();
 
 	ZVarDef* parseVarDef();
 
     ZExpr* parseExpr() {
-        return parseAssign();           
-        
+        return parseAssign();  
     }
 
 	ZExpr* parseAssign();

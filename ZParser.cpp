@@ -2,6 +2,7 @@
 #include "ZArg.h"
 #include "ZStringLit.h"
 #include "ZReturn.h"
+#include "ZIf.h"
 
 ZFunc* ZParser::parseFunc() {
 	if (!consume(DEF))
@@ -68,6 +69,20 @@ ZAst* ZParser::parseReturn() {
 	return new ZReturn(parseExpr());
 }
 
+ZAst* ZParser::parseIf() {
+	reqConsume(IF);
+	reqConsume(OPEN_PAREN);
+	ZExpr* cond = parseExpr();
+	reqConsume(CLOSE_PAREN);
+
+	ZAst* body = parseBlock();
+	ZAst* elseBody = nullptr;
+	if (consume(ELSE))
+		elseBody = parseBlock();
+
+	return new ZIf(cond, body, elseBody);	
+}
+
 ZAst* ZParser::parseStatement() {
 	int pos = _lexer.getPos();
 	if (consume(VAR)) {
@@ -76,6 +91,9 @@ ZAst* ZParser::parseStatement() {
 	} else if (consume(RETURN)) {
 		_lexer.backtrackTo(pos);
 		return parseReturn();
+	} else if (consume(IF)) {
+		_lexer.backtrackTo(pos);
+		return parseIf();
 	}
 
 	return parseExpr();

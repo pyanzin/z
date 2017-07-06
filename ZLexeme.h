@@ -6,6 +6,7 @@ enum ZLexeme {
     VAR,
 	RETURN,
 	IF,
+	ELSE,
 	WHILE,
     STRING_LIT,
 	INT_LIT,

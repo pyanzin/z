@@ -164,6 +164,7 @@
     <ClCompile Include="ZBlock.cpp" />
     <ClCompile Include="ZCall.cpp" />
     <ClCompile Include="ZFunc.cpp" />
+    <ClCompile Include="ZIf.cpp" />
     <ClCompile Include="ZLexer.cpp" />
     <ClCompile Include="ZModule.cpp" />
     <ClCompile Include="ZParser.cpp" />
@@ -189,6 +190,7 @@
     <ClInclude Include="ZCall.h" />
     <ClInclude Include="ZExpr.h" />
     <ClInclude Include="ZFunc.h" />
+    <ClInclude Include="ZIf.h" />
     <ClInclude Include="ZIntLit.h" />
     <ClInclude Include="ZLexeme.h" />
     <ClInclude Include="ZLexer.h" />
