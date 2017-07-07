@@ -11,6 +11,8 @@
 #include "ZArg.h"
 #include "ZReturn.h"
 #include "ZIf.h"
+#include "ZWhile.h"
+#include "ZVarDef.h"
 
 void TypingPass::visit(ZModule* zmodule) {
 	for (ZFunc* zf : zmodule->getFunctions())
@@ -90,6 +92,13 @@ void TypingPass::visit(ZIf* zif) {
 	zif->getBody()->accept(this);
 	if (zif->getElseBody())
 		zif->getElseBody()->accept(this);
+}
+
+void TypingPass::visit(ZWhile* zwhile) {
+	zwhile->getCondition()->accept(this);
+	// todo: check if condition type equals bool
+
+	zwhile->getBody()->accept(this);
 }
 
 void TypingPass::visit(ZVarDef* zvardef) {

@@ -13,6 +13,7 @@ class ZCall;
 class ZVarDef;
 class ZReturn;
 class ZIf;
+class ZWhile;
 
 class ZVisitor {
 public:
@@ -40,6 +41,7 @@ public:
 
 	virtual void visit(ZIf* zif) { };
 
+	virtual void visit(ZWhile* zwhile) { };	
 
 	void error(std::string& text) {
 		throw std::exception(text.c_str());

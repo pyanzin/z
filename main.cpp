@@ -46,22 +46,24 @@ int main() {
 
 	//mod->dump();
 
-	//std::string src = "def main(params: String): None = {"
-	//	"var name: String = readLine();"
-	//	"var age: Int = toInt(readLine());"
-	//	"print(\"hi \" + name);"
-	//	"print(\"you will die in approx. \" + (75 - age));}";
+	std::string src = "def main(params: String): None = {"
+		"var x: Int = 10;"
+		"while (x > 0) { print(x); x = x - 1; };"
+		"var name: String = readLine();"
+		"var age: Int = toInt(readLine());"
+		"print(\"hi \" + name);"
+		"print(\"you will die in approx. \" + (75 - age));}";
 
-	std::string src = "def gcd(x: Int, y: Int): Int = {"
-		"if (x == y) {            "
-		"	return x;			  "
-		"};					      "
-		"if (x < y) {	          "
-		"	return gcd(x, y - x); "
-		"} else {			      "
-		"	return gcd(x - y, y); "
-		"};					      "
-		"}";
+	//std::string src = "def gcd(x: Int, y: Int): Int = {"
+	//	"if (x == y) {            "
+	//	"	return x;			  "
+	//	"};					      "
+	//	"if (x < y) {	          "
+	//	"	return gcd(x, y - x); "
+	//	"} else {			      "
+	//	"	return gcd(x - y, y); "
+	//	"};					      "
+	//	"}";
 
     ZLexer lexer(src);
 

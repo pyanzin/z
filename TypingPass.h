@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "ZVisitor.h"
-#include "ZVarDef.h"
 
 class ZIf;
 
@@ -25,4 +24,6 @@ public:
 	void visit(ZReturn* zreturn) override;
 
 	void visit(ZIf* zif) override;
+
+	void visit(ZWhile* zwhile) override;
 };

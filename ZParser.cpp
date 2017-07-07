@@ -3,6 +3,7 @@
 #include "ZStringLit.h"
 #include "ZReturn.h"
 #include "ZIf.h"
+#include "ZWhile.h"
 
 ZFunc* ZParser::parseFunc() {
 	if (!consume(DEF))
@@ -83,6 +84,17 @@ ZAst* ZParser::parseIf() {
 	return new ZIf(cond, body, elseBody);	
 }
 
+ZAst* ZParser::parseWhile() {
+	reqConsume(WHILE);
+	reqConsume(OPEN_PAREN);
+	ZExpr* cond = parseExpr();
+	reqConsume(CLOSE_PAREN);
+
+	ZAst* body = parseBlock();
+
+	return new ZWhile(cond, body);
+}
+
 ZAst* ZParser::parseStatement() {
 	int pos = _lexer.getPos();
 	if (consume(VAR)) {
@@ -94,6 +106,10 @@ ZAst* ZParser::parseStatement() {
 	} else if (consume(IF)) {
 		_lexer.backtrackTo(pos);
 		return parseIf();
+	}
+	else if (consume(WHILE)) {
+		_lexer.backtrackTo(pos);
+		return parseWhile();
 	}
 
 	return parseExpr();

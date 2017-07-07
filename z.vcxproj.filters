@@ -90,6 +90,9 @@
     <ClCompile Include="ZIf.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ZWhile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ZLexer.h">
@@ -171,6 +174,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ZIf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZWhile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

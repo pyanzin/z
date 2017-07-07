@@ -51,6 +51,8 @@ public:
 
 	ZAst* parseIf();
 
+	ZAst* parseWhile();
+
 	ZAst* parseStatement();
 
 	ZVarDef* parseVarDef();

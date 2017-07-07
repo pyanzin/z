@@ -172,6 +172,7 @@
     <ClCompile Include="ZStringLit.cpp" />
     <ClCompile Include="ZVarDef.cpp" />
     <ClCompile Include="ZVisitor.cpp" />
+    <ClCompile Include="ZWhile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LlvmPass.h" />
@@ -201,6 +202,7 @@
     <ClInclude Include="ZStringLit.h" />
     <ClInclude Include="ZVarDef.h" />
     <ClInclude Include="ZVisitor.h" />
+    <ClInclude Include="ZWhile.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
