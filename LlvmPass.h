@@ -15,19 +15,19 @@ public:
 
 	void visit(ZModule* zmodule) override;
 
-	void visit(ZBlock* zblock) override;
+	llvm::BasicBlock* generate(ZBlock* zblock);
+	llvm::BasicBlock* generate(ZAst* zast);
 
-	void visit(ZVarDef* zvardef) override;
-	void visit(ZReturn* zreturn) override;
-	void visit(ZBinOp* zbinop) override;
+	llvm::BasicBlock* generate(ZVarDef* zvardef);
+	llvm::BasicBlock* generate(ZReturn* zreturn);
 
-	llvm::Value* getValue(ZExpr* zexpr);
+	llvm::Value* getValue(ZExpr* zexpr, llvm::BasicBlock* bb);
 
 	llvm::Value* getValue(ZId* zvar);
 
-	llvm::Value* getValue(ZBinOp* zbinop);
+	llvm::Value* getValue(ZBinOp* zbinop, llvm::BasicBlock* bb);
 	llvm::Value* getValue(ZIntLit* zintlit);
-	llvm::Value* getValue(ZCall* zcall);
+	llvm::Value* getValue(ZCall* zcall, llvm::BasicBlock* bb);
 
 	llvm::Module* getModule() {
 		return _module;

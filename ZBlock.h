@@ -4,7 +4,7 @@
 #include "ZExpr.h"
 #include <vector>
 
-class ZBlock : public ZExpr {
+class ZBlock : public ZAst {
 public:
     ZBlock(std::vector<ZAst*>* stmts) {
 		_statements = *stmts;

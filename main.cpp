@@ -46,24 +46,19 @@ int main() {
 
 	//mod->dump();
 
-	std::string src = "def main(params: String): None = {"
-		"var x: Int = 10;"
-		"while (x > 0) { print(x); x = x - 1; };"
-		"var name: String = readLine();"
-		"var age: Int = toInt(readLine());"
-		"print(\"hi \" + name);"
-		"print(\"you will die in approx. \" + (75 - age));}";
+	//std::string src = "def main(params: String): None = {"
+	//	"var x: Int = 10;"
+	//	"while (x > 0) { print(x); x = x - 1; };"
+	//	"var name: String = readLine();"
+	//	"var age: Int = toInt(readLine());"
+	//	"print(\"hi \" + name);"
+	//	"print(\"you will die in approx. \" + (75 - age));}";
 
-	//std::string src = "def gcd(x: Int, y: Int): Int = {"
-	//	"if (x == y) {            "
-	//	"	return x;			  "
-	//	"};					      "
-	//	"if (x < y) {	          "
-	//	"	return gcd(x, y - x); "
-	//	"} else {			      "
-	//	"	return gcd(x - y, y); "
-	//	"};					      "
-	//	"}";
+	std::string src = "def gcd(x: Int, y: Int): Int = {"
+		"var a: Int = x + y;"
+		"var b: Int = a * x - y;"
+		"return b - a;"
+		"}";
 
     ZLexer lexer(src);
 
@@ -135,15 +130,16 @@ int main() {
 //	char size;
 //};
 //
-//Module* makeLLVMModule() {
-//	Module* mod = new Module("test", getGlobalContext());
+//using namespace llvm;
+//llvm::Module* makeLLVMModule() {
+//	llvm::Module* mod = new llvm::Module("test", llvm::getGlobalContext());
 //
-//	Constant* c = mod->getOrInsertFunction("gcd",
-//		IntegerType::get(getGlobalContext(), 32),
-//		IntegerType::get(getGlobalContext(), 32),
-//		IntegerType::get(getGlobalContext(), 32),
+//	llvm::Constant* c = mod->getOrInsertFunction("gcd",
+//	                                             llvm::IntegerType::get(llvm::getGlobalContext(), 32),
+//	                                             llvm::IntegerType::get(llvm::getGlobalContext(), 32),
+//	                                             llvm::IntegerType::get(llvm::getGlobalContext(), 32),
 //		NULL);
-//	Function* gcd = cast<Function>(c);
+//	llvm::Function* gcd = cast<llvm::Function>(c);
 //
 //	Function::arg_iterator args = gcd->arg_begin();
 //	Value* x = args++;
@@ -181,7 +177,7 @@ int main() {
 //	std::vector<Value*> args2;
 //	args2.push_back(xMinusY);
 //	args2.push_back(y);
-//	Value* recur_2 = builder.CreateCall(gcd, args2, "tmp");
+//	llvm::Value* recur_2 = builder.CreateCall(gcd, args2, "tmp");
 //	builder.CreateRet(recur_2);
 //
 //	return mod;

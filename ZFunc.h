@@ -2,12 +2,13 @@
 
 #include <vector>
 #include "ZExpr.h"
+#include "ZBlock.h"
 
 class ZArg;
 
 class ZFunc : public ZAst {
 public:
-	ZFunc(std::string* name, ZType* returnType, std::vector<ZArg*>& args, ZExpr* body) : _args(args) {
+	ZFunc(std::string* name, ZType* returnType, std::vector<ZArg*>& args, ZBlock* body) : _args(args) {
         _name = name;
         _returnType = returnType;
         _body = body;
@@ -40,6 +41,6 @@ public:
     std::string* _name;
 	ZType* _returnType;
     std::vector<ZArg*> _args;
-    ZExpr* _body;
+    ZBlock* _body;
 
 };
