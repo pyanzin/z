@@ -39,9 +39,7 @@ public:
         _argTypes = argTypes;
     }
 
-    llvm::Type* toLlvmType() override {
-        return nullptr;
-    };
+	llvm::Type* toLlvmType();
 
     std::string& toString() override {
 		std::string* res = new std::string("(");
