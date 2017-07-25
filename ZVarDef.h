@@ -3,11 +3,14 @@
 #include "ZBasicTypes.h"
 #include "ZAst.h"
 #include "ZExpr.h"
+#include "SymbolRef.h"
 
 
 class ZVarDef : public ZAst {
 public:
-    ZVarDef(std::string& name, ZType* type, ZExpr* initExpr = nullptr) : _name(name) {
+	
+
+	ZVarDef(std::string& name, SymbolRef& ref, ZType* type = nullptr, ZExpr* initExpr = nullptr) : _name(name), _ref(ref) {
         _type = type;
         _initExpr = initExpr;
     }
@@ -31,9 +34,19 @@ public:
 		return _initExpr;
     }
 
+	ZType* getVarType() {
+		return _type;
+    }
+
+	void setVarType(ZType* type) {
+		_type = type;
+		_ref.getEntry()->setType(type);
+    }
 private:
     std::string& _name;
+	SymbolRef& _ref;
     ZType* _type;
     ZExpr* _initExpr;
+	
 
 };

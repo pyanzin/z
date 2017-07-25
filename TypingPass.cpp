@@ -104,5 +104,8 @@ void TypingPass::visit(ZWhile* zwhile) {
 void TypingPass::visit(ZVarDef* zvardef) {
 	zvardef->getInitExpr()->accept(this);
 
+	if (!zvardef->getVarType() || zvardef->getVarType() == Unknown)
+		zvardef->setVarType(zvardef->getInitExpr()->getType());
+
 	// todo: check for duplicated defs and that var type conforms init expr
 }

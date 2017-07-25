@@ -118,17 +118,16 @@ ZAst* ZParser::parseStatement() {
 ZVarDef* ZParser::parseVarDef() {
 	reqConsume(VAR);
 	std::string* name = reqVal(IDENT);
-	reqConsume(COLON);
-	ZType* type = parseType();
+	ZType* type = consume(COLON) ? parseType() : Unknown;
     
     ZExpr* initExpr = nullptr;
 
     if (consume(EQUAL))
         initExpr = parseExpr();
 
-    _symTable.add(type, name);
+    auto ref = _symTable.add(type, name);
 
-	return new ZVarDef(*name, type, initExpr);
+	return new ZVarDef(*name, *ref, type, initExpr);
 }
 
 ZExpr* ZParser::parseAssign() {

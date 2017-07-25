@@ -55,8 +55,8 @@ int main() {
 	//	"print(\"you will die in approx. \" + (75 - age));}";
 
 	std::string src = "def gcd(x: Int, y: Int): Int = {"
-		"var a: Int = x + y;"
-		"var b: Int = a * x - y;"
+		"var a = x + y;"
+		"var b = a * x - y;"
 		"return b - a;"
 		"}";
 

@@ -16,6 +16,9 @@ public:
         return _name;
 	}
 
+	void setType(ZType* type) {
+		_type = type;
+	};
 private:
 	ZType* _type;
     std::string& _name;
