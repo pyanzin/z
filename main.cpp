@@ -55,9 +55,7 @@ int main() {
 	//	"print(\"you will die in approx. \" + (75 - age));}";
 
 	std::string src = "def gcd(x: Int, y: Int): Int = {"
-		"var a = x + y;"
-		"var b = a * x - y;"
-		"return b - a;"
+		"if (x == y) { return x; } else { return y; };"
 		"}";
 
     ZLexer lexer(src);

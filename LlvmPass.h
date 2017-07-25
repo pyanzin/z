@@ -20,6 +20,7 @@ public:
 
 	llvm::BasicBlock* generate(ZVarDef* zvardef);
 	llvm::BasicBlock* generate(ZReturn* zreturn);
+	llvm::BasicBlock* generate(ZIf* zif);
 
 	llvm::Value* getValue(ZExpr* zexpr, llvm::BasicBlock* bb);
 

@@ -6,12 +6,17 @@
 #include "ZBasicTypes.h"
 #include "ZBlock.h"
 #include "ZId.h"
+#include "ZIf.h"
 #include "ZBinOp.h"
 #include "ZVarDef.h"
 #include "ZIntLit.h"
 #include "ZCall.h"
 #include "ZReturn.h"
 #include "llvm/IR/BasicBlock.h"
+
+LlvmPass::LlvmPass() {
+	_builder = new llvm::IRBuilder<>(llvm::getGlobalContext());
+}
 
 void LlvmPass::visit(ZModule* zmodule) {
 	_module = new llvm::Module("test", llvm::getGlobalContext());
@@ -63,6 +68,11 @@ llvm::BasicBlock* LlvmPass::generate(ZAst* zast) {
 		return bb;
 	}
 
+	ZBlock* zblock = dynamic_cast<ZBlock*>(zast);
+	if (zblock) 
+		return generate(zblock);
+	
+
 	ZVarDef* zvardef = dynamic_cast<ZVarDef*>(zast);
 	if (zvardef) 
 		return generate(zvardef);
@@ -70,6 +80,10 @@ llvm::BasicBlock* LlvmPass::generate(ZAst* zast) {
 	ZReturn* zreturn = dynamic_cast<ZReturn*>(zast);
 	if (zreturn)
 		return generate(zreturn);
+
+	ZIf* zif = dynamic_cast<ZIf*>(zast);
+	if (zif)
+		return generate(zif);
 }
 
 llvm::BasicBlock* LlvmPass::generate(ZVarDef* zvardef) {
@@ -90,10 +104,24 @@ llvm::BasicBlock* LlvmPass::generate(ZReturn* zreturn) {
 	return bb;
 }
 
-LlvmPass::LlvmPass() {
-	_builder = new llvm::IRBuilder<>(llvm::getGlobalContext());
-}
+llvm::BasicBlock* LlvmPass::generate(ZIf* zif) {
+	llvm::BasicBlock* condBB = llvm::BasicBlock::Create(llvm::getGlobalContext(), "", _func);
 
+	llvm::Value* condValue = getValue(zif->getCondition(), condBB);
+
+	llvm::BasicBlock* bodyBB = generate(zif->getBody());
+	
+	llvm::BasicBlock* elseBB;
+
+	if (zif->getElseBody())
+		elseBB = generate(zif->getElseBody());
+	else
+		elseBB = llvm::BasicBlock::Create(llvm::getGlobalContext(), "", _func);
+
+	_builder->CreateCondBr(condValue, bodyBB, elseBB);
+
+	return condBB;
+}
 
 llvm::Value* LlvmPass::getValue(ZExpr* zexpr, llvm::BasicBlock* bb) {
 	ZCall* zcall = dynamic_cast<ZCall*>(zexpr);
