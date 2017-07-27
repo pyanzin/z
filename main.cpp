@@ -7,7 +7,7 @@
 #include "ZParser.h"
 #include "TypingPass.h"
 #include "LlvmPass.h"
-
+#include "llvm/ExecutionEngine/ExecutionEngine.h"
 
 //using namespace llvm;
 
@@ -54,8 +54,11 @@ int main() {
 	//	"print(\"hi \" + name);"
 	//	"print(\"you will die in approx. \" + (75 - age));}";
 
-	std::string src = "def gcd(x: Int, y: Int): Int = {"
-		"if (x == y) { return x; } else { return y; };"
+	std::string src = "def main(): Int = {"
+		"var x = 0;"
+		"var y = 11;"
+		"var a = 0;"
+		"while (x <= y) { x = x + 1; a = a + x + y; };"
 		"}";
 
     ZLexer lexer(src);
@@ -79,19 +82,20 @@ int main() {
     auto mod = parser.parseModule();
 	mod->dump(std::cout, 0);
 
-	getchar();
+	//getchar();
 
 	TypingPass typingPass;
 	typingPass.visit(mod);
 	mod->dump(std::cout, 0);
 
-    getchar();
+    //getchar();
 
 	LlvmPass llvmPass;
 
 	llvmPass.visit(mod);
 
-	llvmPass.getModule()->dump();
+	auto module = llvmPass.getModule();
+	module->dump();
 
 	getchar();
 

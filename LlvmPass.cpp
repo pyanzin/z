@@ -13,13 +13,16 @@
 #include "ZCall.h"
 #include "ZReturn.h"
 #include "llvm/IR/BasicBlock.h"
+#include "ZWhile.h"
+
+using namespace llvm;
 
 LlvmPass::LlvmPass() {
-	_builder = new llvm::IRBuilder<>(llvm::getGlobalContext());
+	_builder = new IRBuilder<>(getGlobalContext());
 }
 
 void LlvmPass::visit(ZModule* zmodule) {
-	_module = new llvm::Module("test", llvm::getGlobalContext());
+	_module = new Module("test", getGlobalContext());
 	for (ZFunc* func : zmodule->getFunctions()) {
 		func->accept(this);
 	}
@@ -28,12 +31,12 @@ void LlvmPass::visit(ZModule* zmodule) {
 void LlvmPass::visit(ZFunc* zfunc) {
 	_currentValues.clear();
 
-	auto args = std::vector<llvm::Type*>();
+	auto args = std::vector<Type*>();
 	for (auto arg : zfunc->_args)
 		args.push_back(arg->getType()->toLlvmType());
 
-	auto funcType = llvm::FunctionType::get(zfunc->_returnType->toLlvmType(), args, false);
-	_func = llvm::Function::Create(funcType, llvm::Function::ExternalLinkage, zfunc->_name->c_str(), _module);
+	auto funcType = FunctionType::get(zfunc->_returnType->toLlvmType(), args, false);
+	_func = Function::Create(funcType, Function::ExternalLinkage, zfunc->_name->c_str(), _module);
 
 	auto zargs = zfunc->_args;
 	unsigned i = 0;
@@ -48,19 +51,19 @@ void LlvmPass::visit(ZFunc* zfunc) {
 	generate(zfunc->_body);
 }
 
-llvm::BasicBlock* LlvmPass::generate(ZBlock* zblock) {
-	llvm::BasicBlock* bb = llvm::BasicBlock::Create(llvm::getGlobalContext(), "", _func);
+BasicBlock* LlvmPass::generate(ZBlock* zblock) {
+	BasicBlock* bb = BasicBlock::Create(getGlobalContext(), "", _func);
 
 	for (ZAst* stmt : zblock->getStatements()) {
-		llvm::BasicBlock* newBB = llvm::BasicBlock::Create(llvm::getGlobalContext());
+		BasicBlock* newBB = BasicBlock::Create(getGlobalContext());
 		generate(stmt);
 	}
 
 	return bb;
 }
 
-llvm::BasicBlock* LlvmPass::generate(ZAst* zast) {
-	llvm::BasicBlock* bb = llvm::BasicBlock::Create(llvm::getGlobalContext(), "", _func);
+BasicBlock* LlvmPass::generate(ZAst* zast) {
+	BasicBlock* bb = BasicBlock::Create(getGlobalContext(), "", _func);
 
 	ZExpr* zexpr = dynamic_cast<ZExpr*>(zast);
 	if (zexpr) {
@@ -84,19 +87,23 @@ llvm::BasicBlock* LlvmPass::generate(ZAst* zast) {
 	ZIf* zif = dynamic_cast<ZIf*>(zast);
 	if (zif)
 		return generate(zif);
+
+	ZWhile* zwhile = dynamic_cast<ZWhile*>(zast);
+	if (zwhile)
+		return generate(zwhile);
 }
 
-llvm::BasicBlock* LlvmPass::generate(ZVarDef* zvardef) {
-	llvm::BasicBlock* bb = llvm::BasicBlock::Create(llvm::getGlobalContext(), "", _func);
+BasicBlock* LlvmPass::generate(ZVarDef* zvardef) {
+	BasicBlock* bb = BasicBlock::Create(getGlobalContext(), "", _func);
 
-	llvm::Value* init = getValue(zvardef->getInitExpr(), bb);
+	Value* init = getValue(zvardef->getInitExpr(), bb);
 	_currentValues[zvardef->getName()] = init;
 
 	return bb;
 }
 
-llvm::BasicBlock* LlvmPass::generate(ZReturn* zreturn) {
-	llvm::BasicBlock* bb = llvm::BasicBlock::Create(llvm::getGlobalContext(), "", _func);
+BasicBlock* LlvmPass::generate(ZReturn* zreturn) {
+	BasicBlock* bb = BasicBlock::Create(getGlobalContext(), "", _func);
 
 	auto retValue = getValue(zreturn->getExpr(), bb);
 	_builder->CreateRet(retValue);
@@ -104,26 +111,44 @@ llvm::BasicBlock* LlvmPass::generate(ZReturn* zreturn) {
 	return bb;
 }
 
-llvm::BasicBlock* LlvmPass::generate(ZIf* zif) {
-	llvm::BasicBlock* condBB = llvm::BasicBlock::Create(llvm::getGlobalContext(), "", _func);
+BasicBlock* LlvmPass::generate(ZIf* zif) {
+	BasicBlock* condBB = BasicBlock::Create(getGlobalContext(), "", _func);
 
-	llvm::Value* condValue = getValue(zif->getCondition(), condBB);
+	Value* condValue = getValue(zif->getCondition(), condBB);
 
-	llvm::BasicBlock* bodyBB = generate(zif->getBody());
+	BasicBlock* bodyBB = generate(zif->getBody());
 	
-	llvm::BasicBlock* elseBB;
+	BasicBlock* elseBB;
 
 	if (zif->getElseBody())
 		elseBB = generate(zif->getElseBody());
 	else
-		elseBB = llvm::BasicBlock::Create(llvm::getGlobalContext(), "", _func);
+		elseBB = BasicBlock::Create(getGlobalContext(), "", _func);
 
 	_builder->CreateCondBr(condValue, bodyBB, elseBB);
 
 	return condBB;
 }
 
-llvm::Value* LlvmPass::getValue(ZExpr* zexpr, llvm::BasicBlock* bb) {
+BasicBlock* LlvmPass::generate(ZWhile* zwhile) {
+	BasicBlock* condBB = BasicBlock::Create(getGlobalContext(), "", _func);
+	
+	Value* condValue = getValue(zwhile->getCondition(), condBB);
+
+	BasicBlock* bodyBB = generate(zwhile->getBody());
+
+	BasicBlock* afterBB = BasicBlock::Create(getGlobalContext(), "", _func);
+
+	_builder->SetInsertPoint(condBB);
+	_builder->CreateCondBr(condValue, bodyBB, afterBB);
+
+	_builder->SetInsertPoint(bodyBB);
+	_builder->CreateBr(condBB);
+
+	return condBB;
+}
+
+Value* LlvmPass::getValue(ZExpr* zexpr, BasicBlock* bb) {
 	ZCall* zcall = dynamic_cast<ZCall*>(zexpr);
 	if (zcall)
 		return getValue(zcall, bb);
@@ -141,11 +166,11 @@ llvm::Value* LlvmPass::getValue(ZExpr* zexpr, llvm::BasicBlock* bb) {
 		return getValue(zintlit);
 }
 
-llvm::Value* LlvmPass::getValue(ZId* zid) {
+Value* LlvmPass::getValue(ZId* zid) {
 	return _currentValues[zid->getName()];
 }
 
-llvm::Value* LlvmPass::getValue(ZBinOp* zbinop, llvm::BasicBlock* bb) {
+Value* LlvmPass::getValue(ZBinOp* zbinop, BasicBlock* bb) {
 	_builder->SetInsertPoint(bb);
 	auto left = getValue(zbinop->getLeft(), bb);
 	auto right = getValue(zbinop->getRight(), bb);
@@ -161,19 +186,21 @@ llvm::Value* LlvmPass::getValue(ZBinOp* zbinop, llvm::BasicBlock* bb) {
 		return _builder->CreateSDiv(left, right);
 	case Equal:
 		return _builder->CreateICmpEQ(left, right);
+	case LessOrEqual:
+		return _builder->CreateICmpSLE(left, right);
 	default:
 		return nullptr;
 	}
 }
 
-llvm::Value* LlvmPass::getValue(ZIntLit* zintlit) {
-	return llvm::ConstantInt::get(llvm::getGlobalContext(), llvm::APInt::APInt(32, zintlit->getValue()));
+Value* LlvmPass::getValue(ZIntLit* zintlit) {
+	return ConstantInt::get(getGlobalContext(), APInt::APInt(32, zintlit->getValue()));
 }
 
-llvm::Value* LlvmPass::getValue(ZCall* zcall, llvm::BasicBlock* bb) {
+Value* LlvmPass::getValue(ZCall* zcall, BasicBlock* bb) {
 	auto callee = getValue(zcall->callee, bb);
 
-	auto args = new std::vector<llvm::Value*>();
+	auto args = new std::vector<Value*>();
 	for (auto arg : zcall->getArgs())
 		args->push_back(getValue(arg, bb));
 	return _builder->CreateCall(callee, *args, "");
