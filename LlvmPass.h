@@ -30,6 +30,7 @@ public:
 	llvm::Value* getValue(ZBinOp* zbinop, llvm::BasicBlock* bb);
 	llvm::Value* getValue(ZIntLit* zintlit);
 	llvm::Value* getValue(ZCall* zcall, llvm::BasicBlock* bb);
+	llvm::Value* getValue(ZAssign* zassign, llvm::BasicBlock* bb);
 
 	llvm::Module* getModule() {
 		return _module;
