@@ -56,9 +56,12 @@ int main() {
 
 	std::string src = "def main(x: Int, y: Int): Int = {"
 		"var a = x;"
+		"another();"
 		"while (y <= 10) { y = y + 1; a = a * y; };"
 		"return a - x;"
-		"}";
+		"}"
+		"def another(): None = { another(); main(10, 20); }"
+	;
 
     ZLexer lexer(src);
 

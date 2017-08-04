@@ -3,6 +3,7 @@
 #include "ZVisitor.h"
 #include <llvm/IR/IRBuilder.h>
 #include "ZIntLit.h"
+#include "LlvmTable.h"
 
 class ZExpr;
 
@@ -14,7 +15,7 @@ public:
 	void visit(ZFunc* zfunc) override;
 
 	void visit(ZModule* zmodule) override;
-
+	void addFuncDef(ZFunc* zfunc);
 	llvm::BasicBlock* generate(ZBlock* zblock);
 	llvm::BasicBlock* generate(ZAst* zast);
 
@@ -38,7 +39,7 @@ public:
 private:
 	llvm::Module* _module;
 	llvm::Function* _func;
-	std::map<std::string, llvm::Value*> _currentValues;
+	LlvmTable* _currentValues;
 
 	llvm::IRBuilder<>* _builder;
 };
