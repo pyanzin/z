@@ -144,7 +144,7 @@ ZExpr* ZParser::parseAssign() {
 
 ZExpr* ZParser::parseBinOp() {
 	int pos = _lexer.getPos();
-	ZExpr* left = parseId();
+	ZExpr* left = parseCall();
 
 	if (consume(PLUS))
 		return new ZBinOp(left, parseExpr(), BinOps::Sum);

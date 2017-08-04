@@ -60,7 +60,7 @@ int main() {
 		"while (y <= 10) { y = y + 1; a = a * y; };"
 		"return a - x;"
 		"}"
-		"def another(): None = { another(); main(10, 20); }"
+		"def another(): Int = { another() + main(10, 20); return 2; }"
 	;
 
     ZLexer lexer(src);
