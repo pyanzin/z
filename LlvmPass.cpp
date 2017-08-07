@@ -35,8 +35,13 @@ void LlvmPass::visit(ZModule* zmodule) {
 
 void LlvmPass::addFuncDef(ZFunc* zfunc) {
 	auto args = std::vector<Type*>();
-	for (auto arg : zfunc->_args)
-		args.push_back(arg->getType()->toLlvmType());
+	for (auto arg : zfunc->_args) {
+		auto argType = arg->getType();
+		if (dynamic_cast<ZFuncType*>(argType))
+			args.push_back(argType->toLlvmType()->getPointerTo());
+		else 
+			args.push_back(argType->toLlvmType());
+	}
 	auto funcType = FunctionType::get(zfunc->_returnType->toLlvmType(), args, false);
 
 	auto func = Function::Create(funcType, Function::ExternalLinkage, zfunc->_name->c_str(), _module);

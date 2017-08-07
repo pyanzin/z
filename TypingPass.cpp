@@ -16,7 +16,7 @@
 
 void TypingPass::visit(ZModule* zmodule) {
 	for (ZFunc* zf : zmodule->getFunctions())
-		zf->accept(this);
+		visit(zf);
 }
 
 void TypingPass::visit(ZFunc* zfunc) {

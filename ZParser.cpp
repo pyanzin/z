@@ -25,6 +25,8 @@ ZFunc* ZParser::parseFunc() {
 
 	reqConsume(EQUAL);
 
+	_symTable.enter();
+
     std::vector<ZType*>* argTypes = new std::vector<ZType*>();
 	for (ZArg* arg : *args) {
 		argTypes->push_back(arg->getType());
@@ -33,10 +35,12 @@ ZFunc* ZParser::parseFunc() {
 
     ZType* funcType = new ZFuncType(retType, *argTypes);
 
-    _symTable.add(funcType, name);
-
 	ZBlock* body = parseBlock();
 
+	_symTable.exit();
+
+	_symTable.add(funcType, name);
+	
 	return new ZFunc(name, retType, *args, body);
 }
 
@@ -48,8 +52,24 @@ ZArg* ZParser::parseArg() {
 	return new ZArg(type, name);
 }
 
-ZBlock* ZParser::parseBlock() {
-    _symTable.enter();
+ZType* ZParser::parseType() {
+	if (consume(OPEN_PAREN)) {
+		std::vector<ZType*>* argTypes = new std::vector<ZType*>;
+		while (!consume(CLOSE_PAREN)) {
+			ZType* argType = parseType();
+			argTypes->push_back(argType);
+			consume(COMMA);
+		}
+
+		reqConsume(FAT_ARROW);
+		ZType* retType = parseType();
+
+		return new ZFuncType(retType, *argTypes);
+	}
+	return _types[*reqVal(IDENT)];
+}
+
+ZBlock* ZParser::parseBlock() {    
 	std::vector<ZAst*>* stmts = new std::vector<ZAst*>;
 
 	reqConsume(OPEN_BRACE);
@@ -59,8 +79,6 @@ ZBlock* ZParser::parseBlock() {
 		reqConsume(SEMICOLON);
 		stmts->push_back(stmt);
 	}
-
-    _symTable.exit();
 
 	return new ZBlock(stmts);
 }

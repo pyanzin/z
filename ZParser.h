@@ -41,9 +41,7 @@ public:
 
 	ZArg* parseArg();
 
-	ZType* parseType() {
-        return _types[*reqVal(IDENT)];
-    }
+	ZType* parseType();
 
 	ZBlock* parseBlock();
 

@@ -54,13 +54,12 @@ int main() {
 	//	"print(\"hi \" + name);"
 	//	"print(\"you will die in approx. \" + (75 - age));}";
 
-	std::string src = "def main(x: Int, y: Int): Int = {"
-		"var a = x;"
-		"another();"
-		"while (y <= 10) { y = y + 1; a = a * y; };"
-		"return a - x;"
-		"}"
-		"def another(): Int = { another() + main(10, 20); return 2; }"
+	std::string src =
+		"def map(f: (Int) => Int): Int = { return f(20);}"
+		"def fu(x: Int): Int = { return 20; }"
+		"def main(): None = {"
+		"var res = map(fu); "		
+		"};		}			  "
 	;
 
     ZLexer lexer(src);
@@ -75,22 +74,18 @@ int main() {
 
     SymbolTable table;
 
-	table.add(readLineType, new std::string("readLine"));
-	table.add(toIntType, new std::string("toInt"));
-	table.add(printType, new std::string("print"));
-
     ZParser parser(lexer, table);
 
     auto mod = parser.parseModule();
-	//mod->dump(std::cout, 0);
+	mod->dump(std::cout, 0);
 
-	//getchar();
+	getchar();
 
 	TypingPass typingPass;
 	typingPass.visit(mod);
-	//mod->dump(std::cout, 0);
+	mod->dump(std::cout, 0);
 
-    //getchar();
+    getchar();
 
 	LlvmPass llvmPass;
 
