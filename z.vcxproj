@@ -178,6 +178,7 @@
     <ClInclude Include="LlvmPass.h" />
     <ClInclude Include="LlvmStorage.h" />
     <ClInclude Include="LlvmTable.h" />
+    <ClInclude Include="SourceRange.h" />
     <ClInclude Include="SymbolEntry.h" />
     <ClInclude Include="SymbolRef.h" />
     <ClInclude Include="SymbolStorage.h" />
