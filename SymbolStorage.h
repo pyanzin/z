@@ -27,7 +27,7 @@ public:
         return new SymbolStorage(this);
     }
 
-    SymbolEntry* findDefinedBefore(int id, std::string& name) {
+    SymbolEntry* findDefinedBefore(int id, std::string& name, bool onlyCurrentScope = false) {
         SymbolStorage* storage = this;
         do {
             auto entries = storage->_entries;
@@ -38,7 +38,7 @@ public:
 					return entry.second;
 			}
 			id = storage->_parentNumber;
-        } while (storage = storage->getParent());
+        } while (storage = onlyCurrentScope ? nullptr : storage->getParent());
 
         return nullptr;
     }

@@ -75,26 +75,26 @@ void LlvmPass::visit(ZFunc* zfunc) {
 }
 
 BasicBlock* LlvmPass::generate(ZBlock* zblock) {
-	BasicBlock* bb = BasicBlock::Create(getGlobalContext(), "", _func);
-	_builder->SetInsertPoint(bb);
+	BasicBlock* bb = nullptr;
 
 	for (ZAst* stmt : zblock->getStatements()) {
 
 		BasicBlock* newBB = BasicBlock::Create(getGlobalContext(), "", _func);
 		_builder->SetInsertPoint(newBB);
 
-		generate(stmt);
+		bb = generate(stmt);
 	}
 
 	return bb;
 }
 
 BasicBlock* LlvmPass::generate(ZAst* zast) {
-	BasicBlock* bb = BasicBlock::Create(getGlobalContext(), "", _func);
-	_builder->SetInsertPoint(bb);
+
 
 	ZExpr* zexpr = dynamic_cast<ZExpr*>(zast);
 	if (zexpr) {
+		BasicBlock* bb = BasicBlock::Create(getGlobalContext(), "", _func);
+		_builder->SetInsertPoint(bb);
 		getValue(zexpr, bb);
 		return bb;
 	}
@@ -179,7 +179,7 @@ BasicBlock* LlvmPass::generate(ZWhile* zwhile) {
 }
 
 Value* LlvmPass::getValue(ZExpr* zexpr, BasicBlock* bb) {
-	_builder->SetInsertPoint(bb);
+	//_builder->SetInsertPoint(bb);
 
 	ZCall* zcall = dynamic_cast<ZCall*>(zexpr);
 	if (zcall)

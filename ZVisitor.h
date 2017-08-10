@@ -43,7 +43,7 @@ public:
 
 	virtual void visit(ZWhile* zwhile) { };	
 
-	void error(std::string& text) {
+	void error(std::string text) {
 		throw std::exception(text.c_str());
 	}
 };

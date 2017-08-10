@@ -26,4 +26,7 @@ public:
 	void visit(ZIf* zif) override;
 
 	void visit(ZWhile* zwhile) override;
+
+private:
+	ZFunc* _func;
 };

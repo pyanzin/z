@@ -42,6 +42,10 @@ public:
 		_type = type;
 		_ref.getEntry()->setType(type);
     }
+
+	SymbolRef& getRef() {
+		return _ref;
+    };
 private:
     std::string& _name;
 	SymbolRef& _ref;

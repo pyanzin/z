@@ -20,6 +20,7 @@ void TypingPass::visit(ZModule* zmodule) {
 }
 
 void TypingPass::visit(ZFunc* zfunc) {
+	_func = zfunc;
 	for (auto arg : zfunc->_args)
 		arg->accept(this);
 	zfunc->_body->accept(this);
@@ -82,12 +83,16 @@ void TypingPass::visit(ZId* zid) {
 
 void TypingPass::visit(ZReturn* zreturn) {
 	zreturn->getExpr()->accept(this);
-	// todo: check if return stmt type equals func return type
+	
+	if (_func->_returnType != zreturn->getExpr()->getType())
+		error("Type of return statement doesn't match function return type");
 }
 
 void TypingPass::visit(ZIf* zif) {
 	zif->getCondition()->accept(this);
-	// todo: check if condition type equals bool
+	
+	if (zif->getCondition()->getType() != Boolean)
+		error("Condition of if statement must be of Boolean type");
 
 	zif->getBody()->accept(this);
 	if (zif->getElseBody())
@@ -96,16 +101,26 @@ void TypingPass::visit(ZIf* zif) {
 
 void TypingPass::visit(ZWhile* zwhile) {
 	zwhile->getCondition()->accept(this);
-	// todo: check if condition type equals bool
+
+	if (zwhile->getCondition()->getType() != Boolean)
+		error("Condition of while statement must be of Boolean type");	
 
 	zwhile->getBody()->accept(this);
 }
 
 void TypingPass::visit(ZVarDef* zvardef) {
-	zvardef->getInitExpr()->accept(this);
+	SymbolEntry* alreadyDefined = zvardef->getRef().findDefinedBefore(zvardef->getName(), true);
+
+	if (alreadyDefined)
+		error("Variable with name '" + alreadyDefined->getName() + "' already defined in this scope");	
+
+	auto initExpr = zvardef->getInitExpr();
+
+	initExpr->accept(this);
 
 	if (!zvardef->getVarType() || zvardef->getVarType() == Unknown)
 		zvardef->setVarType(zvardef->getInitExpr()->getType());
-
-	// todo: check for duplicated defs and that var type conforms init expr
+	else if (zvardef->getVarType() != initExpr->getType())
+		error("Type of variable '" + zvardef->getName() + "' doesn't match the type of init expression");
+			
 }

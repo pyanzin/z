@@ -8,69 +8,31 @@
 #include "TypingPass.h"
 #include "LlvmPass.h"
 #include "llvm/ExecutionEngine/ExecutionEngine.h"
+#include "llvm/IR/LegacyPassManager.h"
+#include "llvm/IR/BasicBlock.h"
+#include "llvm/IR/DerivedTypes.h"
+#include "llvm/IR/Function.h"
+#include "llvm/IR/IRBuilder.h"
+#include "llvm/Transforms/Scalar.h"
+#include <fstream>
+#include <sstream>
 
 //using namespace llvm;
 
 llvm::Module* makeLLVMModule();
 
-int main() {
-	//auto args = std::vector<ZArg*>() = { new ZArg(Int, "x"), new ZArg(Int, "y") };
-	//auto myFunc = new ZFunc(new std::string("MyFunc"), Int, args, new ZBinOp(new ZId("x"), new ZId("y"), Sum));
+int main(int argc, char* args[]) {
+	std::ifstream srcFile;
 
-	//Module* mod = new Module("test", context);
+	std::stringstream stream;
 
-	//myFunc->generateDef(mod);
+	srcFile.open(args[1]);
 
-	/*Function* sum = cast<Function>(c);
-	sum->setCallingConv(CallingConv::C);
+	stream << srcFile.rdbuf();
 
-	Function::arg_iterator args = sum->arg_begin();
-	Argument* x = (args++).getNodePtrUnchecked();
-	x->setName("x");
-	auto y = args.getNodePtrUnchecked();
-	y->setName("y");
-
-	auto bb = BasicBlock::Create(getGlobalContext(), "entry", sum);
-
-	builder.SetInsertPoint(bb);
-
-	auto ast = new ZBinOp(new ZIntLit(23), new ZIntLit(19), Sum);
-
-	auto result = ast->codegen();
-
-	builder.CreateRet(result);
-	*/
-
-	//auto mod = makeLLVMModule();
-	//verifyModule(*mod);
-
-	//mod->dump();
-
-	//std::string src = "def main(params: String): None = {"
-	//	"var x: Int = 10;"
-	//	"while (x > 0) { print(x); x = x - 1; };"
-	//	"var name: String = readLine();"
-	//	"var age: Int = toInt(readLine());"
-	//	"print(\"hi \" + name);"
-	//	"print(\"you will die in approx. \" + (75 - age));}";
-
-	std::string src =
-		"def map(f: (Int) => Int): Int = { return f(20);}"
-		"def fu(x: Int): Int = { return 20; }"
-		"def main(): None = {"
-		"var res = map(fu); "		
-		"};		}			  "
-	;
+	std::string src = stream.str();
 
     ZLexer lexer(src);
-
-    //ZLexeme lexeme;
-    //while ((lexeme = lexer.getNextToken()) != INPUT_END)
-    //    printf("%d %s\n", (int)lexeme, lexer.getValue()->c_str());
-
-	ZType* readLineType = new ZFuncType(String, std::vector<ZType*>());
-	ZType* toIntType = new ZFuncType(Int, std::vector<ZType*>() = { String });
-	ZType* printType = new ZFuncType(None, std::vector<ZType*>() = { String });
 
     SymbolTable table;
 
@@ -94,92 +56,25 @@ int main() {
 	auto module = llvmPass.getModule();
 	module->dump();
 
-	//makeLLVMModule()->dump();
-
 	getchar();
 
+	//auto fpm = llvm::make_unique<llvm::legacy::FunctionPassManager>(module);
+	// Promote allocas to registers.
+	//fpm->add(llvm::createPromoteMemoryToRegisterPass());
+	// Do simple "peephole" optimizations and bit-twiddling optzns.
+	//fpm->add(llvm::createInstructionCombiningPass());
+	// Reassociate expressions.
+	//fpm->add(llvm::createReassociatePass());
+	// Eliminate Common SubExpressions.
+	//fpm->add(llvm::createGVNPass());
+	// Simplify the control flow graph (deleting unreachable blocks, etc).
+	//fpm->add(llvm::createCFGSimplificationPass());
+
+	//fpm->doInitialization();
+
+	//fpm->run(*module->getFunction("main"));
+
+	//getchar();
+
     return 0;
-}
-
-//int allocate(ZType* type) {	auto size = type->size();
-//	if (lastAllocPtr + size > memEnd)	
-//		gc();	
-//
-//	auto result = lastAllocPtr;
-//	lastAllocPtr += size;
-//
-//	return result;
-//}
-
-
-
-//class ZType
-//{
-//public:
-//	ZField* fields;
-//	char size;
-//
-//	ZType(ZField* flds)
-//	{
-//		char s = 0;
-//
-//	}
-//};
-//
-//struct ZField
-//{
-//	char size;
-//};
-//
-using namespace llvm;
-llvm::Module* makeLLVMModule() {
-	llvm::Module* mod = new llvm::Module("test", llvm::getGlobalContext());
-
-	llvm::Constant* c = mod->getOrInsertFunction("gcd",
-	                                             llvm::IntegerType::get(llvm::getGlobalContext(), 32),
-	                                             llvm::IntegerType::get(llvm::getGlobalContext(), 32),
-	                                             llvm::IntegerType::get(llvm::getGlobalContext(), 32),
-		NULL);
-	llvm::Function* gcd = cast<llvm::Function>(c);
-
-	Function::arg_iterator args = gcd->arg_begin();
-	Value* x = args++;
-	x->setName("x");
-	Value* y = args++;
-	y->setName("y");
-
-	BasicBlock* entry = BasicBlock::Create(getGlobalContext(), "", gcd);
-	BasicBlock* ret = BasicBlock::Create(getGlobalContext(), "", gcd);
-	BasicBlock* cond_false = BasicBlock::Create(getGlobalContext(), "", gcd);
-	BasicBlock* cond_true = BasicBlock::Create(getGlobalContext(), "", gcd);
-	BasicBlock* cond_false_2 = BasicBlock::Create(getGlobalContext(), "", gcd);
-
-	IRBuilder<> builder(entry);
-	Value* xEqualsY = builder.CreateICmpEQ(x, y, "tmp");
-	builder.CreateCondBr(xEqualsY, ret, cond_false);
-
-	builder.SetInsertPoint(ret);
-	builder.CreateRet(x);
-
-	builder.SetInsertPoint(cond_false);
-	Value* xLessThanY = builder.CreateICmpULT(x, y, "tmp");
-	builder.CreateCondBr(xLessThanY, cond_true, cond_false_2);
-
-	builder.SetInsertPoint(cond_true);
-	Value* yMinusX = builder.CreateSub(y, x, "tmp");
-	std::vector<Value*> args1;
-	args1.push_back(x);
-	args1.push_back(yMinusX);
-	Value* recur_1 = builder.CreateCall(gcd, args1, "tmp");
-	builder.CreateRet(recur_1);
-
-	builder.SetInsertPoint(cond_false_2);
-	Value* xMinusY = builder.CreateSub(x, y, "tmp");
-	std::vector<Value*> args2;
-	args2.push_back(xMinusY);
-	args2.push_back(y);
-	llvm::Value* recur_2 = builder.CreateCall(gcd, args2, "tmp");
-	builder.CreateRet(recur_2);
-
-	return mod;
 }
