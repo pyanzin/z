@@ -43,6 +43,26 @@ void TypingPass::visit(ZCall* zcall) {
 	for (ZExpr* arg : zcall->getArgs())
 		arg->accept(this);
 
+	ZFuncType* calleeType = dynamic_cast<ZFuncType*>(zcall->callee->getType());
+
+	if (!calleeType)
+		error("Type of calee is not callable");
+
+	int calleeArgsCount = calleeType->getArgTypes().size();
+	int callerArgsCount = zcall->getArgs().size();
+
+	if (calleeArgsCount != callerArgsCount)
+		error("Callee requires " + std::to_string(calleeArgsCount) + ", but caller passes " + std::to_string(callerArgsCount));
+	int i = 0;
+	for (ZType* calleeArgType : calleeType->getArgTypes()) {
+		ZType* callerArgType = zcall->getArgs()[i++]->getType();
+		if (calleeArgType != callerArgType)
+			error("Callee expects argument of type " + calleeArgType->toString() 
+				+ ", but received " + callerArgType->toString() 
+				+ " at position " + std::to_string(i));
+		
+	}
+
 	ZType* retType = static_cast<ZFuncType*>(zcall->callee->getType())->getRetType();
 	zcall->setType(retType);
 }

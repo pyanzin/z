@@ -55,6 +55,10 @@ public:
 		return *res;
     };
 
+	std::vector<ZType*>& getArgTypes() {
+		return _argTypes;
+	}
+
 	ZType* getRetType() {
 		return _retType;
 	}

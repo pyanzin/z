@@ -23,13 +23,9 @@ llvm::Module* makeLLVMModule();
 
 int main(int argc, char* args[]) {
 	std::ifstream srcFile;
-
 	std::stringstream stream;
-
 	srcFile.open(args[1]);
-
 	stream << srcFile.rdbuf();
-
 	std::string src = stream.str();
 
     ZLexer lexer(src);
