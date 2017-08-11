@@ -243,7 +243,7 @@ Value* LlvmPass::getValue(ZCall* zcall, BasicBlock* bb) {
 }
 
 Value* LlvmPass::getValue(ZAssign* zassign, BasicBlock* bb) {
-	Value* rightValue = getValue(zassign->_right, bb);
-	_currentValues->add(dynamic_cast<ZId*>(zassign->_left)->getName(), rightValue);
+	Value* rightValue = getValue(zassign->getRight(), bb);
+	_currentValues->add(dynamic_cast<ZId*>(zassign->getLeft())->getName(), rightValue);
 	return rightValue;
 }

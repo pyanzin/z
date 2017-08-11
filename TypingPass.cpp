@@ -32,10 +32,10 @@ void TypingPass::visit(ZBlock* zblock) {
 }
 
 void TypingPass::visit(ZAssign* zassign) {
-	zassign->_left->accept(this);
-	zassign->_right->accept(this);
+	zassign->getLeft()->accept(this);
+	zassign->getRight()->accept(this);
 
-	zassign->setType(zassign->_right->getType());
+	zassign->setType(zassign->getRight()->getType());
 }
 
 void TypingPass::visit(ZCall* zcall) {
