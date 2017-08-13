@@ -4,12 +4,13 @@
 #include "ZLexeme.h"
 
 enum ZLexeme;
+class SourceRange;
 
 class ZLexer
 {
 public:
     ZLexeme getNextToken();
-    ZLexer(std::string src);
+    ZLexer(std::string* src);
     ~ZLexer();
 
     int getPos() {
@@ -31,10 +32,14 @@ public:
     void reset() {
         _pos = 0;
     }
-    
+
+    SourceRange* beginRange();
+
+    SourceRange* endRange(SourceRange* sr);
+
 private:
     char getNextChar();
-    std::string _src;
+    std::string* _src;
     std::string* _value;
     int _pos;
     std::map<std::string, ZLexeme> _keywords;

@@ -4,6 +4,32 @@
 #include "ZReturn.h"
 #include "ZIf.h"
 #include "ZWhile.h"
+#include "ZIntLit.h"
+#include "ZLexeme.h"
+#include "ZAssign.h"
+#include "ZCall.h"
+#include "ZId.h"
+#include "SourceRange.h"
+#include "ZLexeme.h"
+#include "ZBinOp.h"
+
+ZParser::ZParser(ZLexer& lexer, SymbolTable& symTable): _lexer(lexer), _symTable(symTable) {
+    _types["Int"] = Int;
+    _types["String"] = String;
+    _types["Boolean"] = Boolean;
+    _types["Double"] = Double;
+    _types["None"] = None;
+}
+
+ZModule* ZParser::parseModule() {
+    auto modName = new std::string("test"); // TODO: user real mod name
+    ZModule* module = new ZModule(*modName);
+    ZFunc* func;
+    while (func = parseFunc())
+        module->addFunction(func);
+
+    return module;
+}
 
 ZFunc* ZParser::parseFunc() {
 	if (!consume(DEF))
@@ -240,3 +266,43 @@ ZExpr* ZParser::parseNumber() {
 
 	return new ZIntLit(std::stoi((*value).c_str()));
 }
+
+std::string* ZParser::val(::ZLexeme lexeme) {
+    if (consume(lexeme))
+        return _lexer.getValue();
+    else
+        return nullptr;
+}
+
+bool ZParser::consume(::ZLexeme lexeme) {
+    int pos = _lexer.getPos();
+        
+    if (_lexer.getNextToken() == lexeme)
+        return true;
+    else {
+        _lexer.backtrackTo(pos);
+        return false;
+    }
+}
+
+void ZParser::reqConsume(::ZLexeme lexeme) {
+    if (!consume(lexeme))
+        error("Expected: " + toString(lexeme) + ", but found: " + toString(_lexer.getNextToken()));
+}
+
+std::string* ZParser::reqVal(::ZLexeme lexeme) {
+    std::string* value = val(lexeme);
+    if (value)
+        return value;
+    else
+        error("Expected: " + toString(lexeme) + ", but found: " + toString(_lexer.getNextToken()));
+
+}
+
+SourceRange* ZParser::beginRange() {
+    return _lexer.beginRange();
+};
+
+SourceRange* ZParser::endRange(SourceRange* sr) {
+    return _lexer.endRange(sr);
+};

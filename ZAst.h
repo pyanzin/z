@@ -1,5 +1,6 @@
 #pragma once
 #include <ostream>
+#include "SourceRange.h"
 
 class ZVisitor;
 
@@ -16,4 +17,18 @@ public:
 		while (d++ < depth)
 			stream << "    ";
 	}
+
+    void setSourceRange(SourceRange* sr) {
+        _sourceRange = sr;
+	}
+
+    SourceRange* getSourceRange() {
+        if (!_sourceRange)
+            throw std::exception("Source range is not set before using");
+
+        return _sourceRange;
+	}
+
+private:
+    SourceRange* _sourceRange = nullptr;
 };

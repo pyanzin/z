@@ -1,6 +1,7 @@
 #include "ZLexer.h"
+#include "SourceRange.h"
 
-ZLexer::ZLexer(std::string src) {
+ZLexer::ZLexer(std::string* src) {
     _src = src;
     _pos = 0;
     init();
@@ -10,8 +11,17 @@ ZLexer::~ZLexer()
 {
 }
 
+SourceRange* ZLexer::beginRange() {
+    return new SourceRange(_src, _pos);
+}
+
+SourceRange* ZLexer::endRange(SourceRange* sr) {
+    sr->setEnd(_pos);
+    return sr;
+}
+
 char ZLexer::getNextChar() {
-    return _src[_pos++];
+    return (*_src)[_pos++];
 };
 
 ZLexeme ZLexer::getNextToken() {

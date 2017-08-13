@@ -1,43 +1,25 @@
 ﻿#pragma once
 #include <string>
 #include "ZModule.h"
-#include "ZLexer.h"
 #include "SymbolTable.h"
-//#include "ZArg.h"
 #include "ZFunc.h"
 #include "ZBlock.h"
-#include "ZCall.h"
 #include "ZVarDef.h"
-#include "ZAssign.h"
-#include "ZBinOp.h"
-#include "ZIntLit.h"
-#include "ZId.h"
+#include "ZLexer.h"
 
 class SymbolTable;
 class ZArg;
+class SourceRange;
+class ZLexer;
+enum ZLexeme;
 
 class ZParser {
 public:
-    ZParser(ZLexer& lexer, SymbolTable& symTable) 
-        : _lexer(lexer), _symTable(symTable) {
-        _types["Int"] = Int;
-        _types["String"] = String;
-        _types["Boolean"] = Boolean;
-        _types["Double"] = Double;
-		_types["None"] = None;
-    }
+    ZParser(ZLexer& lexer, SymbolTable& symTable);
 
-    ZModule* parseModule() {
-		auto modName = new std::string("test"); // TODO: user real mod name
-        ZModule* module = new ZModule(*modName);
-        ZFunc* func;
-        while (func = parseFunc())
-            module->addFunction(func);
+    ZModule* parseModule();
 
-        return module;
-    }
-
-	ZFunc* parseFunc();
+    ZFunc* parseFunc();
 
 	ZArg* parseArg();
 
@@ -71,43 +53,24 @@ public:
 
 	ZExpr* parseNumber();
 
-    void reqConsume(ZLexeme lexeme) {
-        if (!consume(lexeme))
-            error("Expected: " + toString(lexeme) + ", but found: " + toString(_lexer.getNextToken()));
-    }
+    void reqConsume(ZLexeme lexeme);
 
-    bool consume(ZLexeme lexeme) {
-        int pos = _lexer.getPos();
-        
-        if (_lexer.getNextToken() == lexeme)
-            return true;
-        else {
-            _lexer.backtrackTo(pos);
-            return false;
-        }
-    }
+    bool consume(ZLexeme lexeme);
 
-    std::string* val(ZLexeme lexeme) {
-        if (consume(lexeme))
-            return _lexer.getValue();
-        else
-            return nullptr;
-    }
+    std::string* val(ZLexeme lexeme);
 
-    std::string* reqVal(ZLexeme lexeme) {
-        std::string* value = val(lexeme);
-        if (value)
-            return value;
-        else
-            error("Expected: " + toString(lexeme) + ", but found: " + toString(_lexer.getNextToken()));
-
-    }
+    std::string* reqVal(ZLexeme lexeme);
 
     void error(std::string& errorText) {
         throw new std::exception(errorText.c_str());
     }
 
+    SourceRange* beginRange();
+
+    SourceRange* endRange(SourceRange* sr);
+
 private:
+
     ZLexer _lexer;
     SymbolTable _symTable;
 

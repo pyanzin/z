@@ -1,4 +1,6 @@
-﻿#include <string>
+﻿#pragma once
+
+#include <string>
 #include <tuple>
 
 class SourceRange {
@@ -32,6 +34,14 @@ public:
 
 		return std::make_tuple(row, col);
 	}
+
+    void setStart(int n) {
+        _start = n;
+    }
+
+    void setEnd(int n) {
+        _end = n;
+	};
 
 private:
 	int _start;

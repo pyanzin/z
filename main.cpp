@@ -28,7 +28,7 @@ int main(int argc, char* args[]) {
 	stream << srcFile.rdbuf();
 	std::string src = stream.str();
 
-    ZLexer lexer(src);
+    ZLexer lexer(&src);
 
     SymbolTable table;
 

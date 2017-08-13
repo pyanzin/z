@@ -1,4 +1,4 @@
-﻿#ifndef ZLEXEME
+﻿#pragma once
 
 enum ZLexeme {
     IDENT,
@@ -30,5 +30,3 @@ enum ZLexeme {
     SLASH,
     INPUT_END
 };
-
-#endif
