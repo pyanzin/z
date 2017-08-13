@@ -41,7 +41,11 @@ ZFunc* ZParser::parseFunc() {
 
 	_symTable.add(funcType, name);
 	
-	return new ZFunc(name, retType, *args, body);
+    auto zfunc = new ZFunc(name, retType, *args, body);
+
+    zfunc->setType(funcType);
+
+	return zfunc;
 }
 
 ZArg* ZParser::parseArg() {

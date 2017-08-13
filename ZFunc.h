@@ -6,7 +6,7 @@
 
 class ZArg;
 
-class ZFunc : public ZAst {
+class ZFunc : public ZExpr {
 public:
 	ZFunc(std::string* name, ZType* returnType, std::vector<ZArg*>& args, ZBlock* body) : _args(args) {
         _name = name;

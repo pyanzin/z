@@ -35,6 +35,14 @@ void TypingPass::visit(ZAssign* zassign) {
 	zassign->getLeft()->accept(this);
 	zassign->getRight()->accept(this);
 
+    ZId* assignee = dynamic_cast<ZId*>(zassign->getLeft());
+
+    if (!assignee)
+        error("Left part of the assignment expression is not suitable for assignment");
+
+    if (assignee->getType() != zassign->getRight()->getType())
+        error("Type of variable '" + assignee->getName() + " doesn't match the type of right expression");
+
 	zassign->setType(zassign->getRight()->getType());
 }
 
@@ -97,8 +105,10 @@ void TypingPass::visit(ZBinOp* zbinop) {
 
 void TypingPass::visit(ZId* zid) {
     SymbolEntry* definition = zid->getRef().findDefinedBefore(zid->getName());
-    if (definition)
-        zid->setType(definition->getType());
+    if (!definition)
+        error("Symbol '" + zid->getName() + "' is not defined before using");
+        
+    zid->setType(definition->getType());
 }
 
 void TypingPass::visit(ZReturn* zreturn) {
