@@ -12,6 +12,7 @@ class ZArg;
 class SourceRange;
 class ZLexer;
 enum ZLexeme;
+enum BinOps;
 
 class ZParser {
 public:
@@ -75,4 +76,6 @@ private:
     SymbolTable _symTable;
 
 	std::map<std::string, ZType*> _types;
+
+	std::map<ZLexeme, BinOps> _ops;
 };

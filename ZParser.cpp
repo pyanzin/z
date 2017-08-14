@@ -19,6 +19,16 @@ ZParser::ZParser(ZLexer& lexer, SymbolTable& symTable): _lexer(lexer), _symTable
     _types["Boolean"] = Boolean;
     _types["Double"] = Double;
     _types["None"] = None;
+
+	_ops[PLUS] = Sum;
+	_ops[MINUS] = Sub;
+	_ops[ASTERISK] = Mul;
+	_ops[SLASH] = Div;
+	_ops[DOUBLE_EQUAL] = Equal;
+	_ops[LESS] = Less;
+	_ops[LESS_OR_EQUAL] = LessOrEqual;
+	_ops[MORE] = More;
+	_ops[MORE_OR_EQUAL] = MoreOrEqual;
 }
 
 ZModule* ZParser::parseModule() {
@@ -32,6 +42,8 @@ ZModule* ZParser::parseModule() {
 }
 
 ZFunc* ZParser::parseFunc() {
+	auto sr = beginRange();
+
 	if (!consume(DEF))
 		return nullptr;
 
@@ -70,6 +82,8 @@ ZFunc* ZParser::parseFunc() {
     auto zfunc = new ZFunc(name, retType, *args, body);
 
     zfunc->setType(funcType);
+
+	zfunc->withSourceRange(endRange(sr));
 
 	return zfunc;
 }
@@ -133,6 +147,8 @@ ZAst* ZParser::parseIf() {
 }
 
 ZAst* ZParser::parseWhile() {
+	auto sr = beginRange();
+
 	reqConsume(WHILE);
 	reqConsume(OPEN_PAREN);
 	ZExpr* cond = parseExpr();
@@ -140,7 +156,9 @@ ZAst* ZParser::parseWhile() {
 
 	ZAst* body = parseBlock();
 
-	return new ZWhile(cond, body);
+	sr = endRange(sr);
+
+	return (new ZWhile(cond, body))->withSourceRange(sr);
 }
 
 ZAst* ZParser::parseStatement() {
@@ -164,6 +182,8 @@ ZAst* ZParser::parseStatement() {
 }
 
 ZVarDef* ZParser::parseVarDef() {
+	auto sr = beginRange();
+
 	reqConsume(VAR);
 	std::string* name = reqVal(IDENT);
 	ZType* type = consume(COLON) ? parseType() : Unknown;
@@ -175,16 +195,26 @@ ZVarDef* ZParser::parseVarDef() {
 
     auto ref = _symTable.add(type, name);
 
-	return new ZVarDef(*name, *ref, type, initExpr);
+	ZVarDef* zvardef = new ZVarDef(*name, *ref, type, initExpr);
+
+	zvardef->withSourceRange(endRange(sr));
+
+	return zvardef;
 }
 
 ZExpr* ZParser::parseAssign() {
+	auto sr = beginRange();
+
 	int pos = _lexer.getPos();
 
 	ZExpr* left = parseId();
 
-	if (left && consume(EQUAL))
-		return new ZAssign(left, parseAssign());
+	if (left && consume(EQUAL)) {
+		auto right = parseAssign();
+		auto zassign = new ZAssign(left, right);
+		zassign->withSourceRange(endRange(sr));
+		return zassign;
+	}
 
 	_lexer.backtrackTo(pos);
 	return parseBinOp();
@@ -192,34 +222,31 @@ ZExpr* ZParser::parseAssign() {
 
 ZExpr* ZParser::parseBinOp() {
 	int pos = _lexer.getPos();
+
+	auto sr = beginRange();
+
 	ZExpr* left = parseCall();
+	auto next = _lexer.getNextToken();
 
-	if (consume(PLUS))
-		return new ZBinOp(left, parseExpr(), BinOps::Sum);
-	else if (consume(MINUS))
-		return new ZBinOp(left, parseExpr(), BinOps::Sub);
-	else if (consume(ASTERISK))
-		return new ZBinOp(left, parseExpr(), BinOps::Mul);
-	else if (consume(SLASH))
-		return new ZBinOp(left, parseExpr(), BinOps::Div);
-	else if (consume(DOUBLE_EQUAL))
-		return new ZBinOp(left, parseExpr(), BinOps::Equal);
-	else if (consume(LESS))
-		return new ZBinOp(left, parseExpr(), BinOps::Less);
-	else if (consume(LESS_OR_EQUAL))
-		return new ZBinOp(left, parseExpr(), BinOps::LessOrEqual);
-	else if (consume(MORE))
-		return new ZBinOp(left, parseExpr(), BinOps::More);
-	else if (consume(MORE_OR_EQUAL))
-		return new ZBinOp(left, parseExpr(), BinOps::MoreOrEqual);
+	if (_ops.find(next) == _ops.end()) {
+		_lexer.backtrackTo(pos);
+		return parseCall();
+	}
 
-	_lexer.backtrackTo(pos);
-	return parseCall();
+	auto right = parseExpr();
+
+	auto zbinop = new ZBinOp(left, right, _ops[next]);
+
+	zbinop->withSourceRange(endRange(sr));
+
+	return zbinop;
 }
 
 ZExpr* ZParser::parseCall() {
 	int pos = _lexer.getPos();
 	// TODO: use expr here
+
+	auto sr = beginRange();
 
 	ZExpr* callee = parseId();
 	if (!consume(OPEN_PAREN)) {
@@ -234,26 +261,44 @@ ZExpr* ZParser::parseCall() {
 		args->push_back(arg);
 	}
 
-	return new ZCall(callee, *args);
+	ZCall* zcall = new ZCall(callee, *args);
+
+	zcall->withSourceRange(endRange(sr));
+
+	return zcall;
 }
 
 ZExpr* ZParser::parseId() {
+	auto sr = beginRange();
+
     std::string* name = val(IDENT);
 	if (!name)
 		return parseString();
     SymbolRef* ref = _symTable.makeRef();
-	return new ZId(*name, *ref);
+
+	ZExpr* zid = new ZId(*name, *ref);
+
+	zid->withSourceRange(endRange(sr));
+
+	return zid;
 }
 
 ZExpr* ZParser::parseString() {
+	auto sr = beginRange();
+
 	std::string* value = val(STRING_LIT);
 	if (!value)
 		return parseNumber();
 
-	return new ZStringLit(*value);
+	auto zstr = new ZStringLit(*value);
+	zstr->withSourceRange(endRange(sr));
+
+	return zstr;
 }
 
 ZExpr* ZParser::parseNumber() {
+	auto sr = beginRange();
+
 	if (consume(OPEN_PAREN)) {
 		ZExpr* expr = parseExpr();
 		reqConsume(CLOSE_PAREN);
@@ -264,7 +309,11 @@ ZExpr* ZParser::parseNumber() {
 	if (!value)
 		return nullptr;
 
-	return new ZIntLit(std::stoi((*value).c_str()));
+	auto zintlit = new ZIntLit(std::stoi((*value).c_str()));
+
+	zintlit->withSourceRange(endRange(sr));
+
+	return zintlit;
 }
 
 std::string* ZParser::val(::ZLexeme lexeme) {

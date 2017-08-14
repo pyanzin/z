@@ -22,35 +22,40 @@
 llvm::Module* makeLLVMModule();
 
 int main(int argc, char* args[]) {
-	std::ifstream srcFile;
-	std::stringstream stream;
-	srcFile.open(args[1]);
-	stream << srcFile.rdbuf();
-	std::string src = stream.str();
+	try {
+		std::ifstream srcFile;
+		std::stringstream stream;
+		srcFile.open(args[1]);
+		stream << srcFile.rdbuf();
+		std::string src = stream.str();
 
-    ZLexer lexer(&src);
+		ZLexer lexer(&src);
 
-    SymbolTable table;
+		SymbolTable table;
 
-    ZParser parser(lexer, table);
+		ZParser parser(lexer, table);
 
-    auto mod = parser.parseModule();
-	mod->dump(std::cout, 0);
+		auto mod = parser.parseModule();
+		mod->dump(std::cout, 0);
 
-	getchar();
+		getchar();
 
-	TypingPass typingPass;
-	typingPass.visit(mod);
-	mod->dump(std::cout, 0);
+		TypingPass typingPass;
+		typingPass.visit(mod);
+		mod->dump(std::cout, 0);
 
-    getchar();
+		getchar();
 
-	LlvmPass llvmPass;
+		LlvmPass llvmPass;
 
-	llvmPass.visit(mod);
+		llvmPass.visit(mod);
 
-	auto module = llvmPass.getModule();
-	module->dump();
+		auto module = llvmPass.getModule();
+		module->dump();
+
+	} catch (std::exception ex) {
+		cout << "Error: " + std::string(ex.what()) << '\n';
+	}
 
 	getchar();
 

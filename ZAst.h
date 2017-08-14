@@ -18,8 +18,13 @@ public:
 			stream << "    ";
 	}
 
-    void setSourceRange(SourceRange* sr) {
+    ZAst* withSourceRange(SourceRange* sr) {
         _sourceRange = sr;
+		return this;
+	}
+
+	std::string getPosition() {
+		return getSourceRange()->getPosition();
 	}
 
     SourceRange* getSourceRange() {

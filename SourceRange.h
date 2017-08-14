@@ -3,9 +3,11 @@
 #include <string>
 #include <tuple>
 
+using namespace std;
+
 class SourceRange {
 public:
-	SourceRange(std::string* src, int start = -1, int end = -1) {
+	SourceRange(string* src, int start = -1, int end = -1) {
 		_start = start;
 		_end = end;
 		_src = src;
@@ -19,7 +21,7 @@ public:
 		return _end;
 	}
 
-	std::tuple<int, int> getRowCol(int position) {
+	tuple<int, int> getRowCol(int position) {
 		int row = 1;
 		int col = 1;
 
@@ -32,7 +34,12 @@ public:
 				++col;
 			}		
 
-		return std::make_tuple(row, col);
+		return make_tuple(row, col);
+	}
+
+	std::string getPosition() {
+		auto rowCol = getRowCol(_start);
+		return to_string(get<0>(rowCol)) + ":" + to_string(get<1>(rowCol));
 	}
 
     void setStart(int n) {
@@ -41,7 +48,7 @@ public:
 
     void setEnd(int n) {
         _end = n;
-	};
+	}
 
 private:
 	int _start;

@@ -38,10 +38,10 @@ void TypingPass::visit(ZAssign* zassign) {
     ZId* assignee = dynamic_cast<ZId*>(zassign->getLeft());
 
     if (!assignee)
-        error("Left part of the assignment expression is not suitable for assignment");
+        error("Left part of the assignment expression is not suitable for assignment", zassign->getPosition());
 
     if (assignee->getType() != zassign->getRight()->getType())
-        error("Type of variable '" + assignee->getName() + " doesn't match the type of right expression");
+        error("Type of variable '" + assignee->getName() + " doesn't match the type of right expression", assignee->getPosition());
 
 	zassign->setType(zassign->getRight()->getType());
 }
@@ -100,13 +100,13 @@ void TypingPass::visit(ZBinOp* zbinop) {
 	// todo: doubles, ints and combinations
 
 	error("Unable to apply operation " + toString(zbinop->getOp()) + " for "
-		+ left->getType()->toString() + " and " + right->getType()->toString());
+		+ left->getType()->toString() + " and " + right->getType()->toString(), zbinop->getPosition());
 }
 
 void TypingPass::visit(ZId* zid) {
     SymbolEntry* definition = zid->getRef().findDefinedBefore(zid->getName());
     if (!definition)
-        error("Symbol '" + zid->getName() + "' is not defined before using");
+        error("Symbol '" + zid->getName() + "' is not defined before using", zid->getPosition());
         
     zid->setType(definition->getType());
 }
@@ -115,14 +115,14 @@ void TypingPass::visit(ZReturn* zreturn) {
 	zreturn->getExpr()->accept(this);
 	
 	if (_func->_returnType != zreturn->getExpr()->getType())
-		error("Type of return statement doesn't match function return type");
+		error("Type of return statement doesn't match function return type", zreturn->getPosition());
 }
 
 void TypingPass::visit(ZIf* zif) {
 	zif->getCondition()->accept(this);
 	
 	if (zif->getCondition()->getType() != Boolean)
-		error("Condition of if statement must be of Boolean type");
+		error("Condition of if statement must be of Boolean type", zif->getPosition());
 
 	zif->getBody()->accept(this);
 	if (zif->getElseBody())
@@ -133,7 +133,7 @@ void TypingPass::visit(ZWhile* zwhile) {
 	zwhile->getCondition()->accept(this);
 
 	if (zwhile->getCondition()->getType() != Boolean)
-		error("Condition of while statement must be of Boolean type");	
+		error("Condition of while statement must be of Boolean type", zwhile->getPosition());	
 
 	zwhile->getBody()->accept(this);
 }
@@ -142,7 +142,7 @@ void TypingPass::visit(ZVarDef* zvardef) {
 	SymbolEntry* alreadyDefined = zvardef->getRef().findDefinedBefore(zvardef->getName(), true);
 
 	if (alreadyDefined)
-		error("Variable with name '" + alreadyDefined->getName() + "' already defined in this scope");	
+		error("Variable with name '" + alreadyDefined->getName() + "' already defined in this scope", zvardef->getPosition());	
 
 	auto initExpr = zvardef->getInitExpr();
 
@@ -151,6 +151,6 @@ void TypingPass::visit(ZVarDef* zvardef) {
 	if (!zvardef->getVarType() || zvardef->getVarType() == Unknown)
 		zvardef->setVarType(zvardef->getInitExpr()->getType());
 	else if (zvardef->getVarType() != initExpr->getType())
-		error("Type of variable '" + zvardef->getName() + "' doesn't match the type of init expression");
+		error("Type of variable '" + zvardef->getName() + "' doesn't match the type of init expression", zvardef->getPosition());
 			
 }

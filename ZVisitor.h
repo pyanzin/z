@@ -46,4 +46,8 @@ public:
 	void error(std::string text) {
 		throw std::exception(text.c_str());
 	}
+
+	void error(std::string text, std::string position) {
+		error(text + " at " + position);
+	}
 };
