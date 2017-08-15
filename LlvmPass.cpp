@@ -89,8 +89,6 @@ BasicBlock* LlvmPass::generate(ZBlock* zblock) {
 }
 
 BasicBlock* LlvmPass::generate(ZAst* zast) {
-
-
 	ZExpr* zexpr = dynamic_cast<ZExpr*>(zast);
 	if (zexpr) {
 		BasicBlock* bb = BasicBlock::Create(getGlobalContext(), "", _func);
@@ -224,6 +222,12 @@ Value* LlvmPass::getValue(ZBinOp* zbinop, BasicBlock* bb) {
 		return _builder->CreateICmpEQ(left, right);
 	case LessOrEqual:
 		return _builder->CreateICmpSLE(left, right);
+	case Less:
+		return _builder->CreateICmpSLT(left, right);
+	case MoreOrEqual:
+		return _builder->CreateICmpSGE(left, right);
+	case More:
+		return _builder->CreateICmpSGT(left, right);
 	default:
 		return nullptr;
 	}
