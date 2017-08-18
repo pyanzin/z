@@ -75,7 +75,7 @@ void LlvmPass::visit(ZFunc* zfunc) {
 }
 
 BasicBlock* LlvmPass::generate(ZBlock* zblock) {
-	BasicBlock* bb = nullptr;
+	BasicBlock* bb = BasicBlock::Create(getGlobalContext(), "", _func);
 
 	for (ZAst* stmt : zblock->getStatements()) {
 
