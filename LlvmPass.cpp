@@ -75,13 +75,9 @@ void LlvmPass::visit(ZFunc* zfunc) {
 }
 
 BasicBlock* LlvmPass::generate(ZBlock* zblock) {
-	BasicBlock* bb = BasicBlock::Create(getGlobalContext(), "", _func);
+	BasicBlock* bb = BasicBlock::Create(getGlobalContext(), "zblock", _func);
 
 	for (ZAst* stmt : zblock->getStatements()) {
-
-		BasicBlock* newBB = BasicBlock::Create(getGlobalContext(), "", _func);
-		_builder->SetInsertPoint(newBB);
-
 		bb = generate(stmt);
 	}
 
@@ -91,7 +87,7 @@ BasicBlock* LlvmPass::generate(ZBlock* zblock) {
 BasicBlock* LlvmPass::generate(ZAst* zast) {
 	ZExpr* zexpr = dynamic_cast<ZExpr*>(zast);
 	if (zexpr) {
-		BasicBlock* bb = BasicBlock::Create(getGlobalContext(), "", _func);
+		BasicBlock* bb = BasicBlock::Create(getGlobalContext(), "zexpr", _func);
 		_builder->SetInsertPoint(bb);
 		getValue(zexpr, bb);
 		return bb;
@@ -120,7 +116,7 @@ BasicBlock* LlvmPass::generate(ZAst* zast) {
 }
 
 BasicBlock* LlvmPass::generate(ZVarDef* zvardef) {
-	BasicBlock* bb = BasicBlock::Create(getGlobalContext(), "", _func);
+	BasicBlock* bb = BasicBlock::Create(getGlobalContext(), "zvardef", _func);
 	_builder->SetInsertPoint(bb);
 
 	Value* init = getValue(zvardef->getInitExpr(), bb);
@@ -130,7 +126,7 @@ BasicBlock* LlvmPass::generate(ZVarDef* zvardef) {
 }
 
 BasicBlock* LlvmPass::generate(ZReturn* zreturn) {
-	BasicBlock* bb = BasicBlock::Create(getGlobalContext(), "", _func);
+	BasicBlock* bb = BasicBlock::Create(getGlobalContext(), "zreturn", _func);
 	_builder->SetInsertPoint(bb);
 
 	auto retValue = getValue(zreturn->getExpr(), bb);
@@ -140,7 +136,7 @@ BasicBlock* LlvmPass::generate(ZReturn* zreturn) {
 }
 
 BasicBlock* LlvmPass::generate(ZIf* zif) {
-	BasicBlock* condBB = BasicBlock::Create(getGlobalContext(), "", _func);
+	BasicBlock* condBB = BasicBlock::Create(getGlobalContext(), "if_cond", _func);
 
 	Value* condValue = getValue(zif->getCondition(), condBB);
 
@@ -159,13 +155,13 @@ BasicBlock* LlvmPass::generate(ZIf* zif) {
 }
 
 BasicBlock* LlvmPass::generate(ZWhile* zwhile) {
-	BasicBlock* condBB = BasicBlock::Create(getGlobalContext(), "", _func);
+	BasicBlock* condBB = BasicBlock::Create(getGlobalContext(), "while_cond", _func);
 	
 	Value* condValue = getValue(zwhile->getCondition(), condBB);
 
 	BasicBlock* bodyBB = generate(zwhile->getBody());
 
-	BasicBlock* afterBB = BasicBlock::Create(getGlobalContext(), "", _func);
+	BasicBlock* afterBB = BasicBlock::Create(getGlobalContext(), "after", _func);
 
 	_builder->SetInsertPoint(condBB);
 	_builder->CreateCondBr(condValue, bodyBB, afterBB);

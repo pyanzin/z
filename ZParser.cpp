@@ -113,7 +113,9 @@ ZType* ZParser::parseType() {
 	return _types[*reqVal(IDENT)];
 }
 
-ZBlock* ZParser::parseBlock() {    
+ZBlock* ZParser::parseBlock() {
+	auto sr = beginRange();
+
 	std::vector<ZAst*>* stmts = new std::vector<ZAst*>;
 
 	reqConsume(OPEN_BRACE);
@@ -124,15 +126,22 @@ ZBlock* ZParser::parseBlock() {
 		stmts->push_back(stmt);
 	}
 
-	return new ZBlock(stmts);
+	auto zblock = new ZBlock(stmts);
+	zblock->withSourceRange(endRange(sr));
+
+	return zblock;
 }
 
 ZAst* ZParser::parseReturn() {
+	auto sr = beginRange();
+
 	reqConsume(RETURN);
-	return new ZReturn(parseExpr());
+	return (new ZReturn(parseExpr()))->withSourceRange(endRange(sr));
 }
 
 ZAst* ZParser::parseIf() {
+	auto sr = beginRange();
+
 	reqConsume(IF);
 	reqConsume(OPEN_PAREN);
 	ZExpr* cond = parseExpr();
@@ -143,7 +152,7 @@ ZAst* ZParser::parseIf() {
 	if (consume(ELSE))
 		elseBody = parseBlock();
 
-	return new ZIf(cond, body, elseBody);	
+	return (new ZIf(cond, body, elseBody))->withSourceRange(endRange(sr));	
 }
 
 ZAst* ZParser::parseWhile() {

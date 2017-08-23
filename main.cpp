@@ -53,13 +53,11 @@ int main(int argc, char* args[]) {
 		auto module = llvmPass.getModule();
 		module->dump();
 
-		getchar();
-
 	} catch (std::exception ex) {
 		cout << "Error: " + std::string(ex.what()) << '\n';
 	}
 
-	//getchar();
+	getchar();
 
 	//auto fpm = llvm::make_unique<llvm::legacy::FunctionPassManager>(module);
 	// Promote allocas to registers.
