@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\AST">
+      <UniqueIdentifier>{90563934-d4f0-43ea-ae45-b15f3d02160e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\AST">
+      <UniqueIdentifier>{83a47b12-c830-4957-8c44-d5e0bbf69df8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -33,9 +39,6 @@
     <ClCompile Include="SymbolTable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ZAst.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ZVisitor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -45,53 +48,56 @@
     <ClCompile Include="Utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ZModule.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ZParser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ZVarDef.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ZCall.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SymbolRef.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ZStringLit.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TypingPass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ZAssign.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ZBasicTypes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ZFunc.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="ZWhile.cpp">
+      <Filter>Source Files\AST</Filter>
     </ClCompile>
-    <ClCompile Include="ZArg.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="ZVarDef.cpp">
+      <Filter>Source Files\AST</Filter>
     </ClCompile>
-    <ClCompile Include="ZBlock.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ZBinOp.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="ZStringLit.cpp">
+      <Filter>Source Files\AST</Filter>
     </ClCompile>
     <ClCompile Include="ZReturn.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\AST</Filter>
+    </ClCompile>
+    <ClCompile Include="ZModule.cpp">
+      <Filter>Source Files\AST</Filter>
     </ClCompile>
     <ClCompile Include="ZIf.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\AST</Filter>
     </ClCompile>
-    <ClCompile Include="ZWhile.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="ZFunc.cpp">
+      <Filter>Source Files\AST</Filter>
+    </ClCompile>
+    <ClCompile Include="ZCall.cpp">
+      <Filter>Source Files\AST</Filter>
+    </ClCompile>
+    <ClCompile Include="ZBlock.cpp">
+      <Filter>Source Files\AST</Filter>
+    </ClCompile>
+    <ClCompile Include="ZBinOp.cpp">
+      <Filter>Source Files\AST</Filter>
+    </ClCompile>
+    <ClCompile Include="ZAst.cpp">
+      <Filter>Source Files\AST</Filter>
+    </ClCompile>
+    <ClCompile Include="ZAssign.cpp">
+      <Filter>Source Files\AST</Filter>
+    </ClCompile>
+    <ClCompile Include="ZArg.cpp">
+      <Filter>Source Files\AST</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -104,25 +110,7 @@
     <ClInclude Include="ZVisitor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ZFunc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ZExpr.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ZBlock.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ZBinOp.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ZBasicTypes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ZAst.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ZArg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Utils.h">
@@ -140,43 +128,13 @@
     <ClInclude Include="ZParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ZModule.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LlvmPass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ZCall.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ZVarDef.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SymbolRef.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ZId.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ZStringLit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ZIntLit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ZAssign.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TypingPass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ZReturn.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ZIf.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ZWhile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LlvmStorage.h">
@@ -187,6 +145,54 @@
     </ClInclude>
     <ClInclude Include="SourceRange.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZWhile.h">
+      <Filter>Header Files\AST</Filter>
+    </ClInclude>
+    <ClInclude Include="ZVarDef.h">
+      <Filter>Header Files\AST</Filter>
+    </ClInclude>
+    <ClInclude Include="ZStringLit.h">
+      <Filter>Header Files\AST</Filter>
+    </ClInclude>
+    <ClInclude Include="ZReturn.h">
+      <Filter>Header Files\AST</Filter>
+    </ClInclude>
+    <ClInclude Include="ZModule.h">
+      <Filter>Header Files\AST</Filter>
+    </ClInclude>
+    <ClInclude Include="ZIntLit.h">
+      <Filter>Header Files\AST</Filter>
+    </ClInclude>
+    <ClInclude Include="ZIf.h">
+      <Filter>Header Files\AST</Filter>
+    </ClInclude>
+    <ClInclude Include="ZFunc.h">
+      <Filter>Header Files\AST</Filter>
+    </ClInclude>
+    <ClInclude Include="ZExpr.h">
+      <Filter>Header Files\AST</Filter>
+    </ClInclude>
+    <ClInclude Include="ZCall.h">
+      <Filter>Header Files\AST</Filter>
+    </ClInclude>
+    <ClInclude Include="ZBlock.h">
+      <Filter>Header Files\AST</Filter>
+    </ClInclude>
+    <ClInclude Include="ZBinOp.h">
+      <Filter>Header Files\AST</Filter>
+    </ClInclude>
+    <ClInclude Include="ZId.h">
+      <Filter>Header Files\AST</Filter>
+    </ClInclude>
+    <ClInclude Include="ZAst.h">
+      <Filter>Header Files\AST</Filter>
+    </ClInclude>
+    <ClInclude Include="ZAssign.h">
+      <Filter>Header Files\AST</Filter>
+    </ClInclude>
+    <ClInclude Include="ZArg.h">
+      <Filter>Header Files\AST</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
