@@ -27,12 +27,16 @@ public:
         return new SymbolStorage(this);
     }
 
+	bool isTopLevel() {
+		return getParent() == nullptr;
+    }
+
     SymbolEntry* findDefinedBefore(int id, std::string& name, bool onlyCurrentScope = false) {
         SymbolStorage* storage = this;
         do {
             auto entries = storage->_entries;
 			for (auto entry : entries) {
-				if (entry.first >= id)
+				if (entry.first >= id && !storage->isTopLevel())
 					break;
 				if (name == entry.second->getName())
 					return entry.second;
