@@ -118,9 +118,12 @@ BasicBlock* LlvmPass::generate(ZAst* zast) {
 BasicBlock* LlvmPass::generate(ZVarDef* zvardef) {
 	BasicBlock* bb = BasicBlock::Create(getGlobalContext(), "zvardef", _func);
 	_builder->SetInsertPoint(bb);
-
 	Value* init = getValue(zvardef->getInitExpr(), bb);
-	_currentValues->add(zvardef->getName(), init);
+
+	Value* alloc = _builder->CreateAlloca(zvardef->getVarType()->toLlvmType(), nullptr, zvardef->getName());
+
+	_builder->CreateStore(init, alloc);
+	_currentValues->add(zvardef->getName(), alloc);
 
 	return bb;
 }
@@ -197,7 +200,12 @@ Value* LlvmPass::getValue(ZExpr* zexpr, BasicBlock* bb) {
 }
 
 Value* LlvmPass::getValue(ZId* zid) {
-	return _currentValues->get(zid->getName());
+	Value* val = _currentValues->get(zid->getName());
+
+	if (isa<AllocaInst>(*val))
+		return _builder->CreateLoad(val);	
+
+	return val;
 }
 
 Value* LlvmPass::getValue(ZBinOp* zbinop, BasicBlock* bb) {
@@ -244,6 +252,9 @@ Value* LlvmPass::getValue(ZCall* zcall, BasicBlock* bb) {
 
 Value* LlvmPass::getValue(ZAssign* zassign, BasicBlock* bb) {
 	Value* rightValue = getValue(zassign->getRight(), bb);
-	_currentValues->add(dynamic_cast<ZId*>(zassign->getLeft())->getName(), rightValue);
+	auto alloc = _currentValues->getAlloca(dynamic_cast<ZId*>(zassign->getLeft())->getName());
+	
+	_builder->CreateStore(rightValue, alloc);
+
 	return rightValue;
 }

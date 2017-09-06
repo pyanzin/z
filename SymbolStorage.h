@@ -38,6 +38,7 @@ public:
 			for (auto entry : entries) {
 				if (entry.first >= id && !storage->isTopLevel())
 					break;
+
 				if (name == entry.second->getName())
 					return entry.second;
 			}
