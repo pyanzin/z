@@ -16,6 +16,7 @@ enum ZLexeme {
     SEMICOLON,
     EQUAL,
     DOUBLE_EQUAL,
+	NOT_EQUAL,
 	LESS,
 	LESS_OR_EQUAL,
 	MORE,
@@ -27,6 +28,7 @@ enum ZLexeme {
     PLUS,
     MINUS,
     ASTERISK,
+	EXCLAM,
     SLASH,
     INPUT_END
 };

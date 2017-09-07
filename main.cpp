@@ -51,10 +51,11 @@ int main(int argc, char* args[]) {
 		llvmPass.visit(mod);
 
 		auto module = llvmPass.getModule();
-		module->dump();
+	    module->dump();
 
 	} catch (std::exception ex) {
 		cout << "Error: " + std::string(ex.what()) << '\n';
+		getchar();
 	}
 
 	getchar();

@@ -11,6 +11,7 @@ enum BinOps {
     Mul,
     Div,
 	Equal,
+	NotEqual,
 	Less,
 	LessOrEqual,
 	More,

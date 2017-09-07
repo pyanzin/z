@@ -12,8 +12,6 @@ public:
 
 	void accept(ZVisitor* visitor) override;
 
-    //llvm::Value* codegen(llvm::Function * func) override = 0;
-
 	void dump(std::ostream& stream, unsigned depth) override {
 		dumpTab(stream, depth);
 

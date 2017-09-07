@@ -224,6 +224,8 @@ Value* LlvmPass::getValue(ZBinOp* zbinop, BasicBlock* bb) {
 		return _builder->CreateSDiv(left, right);
 	case Equal:
 		return _builder->CreateICmpEQ(left, right);
+	case NotEqual:
+		return _builder->CreateICmpNE(left, right);
 	case LessOrEqual:
 		return _builder->CreateICmpSLE(left, right);
 	case Less:

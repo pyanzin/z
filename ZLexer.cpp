@@ -73,6 +73,12 @@ ZLexeme ZLexer::getNextToken() {
             return FAT_ARROW;
         backtrackBy(1);
         return EQUAL;
+	case '!':
+		ch = getNextChar();
+		if (ch == '=')
+			return NOT_EQUAL;
+		backtrackBy(1);
+		return EXCLAM;
     case '"': {
         std::string* s = new std::string;
         while ((ch = getNextChar()) != '"')

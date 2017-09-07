@@ -60,7 +60,9 @@ std::string toString(BinOps op) {
 	case BinOps::Div:
 		return "/";
 	case BinOps::Equal:
-		return "==";	
+		return "==";
+	case BinOps::NotEqual:
+		return "!=";
 	case BinOps::Less:
 			return "<";
 	case BinOps::LessOrEqual:

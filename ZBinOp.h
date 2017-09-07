@@ -14,8 +14,6 @@ public:
 
 	void accept(ZVisitor* visitor) override;
 
-
-
 	ZExpr* getLeft() { return _a; }
 	ZExpr* getRight() { return _b; }
 	BinOps getOp() { return _op; }

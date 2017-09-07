@@ -25,6 +25,7 @@ ZParser::ZParser(ZLexer& lexer, SymbolTable& symTable): _lexer(lexer), _symTable
 	_ops[ASTERISK] = Mul;
 	_ops[SLASH] = Div;
 	_ops[DOUBLE_EQUAL] = Equal;
+	_ops[NOT_EQUAL] = NotEqual;
 	_ops[LESS] = Less;
 	_ops[LESS_OR_EQUAL] = LessOrEqual;
 	_ops[MORE] = More;
