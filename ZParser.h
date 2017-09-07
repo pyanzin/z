@@ -57,8 +57,8 @@ public:
     void reqConsume(ZLexeme lexeme);
 
     bool consume(ZLexeme lexeme);
-
-    std::string* val(ZLexeme lexeme);
+	bool isNext(::ZLexeme lexeme);
+	std::string* val(ZLexeme lexeme);
 
     std::string* reqVal(ZLexeme lexeme);
 

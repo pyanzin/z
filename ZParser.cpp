@@ -45,9 +45,10 @@ ZModule* ZParser::parseModule() {
 ZFunc* ZParser::parseFunc() {
 	auto sr = beginRange();
 
+	bool isExtern = consume(EXTERN);
+
 	if (!consume(DEF))
 		return nullptr;
-
 
 	std::string* name = reqVal(IDENT);
 	reqConsume(OPEN_PAREN);
@@ -62,7 +63,8 @@ ZFunc* ZParser::parseFunc() {
 
 	ZType* retType = parseType();
 
-	reqConsume(EQUAL);
+	if (!isExtern)
+		reqConsume(EQUAL);	
 
 	_symTable.enter();
 
@@ -74,14 +76,15 @@ ZFunc* ZParser::parseFunc() {
 
     ZType* funcType = new ZFuncType(retType, *argTypes);
 
-	ZBlock* body = parseBlock();
+	ZBlock* body = nullptr;
+	if (!isExtern)
+		body = parseBlock();
 
 	_symTable.exit();
 
 	_symTable.add(funcType, name);
 	
-    auto zfunc = new ZFunc(name, retType, *args, body);
-
+    auto zfunc = new ZFunc(name, retType, *args, body, isExtern);
     zfunc->setType(funcType);
 
 	zfunc->withSourceRange(endRange(sr));
@@ -342,6 +345,18 @@ bool ZParser::consume(::ZLexeme lexeme) {
         _lexer.backtrackTo(pos);
         return false;
     }
+}
+
+bool ZParser::isNext(::ZLexeme lexeme) {
+	int pos = _lexer.getPos();
+
+	ZLexeme next = _lexer.getNextToken();
+
+	_lexer.backtrackTo(pos);
+	if (next == lexeme)
+		return true;
+	else
+		return false;	
 }
 
 void ZParser::reqConsume(::ZLexeme lexeme) {

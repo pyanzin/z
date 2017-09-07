@@ -10,6 +10,9 @@ void ZFunc::accept(ZVisitor* visitor) {
 void ZFunc::dump(std::ostream& stream, unsigned depth) {
 	dumpTab(stream, depth);
 
+	if (isExtern())
+		stream << "extern ";	
+
 	stream << "func " << _name->c_str() << "(";
 	for (auto i = _args.begin(); i < _args.end(); ++i) {
 		bool isLast = i == _args.end() - 1;
@@ -19,5 +22,7 @@ void ZFunc::dump(std::ostream& stream, unsigned depth) {
 	}
 
 	stream << ")\n";
-	_body->dump(stream, depth + 1);
+
+	if (!isExtern())
+		_body->dump(stream, depth + 1);	
 }

@@ -8,39 +8,24 @@ class ZArg;
 
 class ZFunc : public ZExpr {
 public:
-	ZFunc(std::string* name, ZType* returnType, std::vector<ZArg*>& args, ZBlock* body) : _args(args) {
+
+	ZFunc(std::string* name, ZType* returnType, std::vector<ZArg*>& args, ZBlock* body, bool isExtern = false) : _args(args) {
         _name = name;
         _returnType = returnType;
         _body = body;
+		_isExtern = isExtern;
     }
 
 	void accept(ZVisitor* visitor);
 
-    //void generateDef(Module* module) {
-    //    auto args = std::vector<Type*>();
-    //    for (auto arg : _args)
-    //        args.push_back(toLlvmType(arg->getType()));
-
-    //    auto funcType = FunctionType::get(toLlvmType(_returnType), args, false);
-    //    auto func = Function::Create(funcType, Function::ExternalLinkage, _name->c_str(), module);
-
-    //    unsigned i = 0;
-    //    for (auto& arg : func->args())
-    //        arg.setName(_args[i++]->getName());
-
-    //    BasicBlock* block = BasicBlock::Create(getGlobalContext(), "entry", func);
-    //    builder.SetInsertPoint(block);
-
-    //    auto ret = _body->codegen(func);
-    //    builder.CreateRet(ret);
-    //}
-
 	void dump(std::ostream& stream, unsigned depth) override;
+
+	bool isExtern() { return _isExtern; }
 
 //private:
     std::string* _name;
 	ZType* _returnType;
     std::vector<ZArg*> _args;
     ZBlock* _body;
-
+	bool _isExtern;
 };

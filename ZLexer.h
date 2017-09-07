@@ -51,6 +51,7 @@ private:
 		_keywords.insert(std::make_pair("while", WHILE));
 		_keywords.insert(std::make_pair("if", IF));
 		_keywords.insert(std::make_pair("else", ELSE));
+		_keywords.insert(std::make_pair("extern", EXTERN));
     }
 };
 

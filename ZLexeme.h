@@ -3,6 +3,7 @@
 enum ZLexeme {
     IDENT,
     DEF,
+	EXTERN,
     VAR,
 	RETURN,
 	IF,

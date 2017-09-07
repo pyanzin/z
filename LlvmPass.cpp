@@ -58,6 +58,9 @@ void LlvmPass::addFuncDef(ZFunc* zfunc) {
 }
 
 void LlvmPass::visit(ZFunc* zfunc) {
+	if (zfunc->isExtern())
+		return;
+	
 	_currentValues->enter();
 
 	_func = static_cast<Function*>(_currentValues->get(*zfunc->_name));

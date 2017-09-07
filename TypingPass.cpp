@@ -23,7 +23,9 @@ void TypingPass::visit(ZFunc* zfunc) {
 	_func = zfunc;
 	for (auto arg : zfunc->_args)
 		arg->accept(this);
-	zfunc->_body->accept(this);
+
+	if (!zfunc->isExtern())
+		zfunc->_body->accept(this);	
 }
 
 void TypingPass::visit(ZBlock* zblock) {
