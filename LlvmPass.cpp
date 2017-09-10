@@ -74,23 +74,34 @@ void LlvmPass::visit(ZFunc* zfunc) {
 
 	generate(zfunc->_body);
 
+    if (zfunc->_returnType == Void)
+    {
+        auto bb = _func->getBasicBlockList().end()->getPrevNode();
+        _builder->SetInsertPoint(bb);
+        _builder->CreateRetVoid();
+    }
+
 	_currentValues->exit();
 }
 
 BasicBlock* LlvmPass::generate(ZBlock* zblock) {
-	BasicBlock* bb = BasicBlock::Create(getGlobalContext(), "zblock", _func);
+    BasicBlock* startBB = makeBB("zblock");
+    BasicBlock* bb = startBB;
 
 	for (ZAst* stmt : zblock->getStatements()) {
-		bb = generate(stmt);
+		auto newBB = generate(stmt);
+        _builder->SetInsertPoint(bb);
+        _builder->CreateBr(newBB);
+        bb = _lastBB;
 	}
 
-	return bb;
+	return startBB;
 }
 
 BasicBlock* LlvmPass::generate(ZAst* zast) {
 	ZExpr* zexpr = dynamic_cast<ZExpr*>(zast);
 	if (zexpr) {
-		BasicBlock* bb = BasicBlock::Create(getGlobalContext(), "zexpr", _func);
+		BasicBlock* bb = makeBB("zexpr");
 		_builder->SetInsertPoint(bb);
 		getValue(zexpr, bb);
 		return bb;
@@ -119,7 +130,7 @@ BasicBlock* LlvmPass::generate(ZAst* zast) {
 }
 
 BasicBlock* LlvmPass::generate(ZVarDef* zvardef) {
-	BasicBlock* bb = BasicBlock::Create(getGlobalContext(), "zvardef", _func);
+	BasicBlock* bb = makeBB("zvardef");
 	_builder->SetInsertPoint(bb);
 	Value* init = getValue(zvardef->getInitExpr(), bb);
 
@@ -132,7 +143,7 @@ BasicBlock* LlvmPass::generate(ZVarDef* zvardef) {
 }
 
 BasicBlock* LlvmPass::generate(ZReturn* zreturn) {
-	BasicBlock* bb = BasicBlock::Create(getGlobalContext(), "zreturn", _func);
+	BasicBlock* bb = makeBB("zreturn");
 	_builder->SetInsertPoint(bb);
 
 	auto retValue = getValue(zreturn->getExpr(), bb);
@@ -142,32 +153,33 @@ BasicBlock* LlvmPass::generate(ZReturn* zreturn) {
 }
 
 BasicBlock* LlvmPass::generate(ZIf* zif) {
-	BasicBlock* condBB = BasicBlock::Create(getGlobalContext(), "if_cond", _func);
-
+	BasicBlock* condBB = makeBB("if_cond");
 	Value* condValue = getValue(zif->getCondition(), condBB);
-
 	BasicBlock* bodyBB = generate(zif->getBody());
 	
 	BasicBlock* elseBB;
+    if (zif->getElseBody())
+        elseBB = generate(zif->getElseBody());
+    else
+        elseBB = makeNopBB("after_if");    
 
-	if (zif->getElseBody())
-		elseBB = generate(zif->getElseBody());
-	else
-		elseBB = BasicBlock::Create(getGlobalContext(), "", _func);
-
+    _builder->SetInsertPoint(condBB);
 	_builder->CreateCondBr(condValue, bodyBB, elseBB);
+
+    _builder->SetInsertPoint(bodyBB);
+    _builder->CreateBr(elseBB);
 
 	return condBB;
 }
 
 BasicBlock* LlvmPass::generate(ZWhile* zwhile) {
-	BasicBlock* condBB = BasicBlock::Create(getGlobalContext(), "while_cond", _func);
+	BasicBlock* condBB = makeBB("while_cond");
 	
 	Value* condValue = getValue(zwhile->getCondition(), condBB);
 
 	BasicBlock* bodyBB = generate(zwhile->getBody());
 
-	BasicBlock* afterBB = BasicBlock::Create(getGlobalContext(), "after", _func);
+    BasicBlock* afterBB = makeNopBB("after");
 
 	_builder->SetInsertPoint(condBB);
 	_builder->CreateCondBr(condValue, bodyBB, afterBB);
@@ -262,4 +274,24 @@ Value* LlvmPass::getValue(ZAssign* zassign, BasicBlock* bb) {
 	_builder->CreateStore(rightValue, alloc);
 
 	return rightValue;
+}
+
+BasicBlock* LlvmPass::makeBB(std::string name) {
+    return _lastBB = BasicBlock::Create(getGlobalContext(), name, _func);
+}
+
+BasicBlock* LlvmPass::makeNopBB(std::string name) {
+    auto bb = BasicBlock::Create(getGlobalContext(), name, _func);
+
+    _builder->SetInsertPoint(bb);
+    Value* nop = _builder->CreateAdd(
+        ConstantInt::get(Type::getInt8Ty(getGlobalContext()), 0),
+        ConstantInt::get(Type::getInt8Ty(getGlobalContext()), 0), "nop");
+
+    Value* alloc = _builder->CreateAlloca(nop->getType(), nullptr, "nopa");
+
+    Value* nopStore = _builder->CreateStore(nop, alloc);
+
+    return _lastBB = bb;
+
 }

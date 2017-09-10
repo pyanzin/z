@@ -18,7 +18,7 @@ ZParser::ZParser(ZLexer& lexer, SymbolTable& symTable): _lexer(lexer), _symTable
     _types["String"] = String;
     _types["Boolean"] = Boolean;
     _types["Double"] = Double;
-    _types["None"] = None;
+    _types["None"] = Void;
 
 	_ops[PLUS] = Sum;
 	_ops[MINUS] = Sub;

@@ -32,14 +32,17 @@ public:
 	llvm::Value* getValue(ZIntLit* zintlit);
 	llvm::Value* getValue(ZCall* zcall, llvm::BasicBlock* bb);
 	llvm::Value* getValue(ZAssign* zassign, llvm::BasicBlock* bb);
+    BasicBlock* makeBB(std::string name);
+    BasicBlock* makeNopBB(std::string name);
 
-	llvm::Module* getModule() {
+    llvm::Module* getModule() {
 		return _module;
 	}
 private:
 	llvm::Module* _module;
 	llvm::Function* _func;
+    llvm::BasicBlock* _lastBB;
 	LlvmTable* _currentValues;
 
-	llvm::IRBuilder<>* _builder;
+    llvm::IRBuilder<>* _builder;
 };

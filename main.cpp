@@ -14,6 +14,7 @@
 #include "llvm/IR/Function.h"
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/Transforms/Scalar.h"
+#include "llvm/IR/Verifier.h"
 #include <fstream>
 #include <sstream>
 
@@ -22,61 +23,65 @@
 llvm::Module* makeLLVMModule();
 
 int main(int argc, char* args[]) {
-	try {
-		std::ifstream srcFile;
-		std::stringstream stream;
-		srcFile.open(args[1]);
-		stream << srcFile.rdbuf();
-		std::string src = stream.str();
+    try {
+        std::ifstream srcFile;
+        std::stringstream stream;
+        srcFile.open(args[1]);
+        stream << srcFile.rdbuf();
+        std::string src = stream.str();
 
-		ZLexer lexer(&src);
+        ZLexer lexer(&src);
 
-		SymbolTable table;
+        SymbolTable table;
 
-		ZParser parser(lexer, table);
+        ZParser parser(lexer, table);
 
-		auto mod = parser.parseModule();
-		mod->dump(std::cout, 0);
+        auto mod = parser.parseModule();
+        mod->dump(std::cout, 0);
 
-		getchar();
+        getchar();
 
-		TypingPass typingPass;
-		typingPass.visit(mod);
-		mod->dump(std::cout, 0);
+        TypingPass typingPass;
+        typingPass.visit(mod);
+        mod->dump(std::cout, 0);
 
-		getchar();
+        getchar();
 
-		LlvmPass llvmPass;
+        LlvmPass llvmPass;
 
-		llvmPass.visit(mod);
+        llvmPass.visit(mod);
 
-		auto module = llvmPass.getModule();
-	    module->dump();
+        auto module = llvmPass.getModule();
+        module->dump();
 
-	} catch (std::exception ex) {
-		cout << "Error: " + std::string(ex.what()) << '\n';
-		getchar();
-	}
+        verifyModule(*module);
 
-	getchar();
+        getchar();
 
-	//auto fpm = llvm::make_unique<llvm::legacy::FunctionPassManager>(module);
-	// Promote allocas to registers.
-	//fpm->add(llvm::createPromoteMemoryToRegisterPass());
-	// Do simple "peephole" optimizations and bit-twiddling optzns.
-	//fpm->add(llvm::createInstructionCombiningPass());
-	// Reassociate expressions.
-	//fpm->add(llvm::createReassociatePass());
-	// Eliminate Common SubExpressions.
-	//fpm->add(llvm::createGVNPass());
-	// Simplify the control flow graph (deleting unreachable blocks, etc).
-	//fpm->add(llvm::createCFGSimplificationPass());
+        auto fpm = llvm::make_unique<llvm::legacy::FunctionPassManager>(module);
+        // Promote allocas to registers.
+        fpm->add(llvm::createPromoteMemoryToRegisterPass());
+        //// Do simple "peephole" optimizations and bit-twiddling optzns.
+        fpm->add(llvm::createInstructionCombiningPass());
+        // Reassociate expressions.
+        fpm->add(llvm::createReassociatePass());
+        //// Eliminate Common SubExpressions.
+        fpm->add(llvm::createGVNPass());
+        //// Simplify the control flow graph (deleting unreachable blocks, etc).
+        fpm->add(llvm::createCFGSimplificationPass());
 
-	//fpm->doInitialization();
+        fpm->doInitialization();
 
-	//fpm->run(*module->getFunction("main"));
+        fpm->run(*module->getFunction("main"));
 
-	//getchar();
+        module->dump();
 
+        getchar();
+
+    }
+    catch (std::exception ex) {
+        cout << "Error: " + std::string(ex.what()) << '\n';
+        getchar();
+    }
     return 0;
 }

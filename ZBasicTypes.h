@@ -30,7 +30,7 @@ extern ZBasicType* Int;
 extern ZBasicType* Double;
 extern ZBasicType* Boolean;
 extern ZBasicType* String;
-extern ZBasicType* None;
+extern ZBasicType* Void;
 
 class ZFuncType : public ZType {
 public:
