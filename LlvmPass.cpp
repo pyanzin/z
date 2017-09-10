@@ -156,18 +156,28 @@ BasicBlock* LlvmPass::generate(ZIf* zif) {
 	BasicBlock* condBB = makeBB("if_cond");
 	Value* condValue = getValue(zif->getCondition(), condBB);
 	BasicBlock* bodyBB = generate(zif->getBody());
-	
-	BasicBlock* elseBB;
-    if (zif->getElseBody())
+    auto lastBodyBB = _lastBB;
+
+    llvm::BasicBlock* elseBB = nullptr;
+    llvm::BasicBlock* lastElseBB = nullptr;
+    if (zif->getElseBody()) {        
         elseBB = generate(zif->getElseBody());
-    else
-        elseBB = makeNopBB("after_if");    
+
+        lastElseBB = _lastBB;
+    }
+
+    BasicBlock* afterBB = makeBB("after_if");
+
+    _builder->SetInsertPoint(lastBodyBB);
+    _builder->CreateBr(afterBB);
+
+    if (lastElseBB) {
+        _builder->SetInsertPoint(lastElseBB);
+        _builder->CreateBr(afterBB);
+    }
 
     _builder->SetInsertPoint(condBB);
-	_builder->CreateCondBr(condValue, bodyBB, elseBB);
-
-    _builder->SetInsertPoint(bodyBB);
-    _builder->CreateBr(elseBB);
+	_builder->CreateCondBr(condValue, bodyBB, elseBB ? elseBB : afterBB);
 
 	return condBB;
 }
@@ -179,13 +189,13 @@ BasicBlock* LlvmPass::generate(ZWhile* zwhile) {
 
 	BasicBlock* bodyBB = generate(zwhile->getBody());
 
-    BasicBlock* afterBB = makeNopBB("after");
+    _builder->SetInsertPoint(_lastBB);
+    _builder->CreateBr(condBB);
+
+    BasicBlock* afterBB = makeNopBB("after_while");
 
 	_builder->SetInsertPoint(condBB);
 	_builder->CreateCondBr(condValue, bodyBB, afterBB);
-
-	_builder->SetInsertPoint(bodyBB);
-	_builder->CreateBr(condBB);
 
 	return condBB;
 }
