@@ -53,8 +53,8 @@ public:
 	ZExpr* parseString();
 
 	ZExpr* parseNumber();
-
-    void reqConsume(ZLexeme lexeme);
+	ZExpr* parseChar();
+	void reqConsume(ZLexeme lexeme);
 
     bool consume(ZLexeme lexeme);
 	bool isNext(::ZLexeme lexeme);

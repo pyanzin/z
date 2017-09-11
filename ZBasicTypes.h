@@ -28,6 +28,7 @@ private:
 extern ZBasicType* Unknown;
 extern ZBasicType* Int;
 extern ZBasicType* Double;
+extern ZBasicType* Char;
 extern ZBasicType* Boolean;
 extern ZBasicType* String;
 extern ZBasicType* Void;

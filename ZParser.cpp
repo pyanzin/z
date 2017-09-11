@@ -5,6 +5,7 @@
 #include "ZIf.h"
 #include "ZWhile.h"
 #include "ZIntLit.h"
+#include "ZCharLit.h"
 #include "ZLexeme.h"
 #include "ZAssign.h"
 #include "ZCall.h"
@@ -15,6 +16,7 @@
 
 ZParser::ZParser(ZLexer& lexer, SymbolTable& symTable): _lexer(lexer), _symTable(symTable) {
     _types["Int"] = Int;
+	_types["Char"] = Char;
     _types["String"] = String;
     _types["Boolean"] = Boolean;
     _types["Double"] = Double;
@@ -301,12 +303,30 @@ ZExpr* ZParser::parseString() {
 
 	std::string* value = val(STRING_LIT);
 	if (!value)
-		return parseNumber();
+		return parseChar();
 
 	auto zstr = new ZStringLit(*value);
 	zstr->withSourceRange(endRange(sr));
 
 	return zstr;
+}
+
+ZExpr* ZParser::parseChar() {
+	auto sr = beginRange();
+
+	if (!isNext(CHAR_LIT))
+		return parseNumber();
+	
+
+	std::string* value = val(CHAR_LIT);
+	if (!value)
+		return nullptr;
+
+	auto zcharlit = new ZCharLit((*value)[0]);
+
+	zcharlit->withSourceRange(endRange(sr));
+
+	return zcharlit;
 }
 
 ZExpr* ZParser::parseNumber() {

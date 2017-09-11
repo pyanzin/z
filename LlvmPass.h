@@ -4,6 +4,7 @@
 #include <llvm/IR/IRBuilder.h>
 #include "ZIntLit.h"
 #include "LlvmTable.h"
+#include "ZCharLit.h"
 
 class ZExpr;
 
@@ -30,6 +31,7 @@ public:
 
 	llvm::Value* getValue(ZBinOp* zbinop, llvm::BasicBlock* bb);
 	llvm::Value* getValue(ZIntLit* zintlit);
+	Value* getValue(ZCharLit* zintlit);
 	llvm::Value* getValue(ZCall* zcall, llvm::BasicBlock* bb);
 	llvm::Value* getValue(ZAssign* zassign, llvm::BasicBlock* bb);
     BasicBlock* makeBB(std::string name);

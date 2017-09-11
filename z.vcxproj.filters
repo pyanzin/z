@@ -99,6 +99,9 @@
     <ClCompile Include="ZArg.cpp">
       <Filter>Source Files\AST</Filter>
     </ClCompile>
+    <ClCompile Include="ZCharLit.cpp">
+      <Filter>Source Files\AST</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ZLexer.h">
@@ -192,6 +195,9 @@
       <Filter>Header Files\AST</Filter>
     </ClInclude>
     <ClInclude Include="ZArg.h">
+      <Filter>Header Files\AST</Filter>
+    </ClInclude>
+    <ClInclude Include="ZCharLit.h">
       <Filter>Header Files\AST</Filter>
     </ClInclude>
   </ItemGroup>

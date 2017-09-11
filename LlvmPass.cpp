@@ -15,6 +15,7 @@
 #include "llvm/IR/BasicBlock.h"
 #include "ZWhile.h"
 #include "ZAssign.h"
+#include "ZCharLit.h"
 
 using namespace llvm;
 
@@ -219,6 +220,10 @@ Value* LlvmPass::getValue(ZExpr* zexpr, BasicBlock* bb) {
 	if (zintlit)
 		return getValue(zintlit);
 
+	ZCharLit* zcharlit = dynamic_cast<ZCharLit*>(zexpr);
+	if (zcharlit)
+		return getValue(zcharlit);
+
 	ZAssign* zassign = dynamic_cast<ZAssign*>(zexpr);
 	if (zassign)
 		return getValue(zassign, bb);
@@ -268,6 +273,10 @@ Value* LlvmPass::getValue(ZIntLit* zintlit) {
 	return ConstantInt::get(getGlobalContext(), APInt::APInt(32, zintlit->getValue()));
 }
 
+Value* LlvmPass::getValue(ZCharLit* zintlit) {
+	return ConstantInt::get(getGlobalContext(), APInt::APInt(8, zintlit->getValue()));
+}
+
 Value* LlvmPass::getValue(ZCall* zcall, BasicBlock* bb) {
 	auto callee = getValue(zcall->callee, bb);
 
@@ -294,13 +303,6 @@ BasicBlock* LlvmPass::makeNopBB(std::string name) {
     auto bb = BasicBlock::Create(getGlobalContext(), name, _func);
 
     _builder->SetInsertPoint(bb);
-    Value* nop = _builder->CreateAdd(
-        ConstantInt::get(Type::getInt8Ty(getGlobalContext()), 0),
-        ConstantInt::get(Type::getInt8Ty(getGlobalContext()), 0), "nop");
-
-    Value* alloc = _builder->CreateAlloca(nop->getType(), nullptr, "nopa");
-
-    Value* nopStore = _builder->CreateStore(nop, alloc);
 
     return _lastBB = bb;
 

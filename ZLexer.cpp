@@ -79,13 +79,21 @@ ZLexeme ZLexer::getNextToken() {
 			return NOT_EQUAL;
 		backtrackBy(1);
 		return EXCLAM;
-    case '"': {
-        std::string* s = new std::string;
-        while ((ch = getNextChar()) != '"')
-            (*s) += ch;
-        _value = s;
-        return STRING_LIT;
-    }
+	case '"': {
+		std::string* s = new std::string;
+		while ((ch = getNextChar()) != '"')
+			(*s) += ch;
+		_value = s;
+		return STRING_LIT;
+	}
+	case '\'': {
+		std::string* s = new std::string;
+		ch = getNextChar();
+		(*s) += ch;
+		_value = s;
+		getNextChar();
+		return CHAR_LIT;
+	}
     case '\0':
         return INPUT_END;
     }
