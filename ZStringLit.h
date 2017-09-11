@@ -10,6 +10,10 @@ public:
 
 	virtual void accept(ZVisitor* visitor);
 
+	std::string& getValue() {
+		return _value;
+	}
+
 	void dump(std::ostream& stream, unsigned depth) override {
 		dumpTab(stream, depth);
 		stream << "string(\'" << _value << "\') : " << getType()->toString() << "\n";

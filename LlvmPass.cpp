@@ -16,6 +16,7 @@
 #include "ZWhile.h"
 #include "ZAssign.h"
 #include "ZCharLit.h"
+#include "ZStringLit.h"
 
 using namespace llvm;
 
@@ -224,6 +225,10 @@ Value* LlvmPass::getValue(ZExpr* zexpr, BasicBlock* bb) {
 	if (zcharlit)
 		return getValue(zcharlit);
 
+	ZStringLit* zstringlit = dynamic_cast<ZStringLit*>(zexpr);
+	if (zstringlit)
+		return getValue(zstringlit);
+
 	ZAssign* zassign = dynamic_cast<ZAssign*>(zexpr);
 	if (zassign)
 		return getValue(zassign, bb);
@@ -269,12 +274,16 @@ Value* LlvmPass::getValue(ZBinOp* zbinop, BasicBlock* bb) {
 	}
 }
 
+Value* LlvmPass::getValue(ZStringLit* zstringlit) {
+	return _builder->CreateGlobalStringPtr(zstringlit->getValue());
+}
+
 Value* LlvmPass::getValue(ZIntLit* zintlit) {
 	return ConstantInt::get(getGlobalContext(), APInt::APInt(32, zintlit->getValue()));
 }
 
-Value* LlvmPass::getValue(ZCharLit* zintlit) {
-	return ConstantInt::get(getGlobalContext(), APInt::APInt(8, zintlit->getValue()));
+Value* LlvmPass::getValue(ZCharLit* zcharlit) {
+	return ConstantInt::get(getGlobalContext(), APInt::APInt(8, zcharlit->getValue()));
 }
 
 Value* LlvmPass::getValue(ZCall* zcall, BasicBlock* bb) {

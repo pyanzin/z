@@ -5,6 +5,7 @@
 #include "ZIntLit.h"
 #include "LlvmTable.h"
 #include "ZCharLit.h"
+#include "ZStringLit.h"
 
 class ZExpr;
 
@@ -30,6 +31,7 @@ public:
 	llvm::Value* getValue(ZId* zvar);
 
 	llvm::Value* getValue(ZBinOp* zbinop, llvm::BasicBlock* bb);
+	Value* getValue(ZStringLit* zstringlit);
 	llvm::Value* getValue(ZIntLit* zintlit);
 	Value* getValue(ZCharLit* zintlit);
 	llvm::Value* getValue(ZCall* zcall, llvm::BasicBlock* bb);
