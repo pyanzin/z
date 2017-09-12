@@ -10,7 +10,8 @@ class ZLexer
 {
 public:
     ZLexeme getNextToken();
-    ZLexer(std::string* src);
+	char toEscape(char ch);
+	ZLexer(std::string* src);
     ~ZLexer();
 
     int getPos() {
@@ -37,6 +38,8 @@ public:
 
     SourceRange* endRange(SourceRange* sr);
 
+	void error(std::string text);
+	
 private:
     char getNextChar();
     std::string* _src;

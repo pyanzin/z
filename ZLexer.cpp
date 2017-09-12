@@ -52,7 +52,14 @@ ZLexeme ZLexer::getNextToken() {
     case '*':
         return ASTERISK;
     case '/':
-        return SLASH;
+		if (getNextChar() == '/') {
+			while (getNextChar() != '\n')
+				;
+			return getNextToken();
+		} else {
+			backtrackBy(1);
+			return SLASH;
+	    }
 	case '<':
 		ch = getNextChar();
 		if (ch == '=')
@@ -81,17 +88,26 @@ ZLexeme ZLexer::getNextToken() {
 		return EXCLAM;
 	case '"': {
 		std::string* s = new std::string;
-		while ((ch = getNextChar()) != '"')
+		while ((ch = getNextChar()) != '"') {
+			if (ch == '\n')
+				error("Incorrect string literal at " + _pos);			
+			if (ch == '\\')
+				ch = toEscape(getNextChar());			
 			(*s) += ch;
+		}
 		_value = s;
 		return STRING_LIT;
 	}
 	case '\'': {
 		std::string* s = new std::string;
 		ch = getNextChar();
+		if (ch == '\\')
+			ch = toEscape(ch);
 		(*s) += ch;
 		_value = s;
-		getNextChar();
+		if (getNextChar() != '\'')
+			error("Incorrect char literal at " + _pos);
+		
 		return CHAR_LIT;
 	}
     case '\0':
@@ -123,5 +139,32 @@ ZLexeme ZLexer::getNextToken() {
 		return INT_LIT;
 	}
 
-    throw std::string("Unable to recognize a token starting with: " + ch);
+    error("Unable to recognize a token starting with: " + ch);
 }
+
+char ZLexer::toEscape(char ch) {
+	switch (ch) {
+	case 'n':
+		return '\n';
+	case 't':
+		return '\t';
+	case '\\':
+		return '\\';
+	case '\'':
+		return '\'';
+	case '\"':
+		return '\"';
+	case 'r':
+		return '\r';
+	case 'v':
+		return '\v';
+	case '0':
+		return '\0';	
+	}
+
+	error("Unknown escape sequence: \\" + ch);
+}
+
+void ZLexer::error(std::string text) {
+	throw new exception(text.c_str());
+};
