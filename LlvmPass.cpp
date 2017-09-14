@@ -86,6 +86,8 @@ void LlvmPass::visit(ZFunc* zfunc) {
 	_currentValues->exit();
 }
 
+
+
 BasicBlock* LlvmPass::generate(ZBlock* zblock) {
     BasicBlock* startBB = makeBB("zblock");
     BasicBlock* bb = startBB;
@@ -136,9 +138,13 @@ BasicBlock* LlvmPass::generate(ZVarDef* zvardef) {
 	_builder->SetInsertPoint(bb);
 	Value* init = getValue(zvardef->getInitExpr(), bb);
 
-	Value* alloc = _builder->CreateAlloca(zvardef->getVarType()->toLlvmType(), nullptr, zvardef->getName());
+	Value* alloc = new AllocaInst(zvardef->getVarType()->toLlvmType(), zvardef->getName(), bb);// _builder->CreateAlloca(zvardef->getVarType()->toLlvmType(), nullptr, zvardef->getName());
 
-	_builder->CreateStore(init, alloc);
+	init->getType()->dump();
+	cast<PointerType>(alloc->getType())->getElementType()->dump();
+
+	new StoreInst(init, alloc, bb);
+	//_builder->CreateStore(init, alloc);
 	_currentValues->add(zvardef->getName(), alloc);
 
 	return bb;
@@ -232,6 +238,10 @@ Value* LlvmPass::getValue(ZExpr* zexpr, BasicBlock* bb) {
 	ZAssign* zassign = dynamic_cast<ZAssign*>(zexpr);
 	if (zassign)
 		return getValue(zassign, bb);
+
+	ZFunc* zfunc = dynamic_cast<ZFunc*>(zexpr);
+	if (zfunc)
+		getValue(zfunc);
 }
 
 Value* LlvmPass::getValue(ZId* zid) {
@@ -302,6 +312,49 @@ Value* LlvmPass::getValue(ZAssign* zassign, BasicBlock* bb) {
 	_builder->CreateStore(rightValue, alloc);
 
 	return rightValue;
+}
+
+Value* LlvmPass::getValue(ZFunc* zfunc) {
+	Function* previousFunc = _func;
+
+	auto args = std::vector<Type*>();
+	for (auto arg : zfunc->_args) {
+		auto argType = arg->getType();
+		if (dynamic_cast<ZFuncType*>(argType))
+			args.push_back(argType->toLlvmType());
+		else
+			args.push_back(argType->toLlvmType());
+	}
+	auto funcType = FunctionType::get(zfunc->_returnType->toLlvmType(), args, false);
+
+	auto func = Function::Create(funcType, Function::PrivateLinkage, zfunc->_name->c_str(), _module);
+
+	_func = func;
+
+	_currentValues->enter();
+
+	auto zargs = zfunc->_args;
+	unsigned i = 0;
+	for (auto& arg : func->args()) {
+		auto zarg = zargs[i++];
+		arg.setName(*zarg->getName());
+		_currentValues->add(*zarg->getName(), &arg);
+	}
+	
+	generate(zfunc->_body);
+
+	if (zfunc->_returnType == Void)
+	{
+		auto bb = _func->getBasicBlockList().end()->getPrevNode();
+		_builder->SetInsertPoint(bb);
+		_builder->CreateRetVoid();
+	}
+
+	_currentValues->exit();
+
+	_func = previousFunc;
+
+	return func;
 }
 
 BasicBlock* LlvmPass::makeBB(std::string name) {

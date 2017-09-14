@@ -21,7 +21,7 @@ public:
     ZModule* parseModule();
 
     ZFunc* parseFunc();
-
+	ZExpr* parseLambda();
 	ZArg* parseArg();
 
 	ZType* parseType();
@@ -62,7 +62,7 @@ public:
 
     std::string* reqVal(ZLexeme lexeme);
 
-    void error(std::string& errorText) {
+    void error(std::string errorText) {
         throw new std::exception(errorText.c_str());
     }
 

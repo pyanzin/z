@@ -15,7 +15,7 @@ llvm::Type* ZFuncType::toLlvmType() {
 		argTypes->push_back(argType->toLlvmType());
 
 	auto funcType = llvm::FunctionType::get(_retType->toLlvmType(), argTypes);
-	return funcType;
+	return llvm::PointerType::get(funcType, 0);
 }
 
 // todo: fill all basic types

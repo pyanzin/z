@@ -36,7 +36,8 @@ public:
 	Value* getValue(ZCharLit* zintlit);
 	llvm::Value* getValue(ZCall* zcall, llvm::BasicBlock* bb);
 	llvm::Value* getValue(ZAssign* zassign, llvm::BasicBlock* bb);
-    BasicBlock* makeBB(std::string name);
+	Value* getValue(ZFunc* zfunc);
+	BasicBlock* makeBB(std::string name);
     BasicBlock* makeNopBB(std::string name);
 
     llvm::Module* getModule() {
