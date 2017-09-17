@@ -20,7 +20,12 @@ public:
 	void dump(std::ostream& stream, unsigned depth) override {
 		dumpTab(stream, depth);
 		stream << "return\n";
-		_expr->dump(stream, depth + 1);
+        if (_expr)
+            _expr->dump(stream, depth + 1);
+        else {
+            dumpTab(stream, depth + 1);
+            stream << "void\n";
+        }
 	}
 private:
 	ZExpr* _expr;

@@ -139,13 +139,9 @@ BasicBlock* LlvmPass::generate(ZVarDef* zvardef) {
 	_builder->SetInsertPoint(bb);
 	Value* init = getValue(zvardef->getInitExpr(), bb);
 
-	Value* alloc = new AllocaInst(init->getType(), zvardef->getName(), bb);// _builder->CreateAlloca(zvardef->getVarType()->toLlvmType(), nullptr, zvardef->getName());
+	auto alloc = _builder->CreateAlloca(init->getType(), nullptr, zvardef->getName());
 
-	init->getType()->dump();
-	cast<PointerType>(alloc->getType())->getElementType()->dump();
-
-	new StoreInst(init, alloc, bb);
-	//_builder->CreateStore(init, alloc);
+	_builder->CreateStore(init, alloc);
 	_currentValues->add(zvardef->getName(), alloc);
 
 	return bb;
@@ -155,8 +151,12 @@ BasicBlock* LlvmPass::generate(ZReturn* zreturn) {
 	BasicBlock* bb = makeBB("zreturn");
 	_builder->SetInsertPoint(bb);
 
-	auto retValue = getValue(zreturn->getExpr(), bb);
-	_builder->CreateRet(retValue);
+    auto expr = zreturn->getExpr();
+
+    if (expr) 
+        _builder->CreateRet(getValue(expr, bb));
+    else
+        _builder->CreateRetVoid();    
 
 	return bb;
 }
@@ -303,7 +303,6 @@ Value* LlvmPass::getValue(ZCall* zcall, BasicBlock* bb) {
 	auto args = new std::vector<Value*>();
 	for (auto arg : zcall->getArgs()) {
 	    auto value = getValue(arg, bb);
-        value->dump();
 	    args->push_back(value);
     }
     return _builder->CreateCall(callee, *args, "");

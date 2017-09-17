@@ -114,9 +114,12 @@ void TypingPass::visit(ZId* zid) {
 }
 
 void TypingPass::visit(ZReturn* zreturn) {
-	zreturn->getExpr()->accept(this);
+    if (zreturn->getExpr())      
+        zreturn->getExpr()->accept(this);
 	
-	if (_func->_returnType != zreturn->getExpr()->getType())
+    ZType* retType = zreturn->getExpr() ? zreturn->getExpr()->getType() : Void;
+
+	if (_func->_returnType != retType)
 		error("Type of return statement doesn't match function return type", zreturn->getPosition());
 }
 

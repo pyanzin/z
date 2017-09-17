@@ -197,7 +197,12 @@ ZAst* ZParser::parseReturn() {
 	auto sr = beginRange();
 
 	reqConsume(RETURN);
-	return (new ZReturn(parseExpr()))->withSourceRange(endRange(sr));
+
+    ZExpr* expr = parseExpr();
+
+    auto ret = (new ZReturn(expr))->withSourceRange(endRange(sr));
+
+	return ret;
 }
 
 ZAst* ZParser::parseIf() {
