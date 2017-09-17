@@ -12,6 +12,7 @@ enum ZLexeme {
     STRING_LIT,
 	INT_LIT,
 	CHAR_LIT,
+    BOOL_LIT,
     OPEN_PAREN,
     CLOSE_PAREN,
     COLON,

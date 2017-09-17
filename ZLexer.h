@@ -55,6 +55,8 @@ private:
 		_keywords.insert(std::make_pair("if", IF));
 		_keywords.insert(std::make_pair("else", ELSE));
 		_keywords.insert(std::make_pair("extern", EXTERN));
+        _keywords.insert(std::make_pair("true", BOOL_LIT));
+        _keywords.insert(std::make_pair("false", BOOL_LIT));
     }
 };
 

@@ -17,6 +17,7 @@
 #include "ZAssign.h"
 #include "ZCharLit.h"
 #include "ZStringLit.h"
+#include "ZBooleanLit.h"
 
 using namespace llvm;
 
@@ -232,6 +233,10 @@ Value* LlvmPass::getValue(ZExpr* zexpr, BasicBlock* bb) {
 	if (zcharlit)
 		return getValue(zcharlit);
 
+    ZBooleanLit* zbooleanlit = dynamic_cast<ZBooleanLit*>(zexpr);
+    if (zbooleanlit)
+        return getValue(zbooleanlit);
+
 	ZStringLit* zstringlit = dynamic_cast<ZStringLit*>(zexpr);
 	if (zstringlit)
 		return getValue(zstringlit);
@@ -295,6 +300,10 @@ Value* LlvmPass::getValue(ZIntLit* zintlit) {
 
 Value* LlvmPass::getValue(ZCharLit* zcharlit) {
 	return ConstantInt::get(getGlobalContext(), APInt::APInt(8, zcharlit->getValue()));
+}
+
+Value* LlvmPass::getValue(ZBooleanLit* zbooleanlit) {
+    return ConstantInt::get(getGlobalContext(), APInt::APInt(1, zbooleanlit->getValue() ? 1 : 0));
 }
 
 Value* LlvmPass::getValue(ZCall* zcall, BasicBlock* bb) {

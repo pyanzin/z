@@ -192,6 +192,7 @@
     <ClInclude Include="ZBasicTypes.h" />
     <ClInclude Include="ZBinOp.h" />
     <ClInclude Include="ZBlock.h" />
+    <ClInclude Include="ZBooleanLit.h" />
     <ClInclude Include="ZCall.h" />
     <ClInclude Include="ZCharLit.h" />
     <ClInclude Include="ZExpr.h" />

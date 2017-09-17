@@ -6,6 +6,7 @@
 #include "LlvmTable.h"
 #include "ZCharLit.h"
 #include "ZStringLit.h"
+#include "ZBooleanLit.h"
 
 class ZExpr;
 
@@ -34,7 +35,8 @@ public:
 	Value* getValue(ZStringLit* zstringlit);
 	llvm::Value* getValue(ZIntLit* zintlit);
 	Value* getValue(ZCharLit* zintlit);
-	llvm::Value* getValue(ZCall* zcall, BasicBlock* bb);
+    Value* getValue(ZBooleanLit* zbooleanlit);
+    llvm::Value* getValue(ZCall* zcall, BasicBlock* bb);
 	llvm::Value* getValue(ZAssign* zassign, llvm::BasicBlock* bb);
 	Value* getValue(ZFunc* zfunc);
 	BasicBlock* makeBB(std::string name);

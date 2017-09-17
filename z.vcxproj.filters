@@ -200,5 +200,8 @@
     <ClInclude Include="ZCharLit.h">
       <Filter>Header Files\AST</Filter>
     </ClInclude>
+    <ClInclude Include="ZBooleanLit.h">
+      <Filter>Header Files\AST</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

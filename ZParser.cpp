@@ -13,6 +13,7 @@
 #include "SourceRange.h"
 #include "ZLexeme.h"
 #include "ZBinOp.h"
+#include "ZBooleanLit.h"
 
 ZParser::ZParser(ZLexer& lexer, SymbolTable& symTable): _lexer(lexer), _symTable(symTable) {
     _types["Int"] = Int;
@@ -399,14 +400,25 @@ ZExpr* ZParser::parseNumber() {
 	}
 
 	std::string* value = val(INT_LIT);
-	if (!value)
-		return nullptr;
+    if (!value)
+        return parseBoolean();
 
 	auto zintlit = new ZIntLit(std::stoi((*value).c_str()));
 
 	zintlit->withSourceRange(endRange(sr));
 
 	return zintlit;
+}
+
+ZExpr* ZParser::parseBoolean() {
+    auto value = val(BOOL_LIT);
+    if (!value)
+        return nullptr;
+
+    if (string("true") == *value)
+        return new ZBooleanLit(true);
+    else
+        return new ZBooleanLit(false);
 }
 
 std::string* ZParser::val(::ZLexeme lexeme) {
