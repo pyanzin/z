@@ -1,5 +1,4 @@
-﻿#ifndef UTILS_H
-#define UTILS_H
+﻿#pragma once
 #include <string>
 
 enum ZLexeme;
@@ -21,5 +20,3 @@ enum BinOps {
 std::string toString(ZLexeme lexeme);
 
 std::string toString(BinOps op);
-
-#endif

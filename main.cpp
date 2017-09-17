@@ -15,6 +15,10 @@
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/Transforms/Scalar.h"
 #include "llvm/IR/Verifier.h"
+#include "llvm/Support/TargetRegistry.h"
+#include "llvm/Support/TargetSelect.h"
+#include "llvm/Target/TargetMachine.h"
+#include "llvm/Target/TargetOptions.h"
 #include <fstream>
 #include <sstream>
 
@@ -24,6 +28,7 @@ llvm::Module* makeLLVMModule();
 
 int main(int argc, char* args[]) {
     try {
+
         std::ifstream srcFile;
         std::stringstream stream;
         srcFile.open(args[1]);
@@ -75,6 +80,51 @@ int main(int argc, char* args[]) {
         fpm->run(*module->getFunction("main"));
 
         module->dump();
+
+        InitializeAllTargetInfos();
+        InitializeAllTargets();
+        InitializeAllTargetMCs();
+        InitializeAllAsmParsers();
+        InitializeAllAsmPrinters();
+
+        auto targetTriple = sys::getDefaultTargetTriple();
+        std::string error;
+        auto target = TargetRegistry::lookupTarget(targetTriple, error);
+
+        if (!target) {
+            errs() << Module::Error;
+            return 1;
+        }
+
+        auto CPU = "generic";
+        auto Features = "";
+
+        TargetOptions opt;
+        auto RM = Reloc::Model();
+        auto TargetMachine = target->createTargetMachine(targetTriple, CPU, Features, opt, RM);
+
+        module->setDataLayout(TargetMachine->createDataLayout());
+        module->setTargetTriple(targetTriple);
+
+        auto Filename = "output.o";
+        std::error_code EC;
+        raw_fd_ostream dest(Filename, EC, sys::fs::F_None);
+
+        if (EC) {
+            errs() << "Could not open file: " << EC.message();
+            return 1;
+        }
+
+        legacy::PassManager pass;
+        auto FileType = TargetMachine::CGFT_ObjectFile;
+
+        if (TargetMachine->addPassesToEmitFile(pass, dest, FileType)) {
+            errs() << "TargetMachine can't emit a file of this type";
+            return 1;
+        }
+
+        pass.run(*module);
+        dest.flush();
 
         getchar();
 

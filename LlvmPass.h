@@ -34,7 +34,7 @@ public:
 	Value* getValue(ZStringLit* zstringlit);
 	llvm::Value* getValue(ZIntLit* zintlit);
 	Value* getValue(ZCharLit* zintlit);
-	llvm::Value* getValue(ZCall* zcall, llvm::BasicBlock* bb);
+	llvm::Value* getValue(ZCall* zcall, BasicBlock* bb);
 	llvm::Value* getValue(ZAssign* zassign, llvm::BasicBlock* bb);
 	Value* getValue(ZFunc* zfunc);
 	BasicBlock* makeBB(std::string name);

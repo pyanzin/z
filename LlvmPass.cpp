@@ -134,11 +134,12 @@ BasicBlock* LlvmPass::generate(ZAst* zast) {
 }
 
 BasicBlock* LlvmPass::generate(ZVarDef* zvardef) {
-	BasicBlock* bb = makeBB("zvardef");
+    BasicBlock* bb = makeBB("zvardef");
+
 	_builder->SetInsertPoint(bb);
 	Value* init = getValue(zvardef->getInitExpr(), bb);
 
-	Value* alloc = new AllocaInst(zvardef->getVarType()->toLlvmType(), zvardef->getName(), bb);// _builder->CreateAlloca(zvardef->getVarType()->toLlvmType(), nullptr, zvardef->getName());
+	Value* alloc = new AllocaInst(init->getType(), zvardef->getName(), bb);// _builder->CreateAlloca(zvardef->getVarType()->toLlvmType(), nullptr, zvardef->getName());
 
 	init->getType()->dump();
 	cast<PointerType>(alloc->getType())->getElementType()->dump();
@@ -300,9 +301,12 @@ Value* LlvmPass::getValue(ZCall* zcall, BasicBlock* bb) {
 	auto callee = getValue(zcall->callee, bb);
 
 	auto args = new std::vector<Value*>();
-	for (auto arg : zcall->getArgs())
-		args->push_back(getValue(arg, bb));
-	return _builder->CreateCall(callee, *args, "");
+	for (auto arg : zcall->getArgs()) {
+	    auto value = getValue(arg, bb);
+        value->dump();
+	    args->push_back(value);
+    }
+    return _builder->CreateCall(callee, *args, "");
 }
 
 Value* LlvmPass::getValue(ZAssign* zassign, BasicBlock* bb) {
@@ -316,6 +320,7 @@ Value* LlvmPass::getValue(ZAssign* zassign, BasicBlock* bb) {
 
 Value* LlvmPass::getValue(ZFunc* zfunc) {
 	Function* previousFunc = _func;
+    BasicBlock* previousLastBB = _lastBB;
 
 	auto args = std::vector<Type*>();
 	for (auto arg : zfunc->_args) {
@@ -327,7 +332,7 @@ Value* LlvmPass::getValue(ZFunc* zfunc) {
 	}
 	auto funcType = FunctionType::get(zfunc->_returnType->toLlvmType(), args, false);
 
-	auto func = Function::Create(funcType, Function::PrivateLinkage, zfunc->_name->c_str(), _module);
+	auto func = Function::Create(funcType, Function::ExternalLinkage, zfunc->_name->c_str(), _module);
 
 	_func = func;
 
@@ -353,6 +358,7 @@ Value* LlvmPass::getValue(ZFunc* zfunc) {
 	_currentValues->exit();
 
 	_func = previousFunc;
+    _lastBB = previousLastBB;
 
 	return func;
 }

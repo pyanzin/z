@@ -66,7 +66,7 @@ void TypingPass::visit(ZCall* zcall) {
 	int i = 0;
 	for (ZType* calleeArgType : calleeType->getArgTypes()) {
 		ZType* callerArgType = zcall->getArgs()[i++]->getType();
-		if (calleeArgType != callerArgType)
+		if (!calleeArgType->isEqual(*callerArgType))
 			error("Callee expects argument of type " + calleeArgType->toString() 
 				+ ", but received " + callerArgType->toString() 
 				+ " at position " + std::to_string(i));

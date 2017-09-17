@@ -1,13 +1,13 @@
 ﻿#pragma once
 #include <llvm/IR/Type.h>
-#include <llvm/IR/LLVMContext.h>
-#include <llvm/IR/DerivedTypes.h>
 
 class ZType {
 public:
     virtual llvm::Type* toLlvmType() = 0;
 
     virtual std::string& toString() = 0;
+
+    virtual bool isEqual(ZType& other) = 0;
 };
 
 class ZBasicType : public ZType {
@@ -19,6 +19,10 @@ public:
     llvm::Type* toLlvmType() override;
 
     std::string& toString() override;
+
+    bool isEqual(ZType& other) override {
+        return this == &other;
+    };
 
 private:
     llvm::Type* _type;
@@ -38,6 +42,24 @@ public:
     ZFuncType(ZType* retType, std::vector<ZType*>& argTypes) {
         _retType = retType;
         _argTypes = argTypes;
+    }
+
+    bool isEqual(ZType& other) override {
+        ZFuncType* otherType = dynamic_cast<ZFuncType*>(&other);
+        if (!otherType)
+            return false;
+        if (this->getArgTypes().size() != otherType->getArgTypes().size())
+            return false;
+
+        auto thisArgs = this->getArgTypes();
+        auto otherArgs = otherType->getArgTypes();
+
+        for (int i = 0; i != thisArgs.size(); ++i) {
+            if (thisArgs[i] != otherArgs[i])
+                return false;
+        }
+
+        return this->getRetType() == otherType->getRetType();
     }
 
 	llvm::Type* toLlvmType();

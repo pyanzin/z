@@ -134,9 +134,12 @@ ZExpr* ZParser::parseLambda() {
 
 	_symTable.exit();
 
+    ZReturn* ret = new ZReturn(expr);
+
+    ZBlock* block = new ZBlock(new std::vector<ZAst*> { ret });
+
 	ZFuncType* lambdaType = new ZFuncType(retType, *argTypes);
-	auto lambda = new ZFunc(new string("lambda"), retType, *args, expr);
-	//lambda->setType(lambdaType);
+	auto lambda = new ZFunc(new string("lambda"), retType, *args, block);
 	lambda->withSourceRange(endRange(sr));
 	return lambda;
 }
