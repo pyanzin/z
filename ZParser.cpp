@@ -246,7 +246,7 @@ ZAst* ZParser::parseIf() {
 	ZAst* body = parseBlockOrStatement();
 	ZAst* elseBody = nullptr;
 	if (consume(ELSE))
-		elseBody = parseBlock();
+		elseBody = parseBlockOrStatement();
 
 	return (new ZIf(cond, body, elseBody))->withSourceRange(endRange(sr));	
 }
