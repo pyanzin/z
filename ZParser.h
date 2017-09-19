@@ -27,7 +27,7 @@ public:
 	ZType* parseType();
 
 	ZBlock* parseBlock();
-
+	ZAst* parseBlockOrStatement();
 	ZAst* parseReturn();
 
 	ZAst* parseIf();

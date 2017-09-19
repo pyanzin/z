@@ -14,6 +14,7 @@
 #include "ZLexeme.h"
 #include "ZBinOp.h"
 #include "ZBooleanLit.h"
+#include "ZNop.h"
 
 ZParser::ZParser(ZLexer& lexer, SymbolTable& symTable): _lexer(lexer), _symTable(symTable) {
     _types["Int"] = Int;
@@ -183,8 +184,7 @@ ZBlock* ZParser::parseBlock() {
 	reqConsume(OPEN_BRACE);
 
 	while (!consume(CLOSE_BRACE)) {
-		ZAst* stmt = parseStatement();
-		reqConsume(SEMICOLON);
+		ZAst* stmt = parseBlockOrStatement();
 		stmts->push_back(stmt);
 	}
 
@@ -192,6 +192,35 @@ ZBlock* ZParser::parseBlock() {
 	zblock->withSourceRange(endRange(sr));
 
 	return zblock;
+}
+
+ZAst* ZParser::parseBlockOrStatement() {
+	if (consume(SEMICOLON))
+		return new ZNop();
+
+	if (isNext(OPEN_BRACE))
+		return parseBlock();
+
+	return parseStatement();
+}
+
+ZAst* ZParser::parseStatement() {
+	if (isNext(IF))
+		return parseIf();
+	if (isNext(WHILE))
+		return parseWhile();
+
+	ZAst* result;
+	if (isNext(VAR))
+		result = parseVarDef();
+	else if (isNext(RETURN))
+		result = parseReturn();
+	else
+		result = parseExpr();
+
+	reqConsume(SEMICOLON);
+
+	return result;
 }
 
 ZAst* ZParser::parseReturn() {
@@ -214,7 +243,7 @@ ZAst* ZParser::parseIf() {
 	ZExpr* cond = parseExpr();
 	reqConsume(CLOSE_PAREN);
 
-	ZAst* body = parseBlock();
+	ZAst* body = parseBlockOrStatement();
 	ZAst* elseBody = nullptr;
 	if (consume(ELSE))
 		elseBody = parseBlock();
@@ -230,31 +259,11 @@ ZAst* ZParser::parseWhile() {
 	ZExpr* cond = parseExpr();
 	reqConsume(CLOSE_PAREN);
 
-	ZAst* body = parseBlock();
+	ZAst* body = parseBlockOrStatement();
 
 	sr = endRange(sr);
 
 	return (new ZWhile(cond, body))->withSourceRange(sr);
-}
-
-ZAst* ZParser::parseStatement() {
-	int pos = _lexer.getPos();
-	if (consume(VAR)) {
-		_lexer.backtrackTo(pos);
-		return parseVarDef();
-	} else if (consume(RETURN)) {
-		_lexer.backtrackTo(pos);
-		return parseReturn();
-	} else if (consume(IF)) {
-		_lexer.backtrackTo(pos);
-		return parseIf();
-	}
-	else if (consume(WHILE)) {
-		_lexer.backtrackTo(pos);
-		return parseWhile();
-	}
-
-	return parseExpr();
 }
 
 ZVarDef* ZParser::parseVarDef() {

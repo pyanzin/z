@@ -7,6 +7,7 @@
 #include "ZCharLit.h"
 #include "ZStringLit.h"
 #include "ZBooleanLit.h"
+#include "ZNop.h"
 
 class ZExpr;
 
@@ -26,7 +27,7 @@ public:
 	llvm::BasicBlock* generate(ZReturn* zreturn);
 	llvm::BasicBlock* generate(ZIf* zif);
 	llvm::BasicBlock* generate(ZWhile* zwhile);
-
+	BasicBlock* generate(ZNop* znop);
 	llvm::Value* getValue(ZExpr* zexpr, llvm::BasicBlock* bb);
 
 	llvm::Value* getValue(ZId* zvar);

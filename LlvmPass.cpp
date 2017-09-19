@@ -18,6 +18,7 @@
 #include "ZCharLit.h"
 #include "ZStringLit.h"
 #include "ZBooleanLit.h"
+#include "ZNop.h"
 
 using namespace llvm;
 
@@ -132,6 +133,10 @@ BasicBlock* LlvmPass::generate(ZAst* zast) {
 	ZWhile* zwhile = dynamic_cast<ZWhile*>(zast);
 	if (zwhile)
 		return generate(zwhile);
+
+	ZNop* znop = dynamic_cast<ZNop*>(zast);
+	if (znop)
+		return generate(znop);
 }
 
 BasicBlock* LlvmPass::generate(ZVarDef* zvardef) {
@@ -208,6 +213,10 @@ BasicBlock* LlvmPass::generate(ZWhile* zwhile) {
 	_builder->CreateCondBr(condValue, bodyBB, afterBB);
 
 	return condBB;
+}
+
+BasicBlock* LlvmPass::generate(ZNop* znop) {
+	return makeBB("nop");
 }
 
 Value* LlvmPass::getValue(ZExpr* zexpr, BasicBlock* bb) {

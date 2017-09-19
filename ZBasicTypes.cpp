@@ -1,5 +1,6 @@
 ﻿#include "ZBasicTypes.h"
 #include <llvm/IR/Function.h>
+#include <llvm/IR/LLVMContext.h>
 
 inline llvm::Type* ZBasicType::toLlvmType() {
 	return _type;
