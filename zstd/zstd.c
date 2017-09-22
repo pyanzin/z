@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <windows.h>
 
 char* concat(char* s1, char* s2) {
 	int resLen = strlen(s1) + strlen(s2);
@@ -18,6 +19,13 @@ void print(char* s) {
 	printf("%s", s);
 }
 
+char* readline() {
+	char* result = malloc(0xFF);
+
+	scanf("%s", result);
+	return result;
+}
+
 void printInt(int i) {
 	printf("%i", i);
 }
@@ -27,3 +35,29 @@ char* int2string(int i) {
 	itoa(i, buf, 10);
 	return buf;
 }
+
+void* allocate(size_t elemSize) {
+	return malloc(elemSize);
+}
+
+void* allocateArray(size_t elemSize, int count) {
+	
+}
+
+DWORD WINAPI funcWrapper(void* fn) {
+	((void(*)())fn)();
+	return 0;
+}
+
+void forkThread(void (*fn)()) {
+	CreateThread(NULL, 0, funcWrapper, fn, 0, NULL);
+}
+
+void helloVasily() {
+	print("hello vasiliyy");
+}
+
+void forkIt() {
+	forkThread(helloVasily);
+}
+

@@ -187,6 +187,7 @@
     <ClInclude Include="TypingPass.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="ZArg.h" />
+    <ClInclude Include="ZArrayType.h" />
     <ClInclude Include="ZAssign.h" />
     <ClInclude Include="ZAst.h" />
     <ClInclude Include="ZBasicTypes.h" />
