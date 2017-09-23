@@ -36,6 +36,10 @@ char* int2string(int i) {
 	return buf;
 }
 
+void pause(int n) {
+    Sleep(n);
+}
+
 void* allocate(size_t elemSize) {
 	return malloc(elemSize);
 }

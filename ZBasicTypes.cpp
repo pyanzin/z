@@ -15,7 +15,7 @@ llvm::Type* ZFuncType::toLlvmType() {
 	for (auto argType : _argTypes)
 		argTypes->push_back(argType->toLlvmType());
 
-	auto funcType = llvm::FunctionType::get(_retType->toLlvmType(), argTypes);
+	auto funcType = llvm::FunctionType::get(_retType->toLlvmType(), *argTypes, false);
 	return llvm::PointerType::get(funcType, 0);
 }
 
