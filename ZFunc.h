@@ -2,7 +2,6 @@
 
 #include <vector>
 #include "ZExpr.h"
-#include "ZBlock.h"
 #include "ZBasicTypes.h"
 #include "ZArg.h"
 
@@ -20,14 +19,26 @@ public:
 		std::vector<ZType*>* argTypes = new std::vector<ZType*>();
 		for (ZArg* arg : args) {
 			argTypes->push_back(arg->getType());
+			adopt(arg);
 		}
-
 		ZFuncType* funcType = new ZFuncType(returnType, *argTypes);
-
 		setType(funcType);
+
+		if (body)
+			adopt(body);
     }
 
 	void accept(ZVisitor* visitor);
+
+	void replaceChild(ZAst* oldChild, ZAst* newChild) override {
+		adopt(newChild);
+		if (_body == oldChild) {
+			_body = newChild;
+			return;
+		}
+
+		throw exception("wrong call to replaceChild in ZFunc");
+	}
 
 	void dump(std::ostream& stream, unsigned depth) override;
 

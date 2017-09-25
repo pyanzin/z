@@ -6,7 +6,15 @@ class ZVisitor;
 
 class ZAst {
 public:
-	virtual void accept(ZVisitor* visitor);;
+	virtual void accept(ZVisitor* visitor);
+
+	void adopt(ZAst* child) {
+		child->_parent = this;
+	}
+
+	virtual void replaceChild(ZAst* oldChild, ZAst* newChild) {
+		throw exception("wrong call to replaceChild");
+	}
 
 	virtual void dump(std::ostream& stream, unsigned depth) {
 		// dump in child only if it's really needed
@@ -34,6 +42,11 @@ public:
         return _sourceRange;
 	}
 
+	ZAst* getParent() {
+		return _parent;
+	}
+
 private:
     SourceRange* _sourceRange = nullptr;
+	ZAst* _parent = nullptr;
 };

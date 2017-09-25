@@ -44,13 +44,13 @@ int main(int argc, char* args[]) {
         auto mod = parser.parseModule();
         mod->dump(std::cout, 0);
 
-        getchar();
+        //getchar();
 
         TypingPass typingPass;
         typingPass.visit(mod);
         mod->dump(std::cout, 0);
 
-        getchar();
+        //getchar();
 
         LlvmPass llvmPass;
 
@@ -61,7 +61,7 @@ int main(int argc, char* args[]) {
 
         verifyModule(*module);
 
-        getchar();
+        //getchar();
 
         auto fpm = llvm::make_unique<llvm::legacy::FunctionPassManager>(module);
         // Promote allocas to registers.
@@ -126,12 +126,12 @@ int main(int argc, char* args[]) {
         pass.run(*module);
         dest.flush();
 
-        getchar();
+        //getchar();
 
     }
     catch (std::exception ex) {
         cout << "Error: " + std::string(ex.what()) << '\n';
-        getchar();
+        //getchar();
     }
     return 0;
 }

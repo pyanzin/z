@@ -26,10 +26,6 @@ char* readline() {
 	return result;
 }
 
-void printInt(int i) {
-	printf("%i", i);
-}
-
 char* int2string(int i) {
 	char* buf = malloc(8);
 	itoa(i, buf, 10);
@@ -53,15 +49,7 @@ DWORD WINAPI funcWrapper(void* fn) {
 	return 0;
 }
 
-void forkThread(void (*fn)()) {
+void fork(void (*fn)()) {
 	CreateThread(NULL, 0, funcWrapper, fn, 0, NULL);
-}
-
-void helloVasily() {
-	print("hello vasiliyy");
-}
-
-void forkIt() {
-	forkThread(helloVasily);
 }
 

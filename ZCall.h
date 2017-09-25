@@ -8,9 +8,24 @@ class ZCall : public ZExpr {
 public:
     ZCall(ZExpr* callee, std::vector<ZExpr*>& args) : args(args){
 		this->callee = callee;
+		adopt(callee);
+		for (auto arg : args)
+			adopt(arg);
     }
 
 	void accept(ZVisitor* visitor) override;
+
+	void replaceChild(ZAst* oldChild, ZAst* newChild) override {
+		adopt(newChild);
+		for (int i = 0; i < args.size(); ++i) {
+			auto arg = args[i];
+			if (arg == oldChild) {
+				args[i] = static_cast<ZExpr*>(newChild);
+				return;
+			}
+		}
+		throw exception("wrong call to replaceChild in ZCall");
+	}
 
     std::vector<ZExpr*>& getArgs() {
         return args;
