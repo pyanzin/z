@@ -320,7 +320,7 @@ ZExpr* ZParser::parseBinOp() {
 
 	auto right = parseExpr();
 
-	auto zbinop = new ZBinOp(left, right, _ops[next]);
+	auto zbinop = new ZBinOp(left, right, _ops[next], _symTable.makeRef());
 
 	zbinop->withSourceRange(endRange(sr));
 
@@ -361,7 +361,7 @@ ZExpr* ZParser::parseId() {
 		return parseString();
     SymbolRef* ref = _symTable.makeRef();
 
-	ZExpr* zid = new ZId(*name, *ref);
+	ZExpr* zid = new ZId(*name, ref);
 
 	zid->withSourceRange(endRange(sr));
 

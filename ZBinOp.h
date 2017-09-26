@@ -3,13 +3,15 @@
 #include "Utils.h"
 #include "ZExpr.h"
 #include "ZVisitor.h"
+#include "SymbolRef.h"
 
 class ZBinOp : public ZExpr {
 public:
-	ZBinOp(ZExpr* a, ZExpr* b, BinOps op) {
+	ZBinOp(ZExpr* a, ZExpr* b, BinOps op, SymbolRef* ref) {
 		_left = a;
 		_right = b;
 		_op = op;
+        _ref = ref;
 
 		adopt(a);
 		adopt(b);
@@ -32,10 +34,14 @@ public:
 
 	void dump(std::ostream& stream, unsigned depth) override;
 
+    SymbolRef* getRef() {
+        return _ref;
+    }
 private:
 	ZExpr* _left;
 	ZExpr* _right;
 	BinOps _op;
+    SymbolRef* _ref;
 };
 
 #endif

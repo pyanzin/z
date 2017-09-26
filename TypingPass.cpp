@@ -84,8 +84,17 @@ void TypingPass::visit(ZBinOp* zbinop) {
 	left->accept(this);
 	right->accept(this);
 
-	if (zbinop->getOp() == Sum && left->getType() == String) {
-		zbinop->setType(String);
+	if (zbinop->getOp() == Sum && left->getType() == String && right->getType() == String) {
+        auto parent = zbinop->getParent();
+        auto args = new std::vector<ZExpr*>();
+        args->push_back(left);
+        args->push_back(right);
+        auto zid = new ZId(*(new std::string("concat")), zbinop->getRef());
+        zid->withSourceRange(zbinop->getSourceRange());
+        auto concat = new ZCall(zid, *args);
+        concat->withSourceRange(zbinop->getSourceRange());
+        parent->replaceChild(zbinop, concat);
+        concat->accept(this);
 		return;
 	}
 
@@ -106,7 +115,7 @@ void TypingPass::visit(ZBinOp* zbinop) {
 }
 
 void TypingPass::visit(ZId* zid) {
-    SymbolEntry* definition = zid->getRef().findDefinedBefore(zid->getName());
+    SymbolEntry* definition = zid->getRef()->findDefinedBefore(zid->getName());
     if (!definition)
         error("Symbol '" + zid->getName() + "' is not defined before using", zid->getPosition());
         

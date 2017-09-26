@@ -6,13 +6,9 @@
 
 class ZId : public ZExpr {
 public:
-    ZId(std::string& name, SymbolRef& ref) : _name(name), _ref(ref) { }
-
-    //llvm::Value* codegen(llvm::Function* func) override {
-    //    for (auto& arg : func->args())
-    //        if (arg.getName() == _name)
-    //            return &(cast<Value>(arg));        
-    //}
+    ZId(std::string& name, SymbolRef* ref) : _name(name) {
+        _ref = ref;
+    }
 
 	virtual void accept(ZVisitor* visitor) override {
 		visitor->visit(this);
@@ -22,7 +18,7 @@ public:
 		return _name;
     }
 
-    SymbolRef& getRef() {
+    SymbolRef* getRef() {
         return _ref;
     }
 
@@ -34,5 +30,5 @@ public:
 
 private:
     std::string& _name;
-    SymbolRef& _ref;
+    SymbolRef* _ref;
 };
