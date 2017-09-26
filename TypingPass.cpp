@@ -78,17 +78,14 @@ void TypingPass::visit(ZCall* zcall) {
 }
 
 void TypingPass::visit(ZBinOp* zbinop) {
-	ZExpr* left = zbinop->getLeft();
-	ZExpr* right = zbinop->getRight();
+	zbinop->getLeft()->accept(this);
+	zbinop->getRight()->accept(this);
 
-	left->accept(this);
-	right->accept(this);
-
-	if (zbinop->getOp() == Sum && left->getType() == String && right->getType() == String) {
+	if (zbinop->getOp() == Sum && zbinop->getLeft()->getType() == String && zbinop->getRight()->getType() == String) {
         auto parent = zbinop->getParent();
         auto args = new std::vector<ZExpr*>();
-        args->push_back(left);
-        args->push_back(right);
+		args->push_back(zbinop->getLeft());
+		args->push_back(zbinop->getRight());
         auto zid = new ZId(*(new std::string("concat")), zbinop->getRef());
         zid->withSourceRange(zbinop->getSourceRange());
         auto concat = new ZCall(zid, *args);
@@ -103,7 +100,7 @@ void TypingPass::visit(ZBinOp* zbinop) {
 		return;
 	}
 
-	if (left->getType() == Int && right->getType() == Int) {
+	if (zbinop->getLeft()->getType() == Int && zbinop->getRight()->getType() == Int) {
 		zbinop->setType(Int);
 		return;
 	}
@@ -111,7 +108,7 @@ void TypingPass::visit(ZBinOp* zbinop) {
 	// todo: doubles, ints and combinations
 
 	error("Unable to apply operation " + toString(zbinop->getOp()) + " for "
-		+ left->getType()->toString() + " and " + right->getType()->toString(), zbinop->getPosition());
+		+ zbinop->getLeft()->getType()->toString() + " and " + zbinop->getRight()->getType()->toString(), zbinop->getPosition());
 }
 
 void TypingPass::visit(ZId* zid) {
