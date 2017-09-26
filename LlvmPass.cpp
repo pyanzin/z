@@ -19,6 +19,7 @@
 #include "ZStringLit.h"
 #include "ZBooleanLit.h"
 #include "ZNop.h"
+#include "ZCast.h"
 
 using namespace llvm;
 
@@ -251,9 +252,19 @@ Value* LlvmPass::getValue(ZExpr* zexpr, BasicBlock* bb) {
 	if (zassign)
 		return getValue(zassign, bb);
 
+	ZCast* zcast = dynamic_cast<ZCast*>(zexpr);
+	if (zcast)
+		return getValue(zcast);
+
 	ZFunc* zfunc = dynamic_cast<ZFunc*>(zexpr);
 	if (zfunc)
 		getValue(zfunc);
+}
+
+llvm::Value* LlvmPass::getValue(ZCast* zcast) {
+	BasicBlock* bb = makeBB("zcast");
+	Value* exprValue = getValue(zcast->getExpr(), bb);
+	return _builder->CreateCast(Instruction::BitCast, exprValue, zcast->getTargetType()->toLlvmType());
 }
 
 Value* LlvmPass::getValue(ZId* zid) {

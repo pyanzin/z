@@ -195,6 +195,7 @@
     <ClInclude Include="ZBlock.h" />
     <ClInclude Include="ZBooleanLit.h" />
     <ClInclude Include="ZCall.h" />
+    <ClInclude Include="ZCast.h" />
     <ClInclude Include="ZCharLit.h" />
     <ClInclude Include="ZExpr.h" />
     <ClInclude Include="ZFunc.h" />

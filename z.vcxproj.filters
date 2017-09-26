@@ -209,5 +209,8 @@
     <ClInclude Include="ZArrayType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ZCast.h">
+      <Filter>Header Files\AST</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

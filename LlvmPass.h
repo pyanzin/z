@@ -9,6 +9,7 @@
 #include "ZBooleanLit.h"
 #include "ZNop.h"
 
+class ZCast;
 class ZExpr;
 
 class LlvmPass : public ZVisitor
@@ -29,6 +30,7 @@ public:
 	llvm::BasicBlock* generate(ZWhile* zwhile);
 	BasicBlock* generate(ZNop* znop);
 	llvm::Value* getValue(ZExpr* zexpr, llvm::BasicBlock* bb);
+	llvm::Value* getValue(ZCast* zcast);
 
 	llvm::Value* getValue(ZId* zvar);
 
