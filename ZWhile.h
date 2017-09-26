@@ -14,6 +14,21 @@ public:
 		visitor->visit(this);
 	}
 
+    void replaceChild(ZAst* oldChild, ZAst* newChild) override {
+        adopt(newChild);
+        if (_cond == oldChild) {
+            _cond = static_cast<ZExpr*>(newChild);
+            return;
+        }
+
+        if (_body == oldChild) {
+            _body = static_cast<ZExpr*>(newChild);
+            return;
+        }
+
+        throw exception("wrong call to replaceChild in ZWhile");
+    }
+
 	ZExpr* getCondition() {
 		return _cond;
 	}

@@ -13,9 +13,21 @@ public:
 	ZVarDef(std::string& name, SymbolRef& ref, ZType* type = nullptr, ZExpr* initExpr = nullptr) : _name(name), _ref(ref) {
         _type = type;
         _initExpr = initExpr;
+        if (initExpr)
+            adopt(initExpr);
     }
 
 	virtual void accept(ZVisitor* visitor);
+
+    void replaceChild(ZAst* oldChild, ZAst* newChild) override {
+        adopt(newChild);
+        if (_initExpr == oldChild) {
+            _initExpr = static_cast<ZExpr*>(newChild);
+            return;        
+        }
+
+        throw exception("wrong call to replaceChild in ZVarDef");
+    }
 
     std::string& getName() {
         return _name;

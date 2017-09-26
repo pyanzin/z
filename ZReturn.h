@@ -7,11 +7,22 @@ class ZReturn : public ZAst {
 public:
 	ZReturn(ZExpr* expr) {
 		_expr = expr;
+        adopt(expr);
 	}
 
 	void accept(ZVisitor* visitor) override {
 		visitor->visit(this);
 	}
+
+    void replaceChild(ZAst* oldChild, ZAst* newChild) override {
+        adopt(newChild);
+        if (_expr == oldChild) {
+            _expr = static_cast<ZExpr*>(newChild);
+            return;
+        }
+
+        throw exception("wrong call to replaceChild in ZReturn");
+    }
 
 	ZExpr* getExpr() {
 		return _expr;

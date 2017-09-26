@@ -11,6 +11,7 @@ public:
 
     void addFunction(ZFunc* function) {
         functions.push_back(function);
+        adopt(function);
     }
 
 	std::vector<ZFunc*>& getFunctions() {

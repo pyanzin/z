@@ -9,11 +9,35 @@ public:
 		_cond = cond;
 		_body = body;
 		_elseBody = elseBody;
+        adopt(cond);
+        adopt(body);
+        if (elseBody)
+            adopt(elseBody);
 	}
 
 	void accept(ZVisitor* visitor) override {
 		visitor->visit(this);
 	}
+
+    void replaceChild(ZAst* oldChild, ZAst* newChild) override {
+        adopt(newChild);
+        if (_cond == oldChild) {
+            _cond = static_cast<ZExpr*>(newChild);
+            return;
+        }
+
+        if (_body == oldChild) {
+            _body = newChild;
+            return;
+        }
+
+        if (_elseBody == oldChild) {
+            _elseBody = newChild;
+            return;
+        }
+
+        throw exception("wrong call to replaceChild in ZIf");
+    }
 
 	ZExpr* getCondition() {
 		return _cond;
