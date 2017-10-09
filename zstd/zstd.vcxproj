@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="zgc.c" />
     <ClCompile Include="zstd.c" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

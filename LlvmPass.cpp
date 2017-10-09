@@ -218,7 +218,7 @@ BasicBlock* LlvmPass::generate(ZNop* znop) {
 }
 
 Value* LlvmPass::getValue(ZExpr* zexpr, BasicBlock* bb) {
-	//_builder->SetInsertPoint(bb);
+	_builder->SetInsertPoint(bb);
 
 	ZCall* zcall = dynamic_cast<ZCall*>(zexpr);
 	if (zcall)

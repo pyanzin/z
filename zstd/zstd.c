@@ -11,6 +11,10 @@ char* concat(char* s1, char* s2) {
 	return res;
 }
 
+int compare(char* s1, char* s2) {
+    return strcmp(s1, s2);
+}
+
 int len(char* str) {
 	return strlen(str);
 }
