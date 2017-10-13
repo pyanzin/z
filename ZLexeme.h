@@ -26,6 +26,8 @@ enum ZLexeme {
 	MORE_OR_EQUAL,
     OPEN_BRACE,
     CLOSE_BRACE,
+	OPEN_BRACKET,
+	CLOSE_BRACKET,
     FAT_ARROW,
     COMMA,
     PLUS,

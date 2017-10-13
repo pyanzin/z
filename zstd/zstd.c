@@ -36,16 +36,20 @@ char* int2string(int i) {
 	return buf;
 }
 
-void pause(int n) {
-    Sleep(n);
+void pause(int millis) {
+	Sleep(millis);
 }
 
 void* allocate(size_t elemSize) {
 	return malloc(elemSize);
 }
 
-void* allocateArray(size_t elemSize, int count) {
-	
+void* Array(size_t elemSize, int count) {
+	int* sizePtr = malloc(count * elemSize + sizeof(int) + sizeof(int));
+	*sizePtr = count;
+	int* typePtr = sizePtr + 1;
+	*typePtr = 0;
+	return typePtr + 1;
 }
 
 DWORD WINAPI funcWrapper(void* fn) {

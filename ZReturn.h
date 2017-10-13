@@ -7,7 +7,8 @@ class ZReturn : public ZAst {
 public:
 	ZReturn(ZExpr* expr) {
 		_expr = expr;
-        adopt(expr);
+		if (_expr)
+			adopt(expr);
 	}
 
 	void accept(ZVisitor* visitor) override {
