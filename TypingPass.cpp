@@ -112,7 +112,7 @@ void TypingPass::visit(ZBinOp* zbinop) {
 }
 
 void TypingPass::visit(ZId* zid) {
-    SymbolEntry* definition = zid->getRef()->findDefinedBefore(zid->getName());
+    SymbolEntry* definition = zid->getRef()->findSymbolDef(zid->getName());
     if (!definition)
         error("Symbol '" + zid->getName() + "' is not defined before using", zid->getPosition());
         
@@ -150,7 +150,7 @@ void TypingPass::visit(ZWhile* zwhile) {
 }
 
 void TypingPass::visit(ZVarDef* zvardef) {
-	SymbolEntry* alreadyDefined = zvardef->getRef().findDefinedBefore(zvardef->getName(), true);
+	SymbolEntry* alreadyDefined = zvardef->getRef().findSymbolDef(zvardef->getName(), true);
 
 	if (alreadyDefined)
 		error("Variable with name '" + alreadyDefined->getName() + "' already defined in this scope", zvardef->getPosition());	

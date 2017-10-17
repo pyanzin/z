@@ -55,6 +55,16 @@ ZFunc* ZParser::parseFunc() {
 		return nullptr;
 
 	std::string* name = reqVal(IDENT);
+
+	std::vector<string*>* typeParams = new std::vector<string*>;
+	if (consume(OPEN_BRACKET)) {
+		while (!consume(CLOSE_BRACKET)) {
+			string* typeParam = reqVal(IDENT);
+			typeParams->push_back(typeParam);
+			consume(COMMA);
+		}
+	}
+
 	reqConsume(OPEN_PAREN);
 
 	std::vector<ZArg*>* args = new std::vector<ZArg*>();
@@ -75,7 +85,7 @@ ZFunc* ZParser::parseFunc() {
     std::vector<ZType*>* argTypes = new std::vector<ZType*>();
 	for (ZArg* arg : *args) {
 		argTypes->push_back(arg->getType());
-		_symTable.add(arg->getType(), arg->getName());
+		_symTable.addSymbol(arg->getType(), arg->getName());
 	}
 
     ZType* funcType = new ZFuncType(retType, *argTypes);
@@ -86,9 +96,9 @@ ZFunc* ZParser::parseFunc() {
 
 	_symTable.exit();
 
-	_symTable.add(funcType, name);
+	_symTable.addSymbol(funcType, name);
 	
-    auto zfunc = new ZFunc(name, retType, *args, body, isExtern);
+    auto zfunc = new ZFunc(name, retType, *args, *typeParams, body, isExtern);
     zfunc->setType(funcType);
 
 	zfunc->withSourceRange(endRange(sr));
@@ -123,7 +133,7 @@ ZExpr* ZParser::parseLambda() {
 	std::vector<ZType*>* argTypes = new std::vector<ZType*>();
 	for (ZArg* arg : *args) {
 		argTypes->push_back(arg->getType());
-		_symTable.add(arg->getType(), arg->getName());
+		_symTable.addSymbol(arg->getType(), arg->getName());
 	}
 
 	reqConsume(COLON);
@@ -141,7 +151,7 @@ ZExpr* ZParser::parseLambda() {
     ZBlock* block = new ZBlock(new std::vector<ZAst*> { ret });
 
 	ZFuncType* lambdaType = new ZFuncType(retType, *argTypes);
-	auto lambda = new ZFunc(new string("lambda"), retType, *args, block);
+	auto lambda = new ZFunc(new string("lambda"), retType, *args, *(new vector<string*>()), block);
 	lambda->withSourceRange(endRange(sr));
 	return lambda;
 }
@@ -278,7 +288,7 @@ ZVarDef* ZParser::parseVarDef() {
     if (consume(EQUAL))
         initExpr = parseExpr();
 
-    auto ref = _symTable.add(type, name);
+    auto ref = _symTable.addSymbol(type, name);
 
 	ZVarDef* zvardef = new ZVarDef(*name, *ref, type, initExpr);
 
@@ -334,6 +344,16 @@ ZExpr* ZParser::parseCall() {
 	auto sr = beginRange();
 
 	ZExpr* callee = parseId();
+
+	vector<ZType*>* typeParams = new vector<ZType*>;
+	if (consume(OPEN_BRACKET)) {
+		while (!consume(CLOSE_BRACKET)) {
+			ZType* typeParam = parseType();
+			typeParams->push_back(typeParam);
+			consume(COMMA);
+		}
+	}
+
 	if (!consume(OPEN_PAREN)) {
 		_lexer.backtrackTo(pos);
 		return parseId();
@@ -346,7 +366,7 @@ ZExpr* ZParser::parseCall() {
 		args->push_back(arg);
 	}
 
-	ZCall* zcall = new ZCall(callee, *args);
+	ZCall* zcall = new ZCall(callee, *args, typeParams);
 
 	zcall->withSourceRange(endRange(sr));
 

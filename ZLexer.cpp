@@ -45,6 +45,10 @@ ZLexeme ZLexer::getNextToken() {
         return OPEN_BRACE;
     case '}':
         return CLOSE_BRACE;
+	case '[':
+		return OPEN_BRACKET;
+	case ']':
+		return CLOSE_BRACKET;
     case '+':
         return PLUS;
     case '-':

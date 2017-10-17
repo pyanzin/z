@@ -14,8 +14,8 @@ public:
         return _storage->getEntries()[_id];
     }
 
-    SymbolEntry* findDefinedBefore(std::string& name, bool onlyCurrentScope = false) {
-        return _storage->findDefinedBefore(_id, name, onlyCurrentScope);
+    SymbolEntry* findSymbolDef(std::string& name, bool onlyCurrentScope = false) {
+        return _storage->findSymbolDef(_id, name, onlyCurrentScope);
     }
 private:
     SymbolStorage* _storage;

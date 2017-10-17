@@ -16,7 +16,7 @@ public:
         storage = storage->getParent();
     }
 
-	SymbolRef* add(ZType* type, std::string* name) {
+	SymbolRef* addSymbol(ZType* type, std::string* name) {
         int id = storage->add(new SymbolEntry(type, *name));
         return new SymbolRef(storage, id);
     }

@@ -8,11 +8,11 @@
 class ZArg;
 
 class ZFunc : public ZExpr {
-public:
-
-	ZFunc(std::string* name, ZType* returnType, std::vector<ZArg*>& args, ZAst* body, bool isExtern = false) : _args(args) {
+public:	
+	ZFunc(std::string* name, ZType* returnType, std::vector<ZArg*>& args, std::vector<string*>& typeParams, ZAst* body, bool isExtern = false) : _args(args) {
         _name = name;
         _returnType = returnType;
+		_typeParams = typeParams;
         _body = body;
 		_isExtern = isExtern;
 
@@ -48,6 +48,7 @@ public:
     std::string* _name;
 	ZType* _returnType;
     std::vector<ZArg*> _args;
+	std::vector<string*> _typeParams;
 	ZAst* _body;
 	bool _isExtern;
 };

@@ -6,8 +6,9 @@
 
 class ZCall : public ZExpr {
 public:
-    ZCall(ZExpr* callee, std::vector<ZExpr*>& args) : args(args){
+	ZCall(ZExpr* callee, std::vector<ZExpr*>& args, std::vector<ZType*>* typeParams = nullptr) : args(args) {
 		this->callee = callee;
+		_typeParams = typeParams;
 		adopt(callee);
 		for (auto arg : args)
 			adopt(arg);
@@ -33,6 +34,7 @@ public:
 
     ZExpr* callee;
     std::vector<ZExpr*>& args;
+	std::vector<ZType*>* _typeParams;
 
 	void dump(std::ostream& stream, unsigned depth) override {
 		dumpTab(stream, depth);

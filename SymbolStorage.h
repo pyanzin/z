@@ -31,7 +31,7 @@ public:
 		return getParent() == nullptr;
     }
 
-    SymbolEntry* findDefinedBefore(int id, std::string& name, bool onlyCurrentScope = false) {
+    SymbolEntry* findSymbolDef(int id, std::string& name, bool onlyCurrentScope = false) {
         SymbolStorage* storage = this;
         do {
             auto entries = storage->_entries;
