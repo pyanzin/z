@@ -17,11 +17,17 @@ public:
         return _parent;
     }
 
-    int add(SymbolEntry* entry) {
+    int add(SymbolEntry* symbol) {
         int id = _number++;
-        _entries[id] = entry;
+		_symbolEntries[id] = symbol;
         return id;
-    };
+    }
+
+	int add(ZType* type) {
+		int id = _number++;
+		_typeEntries[id] = type;
+		return id;
+	}
 
     SymbolStorage* makeChild() {
         return new SymbolStorage(this);
@@ -31,10 +37,10 @@ public:
 		return getParent() == nullptr;
     }
 
-    SymbolEntry* findSymbolDef(int id, std::string& name, bool onlyCurrentScope = false) {
+    SymbolEntry* findSymbol(int id, std::string& name, bool onlyCurrentScope = false) {
         SymbolStorage* storage = this;
         do {
-            auto entries = storage->_entries;
+			auto entries = storage->_symbolEntries;
 			for (auto entry : entries) {
 				if (entry.first >= id && !storage->isTopLevel())
 					break;
@@ -48,8 +54,25 @@ public:
         return nullptr;
     }
 
-    std::map<int, SymbolEntry*>& getEntries() {
-        return _entries;
+	ZType* findType(int id, std::string& name, bool onlyCurrentScope = false) {
+		SymbolStorage* storage = this;
+		do {
+			auto entries = storage->_typeEntries;
+			for (auto entry : entries) {
+				if (entry.first >= id && !storage->isTopLevel())
+					break;
+
+				if (name == entry.second->getName())
+					return entry.second;
+			}
+			id = storage->_parentNumber;
+		} while (storage = onlyCurrentScope ? nullptr : storage->getParent());
+
+		return nullptr;
+    }
+
+    std::map<int, SymbolEntry*>& getSymbolEntries() {
+		return _symbolEntries;
     }
 
 	int incrementNumber() {
@@ -60,5 +83,6 @@ private:
     SymbolStorage* _parent;
     int _parentNumber;
 
-    std::map<int, SymbolEntry*> _entries;
+    std::map<int, SymbolEntry*> _symbolEntries;
+	std::map<int, ZType*> _typeEntries;
 };

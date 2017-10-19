@@ -1,20 +1,18 @@
 ﻿#pragma once
 #include <llvm/IR/Type.h>
+#include "ZType.h"
 
-class ZType {
-public:
-    virtual llvm::Type* toLlvmType() = 0;
-
-    virtual std::string& toString() = 0;
-
-    virtual bool isEqual(ZType& other) = 0;
-};
+class ZArrayType;
 
 class ZBasicType : public ZType {
 public:
     ZBasicType(llvm::Type* type, std::string name) : _name(name) {
         _type = type;
     }
+
+	std::string& getName() override {
+		return _name;
+	}
 
     llvm::Type* toLlvmType() override;
 
@@ -62,6 +60,10 @@ public:
         return this->getRetType() == otherType->getRetType();
     }
 
+	std::string& getName() override {
+		return toString();
+	}
+
 	llvm::Type* toLlvmType();
 
     std::string& toString() override {
@@ -91,3 +93,28 @@ private:
     std::vector<ZType*> _argTypes;
 };
 
+class ZGenericParam : public ZType {
+public:
+	ZGenericParam(std::string& name) : _name(name) {
+		
+	}
+
+	llvm::Type* toLlvmType() override {
+		return nullptr;
+	}
+
+	std::string& getName() override {
+		return _name;
+	}
+
+	std::string& toString() override {
+		return _name;
+	}
+
+	bool isEqual(ZType& other) override {
+		return false;
+	}
+
+private:
+	std::string& _name;
+};

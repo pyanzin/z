@@ -11,19 +11,12 @@
 #include "ZCall.h"
 #include "ZId.h"
 #include "SourceRange.h"
-#include "ZLexeme.h"
 #include "ZBinOp.h"
 #include "ZBooleanLit.h"
 #include "ZNop.h"
+#include "ZArrayType.h"
 
 ZParser::ZParser(ZLexer& lexer, SymbolTable& symTable): _lexer(lexer), _symTable(symTable) {
-    _types["Int"] = Int;
-	_types["Char"] = Char;
-    _types["String"] = String;
-    _types["Boolean"] = Boolean;
-    _types["Double"] = Double;
-    _types["None"] = Void;
-
 	_ops[PLUS] = Sum;
 	_ops[MINUS] = Sub;
 	_ops[ASTERISK] = Mul;
@@ -34,6 +27,14 @@ ZParser::ZParser(ZLexer& lexer, SymbolTable& symTable): _lexer(lexer), _symTable
 	_ops[LESS_OR_EQUAL] = LessOrEqual;
 	_ops[MORE] = More;
 	_ops[MORE_OR_EQUAL] = MoreOrEqual;
+
+	_symTable.addType(Int);
+	_symTable.addType(Char);
+	_symTable.addType(String);
+	_symTable.addType(Boolean);
+	_symTable.addType(Double);
+	_symTable.addType(Void);
+	_symTable.addType(new ZArrayType(nullptr));
 }
 
 ZModule* ZParser::parseModule() {
@@ -56,11 +57,14 @@ ZFunc* ZParser::parseFunc() {
 
 	std::string* name = reqVal(IDENT);
 
+	_symTable.enter();
+
 	std::vector<string*>* typeParams = new std::vector<string*>;
 	if (consume(OPEN_BRACKET)) {
 		while (!consume(CLOSE_BRACKET)) {
 			string* typeParam = reqVal(IDENT);
 			typeParams->push_back(typeParam);
+			_symTable.addType(new ZGenericParam(*typeParam));
 			consume(COMMA);
 		}
 	}
@@ -79,8 +83,6 @@ ZFunc* ZParser::parseFunc() {
 
 	if (!isExtern)
 		reqConsume(EQUAL);	
-
-	_symTable.enter();
 
     std::vector<ZType*>* argTypes = new std::vector<ZType*>();
 	for (ZArg* arg : *args) {
@@ -183,7 +185,17 @@ ZType* ZParser::parseType() {
 
 		return new ZFuncType(retType, *argTypes);
 	}
-	return _types[*reqVal(IDENT)];
+
+	auto type = _symTable.makeRef()->findTypeDef(*reqVal(IDENT));
+
+	if (dynamic_cast<ZArrayType*>(type)) {
+		reqConsume(OPEN_BRACKET);
+		auto elemType = parseType();
+		reqConsume(CLOSE_BRACKET);
+		return new ZArrayType(elemType);
+	}
+
+	return type;
 }
 
 ZBlock* ZParser::parseBlock() {

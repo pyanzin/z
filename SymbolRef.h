@@ -11,12 +11,16 @@ public:
     }
 
 	SymbolEntry* getEntry() {
-        return _storage->getEntries()[_id];
+        return _storage->getSymbolEntries()[_id];
     }
 
     SymbolEntry* findSymbolDef(std::string& name, bool onlyCurrentScope = false) {
-        return _storage->findSymbolDef(_id, name, onlyCurrentScope);
+        return _storage->findSymbol(_id, name, onlyCurrentScope);
     }
+
+	ZType* findTypeDef(std::string& name, bool onlyCurrentScope = false) {
+		return _storage->findType(_id, name, onlyCurrentScope);
+	}
 private:
     SymbolStorage* _storage;
     int _id;
