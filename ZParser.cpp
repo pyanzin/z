@@ -314,7 +314,7 @@ ZExpr* ZParser::parseAssign() {
 
 	int pos = _lexer.getPos();
 
-	ZExpr* left = parseId();
+	ZExpr* left = parseCall();
 
 	if (left && consume(EQUAL)) {
 		auto right = parseAssign();

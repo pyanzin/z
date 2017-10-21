@@ -350,11 +350,21 @@ Value* LlvmPass::getValue(ZCall* zcall, BasicBlock* bb) {
 
 Value* LlvmPass::getValue(ZAssign* zassign, BasicBlock* bb) {
 	Value* rightValue = getValue(zassign->getRight(), bb);
-	auto alloc = _currentValues->getAlloca(dynamic_cast<ZId*>(zassign->getLeft())->getName());
-	
-	_builder->CreateStore(rightValue, alloc);
 
-	return rightValue;
+    if (dynamic_cast<ZId*>(zassign->getLeft())) {
+        auto alloc = _currentValues->getAlloca(dynamic_cast<ZId*>(zassign->getLeft())->getName());
+        _builder->CreateStore(rightValue, alloc);
+        return rightValue;
+    }
+
+    ZSubscript* zsubscript = dynamic_cast<ZSubscript*>(zassign->getLeft());
+    Value* targetValue = getValue(zsubscript->getTarget(), bb);
+    Value* indexValue = getValue(zsubscript->getIndex(), bb);
+    auto gep = _builder->CreateGEP(targetValue, indexValue);
+
+    _builder->CreateStore(rightValue, gep);
+
+    return rightValue;
 }
 
 Value* LlvmPass::getValue(ZFunc* zfunc) {

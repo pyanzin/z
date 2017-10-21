@@ -39,13 +39,16 @@ void TypingPass::visit(ZAssign* zassign) {
 	zassign->getLeft()->accept(this);
 	zassign->getRight()->accept(this);
 
-    ZId* assignee = dynamic_cast<ZId*>(zassign->getLeft());
+    ZExpr* assignee = dynamic_cast<ZId*>(zassign->getLeft());
+
+    if (!assignee)
+        assignee = dynamic_cast<ZSubscript*>(zassign->getLeft());
 
     if (!assignee)
         error("Left part of the assignment expression is not suitable for assignment", zassign->getPosition());
 
     if (assignee->getType() != zassign->getRight()->getType())
-        error("Type of variable '" + assignee->getName() + " doesn't match the type of right expression", assignee->getPosition());
+        error("Type of the left hand expression doesn't match the type of right hand expression", assignee->getPosition());
 
 	zassign->setType(zassign->getRight()->getType());
 }
