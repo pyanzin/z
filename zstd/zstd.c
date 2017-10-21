@@ -52,12 +52,6 @@ void* Array(size_t elemSize, int count) {
 	return typePtr + 1;
 }
 
-int* makeArray(int size) {
-    int* array = Array(sizeof(int), size);
-    array[0] = 228;
-    return array;
-}
-
 DWORD WINAPI funcWrapper(void* fn) {
 	((void(*)())fn)();
 	return 0;
