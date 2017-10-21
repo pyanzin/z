@@ -7,8 +7,7 @@ class ZType;
 
 class ZArg : public ZAst {
 public:
-    ZArg(ZType* type, std::string* name)
-    {
+    ZArg(ZType* type, std::string* name) {
         _type = type;
         _name = name;
     }

@@ -20,6 +20,7 @@
 #include "ZBooleanLit.h"
 #include "ZNop.h"
 #include "ZCast.h"
+#include "ZSubscript.h"
 
 using namespace llvm;
 
@@ -259,6 +260,10 @@ Value* LlvmPass::getValue(ZExpr* zexpr, BasicBlock* bb) {
 	ZFunc* zfunc = dynamic_cast<ZFunc*>(zexpr);
 	if (zfunc)
 		getValue(zfunc);
+
+    ZSubscript* zsubscript = dynamic_cast<ZSubscript*>(zexpr);
+    if (zsubscript)
+        getValue(zsubscript, bb);
 }
 
 llvm::Value* LlvmPass::getValue(ZCast* zcast) {
@@ -274,6 +279,15 @@ Value* LlvmPass::getValue(ZId* zid) {
 		return _builder->CreateLoad(val);	
 
 	return val;
+}
+
+Value* LlvmPass::getValue(ZSubscript* zsubscript, BasicBlock* bb) {
+    _builder->SetInsertPoint(bb);
+    Value* targetValue = getValue(zsubscript->getTarget(), bb);
+    Value* indexValue = getValue(zsubscript->getIndex(), bb);
+
+    auto gep = _builder->CreateGEP(targetValue, indexValue);
+    return _builder->CreateLoad(gep);
 }
 
 Value* LlvmPass::getValue(ZBinOp* zbinop, BasicBlock* bb) {

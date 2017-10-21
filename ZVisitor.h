@@ -14,6 +14,7 @@ class ZVarDef;
 class ZReturn;
 class ZIf;
 class ZWhile;
+class ZSubscript;
 
 class ZVisitor {
 public:
@@ -41,7 +42,9 @@ public:
 
 	virtual void visit(ZIf* zif) { };
 
-	virtual void visit(ZWhile* zwhile) { };	
+	virtual void visit(ZWhile* zwhile) { };
+
+    virtual void visit(ZSubscript* zsubscript) { };
 
 	void error(std::string text) {
 		throw std::exception(text.c_str());

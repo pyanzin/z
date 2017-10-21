@@ -215,5 +215,8 @@
     <ClInclude Include="ZType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ZSubscript.h">
+      <Filter>Header Files\AST</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

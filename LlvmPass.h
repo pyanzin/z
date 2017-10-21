@@ -33,8 +33,8 @@ public:
 	llvm::Value* getValue(ZCast* zcast);
 
 	llvm::Value* getValue(ZId* zvar);
-
-	llvm::Value* getValue(ZBinOp* zbinop, llvm::BasicBlock* bb);
+    Value* getValue(ZSubscript* zsubscript, llvm::BasicBlock* bb);
+    llvm::Value* getValue(ZBinOp* zbinop, llvm::BasicBlock* bb);
 	Value* getValue(ZStringLit* zstringlit);
 	llvm::Value* getValue(ZIntLit* zintlit);
 	Value* getValue(ZCharLit* zintlit);

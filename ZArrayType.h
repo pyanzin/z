@@ -13,14 +13,15 @@ public:
 	}
 
 	llvm::Type* toLlvmType() override {
-		return getElementType()->toLlvmType()->getPointerTo();
+		return (llvm::Type*)_elementType->toLlvmType()->getPointerTo();
 	}
 
 	std::string& toString()  override {
-		return "Array[" + _elementType->toString() + "]";
-	}
+	    auto elemTypeName = _elementType ? _elementType->toString() : "_";
+	    return *(new std::string("Array[" + elemTypeName + "]"));
+    }
 
-	std::string& getName() override {
+    std::string& getName() override {
 		return *(new std::string("Array"));
 	}
 

@@ -13,6 +13,8 @@
 #include "ZIf.h"
 #include "ZWhile.h"
 #include "ZVarDef.h"
+#include "ZSubscript.h"
+#include "ZArrayType.h"
 
 void TypingPass::visit(ZModule* zmodule) {
 	for (ZFunc* zf : zmodule->getFunctions())
@@ -50,6 +52,19 @@ void TypingPass::visit(ZAssign* zassign) {
 
 void TypingPass::visit(ZCall* zcall) {
 	zcall->callee->accept(this);
+
+    int callerArgsCount = zcall->getArgs().size();
+
+    if (zcall->callee->getType()->getName() == "Array") {
+        if (callerArgsCount != 1)
+            error("Array subsciprt operator requires 1 argument");
+
+        ZSubscript* zsubscript = new ZSubscript(zcall->callee, zcall->getArgs()[0]);
+        zcall->getParent()->replaceChild(zcall, zsubscript);
+        visit(zsubscript);
+        return;
+    }
+
 	for (ZExpr* arg : zcall->getArgs())
 		arg->accept(this);
 
@@ -59,7 +74,7 @@ void TypingPass::visit(ZCall* zcall) {
 		error("Type of calee is not callable");
 
 	int calleeArgsCount = calleeType->getArgTypes().size();
-	int callerArgsCount = zcall->getArgs().size();
+	
 
 	if (calleeArgsCount != callerArgsCount)
 		error("Callee requires " + std::to_string(calleeArgsCount) + ", but caller passes " + std::to_string(callerArgsCount));
@@ -76,6 +91,23 @@ void TypingPass::visit(ZCall* zcall) {
 	ZType* retType = static_cast<ZFuncType*>(zcall->callee->getType())->getRetType();
 	zcall->setType(retType);
 }
+
+void TypingPass::visit(ZSubscript* zsubscript) {
+    ZExpr* target = zsubscript->getTarget();
+    target->accept(this);
+    ZArrayType* targetType = dynamic_cast<ZArrayType*>(target->getType());
+
+    if (!targetType)
+        error("Subscript operator is only applicable for expressions of array type");
+
+    ZExpr* index = zsubscript->getIndex();
+    index->accept(this);
+    if (index->getType() != Int && index->getType() != Char)
+        error("Subscript index must have integer type");
+
+    zsubscript->setType(targetType->getElementType());
+}
+
 
 void TypingPass::visit(ZBinOp* zbinop) {
 	zbinop->getLeft()->accept(this);
