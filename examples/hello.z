@@ -1,0 +1,45 @@
+extern def concat(s1: String, s2: String): String
+extern def print(s: String): None
+extern def getchar(): Char
+//extern def len(s: String): Int
+//extern def fork(fn: () => None): None
+//extern def pause(n: Int): None
+//extern def compare(s1: String, s2: String): Int
+extern def int2string(i: Int): String
+
+def main(): None = {
+	var arr = makeArray(4);
+	arr(0) = "a mulatto";
+	arr(1) = "an llbino";
+	arr(2) = "a mosquito";
+	arr(3) = "my libido";
+	print(int2string(size(arr)) + "\n");
+	print(join(arr, ", ") + "\n\0");
+
+	getchar();
+}
+
+def join(xs: Array[String], delim: String): String = {
+	var result = "";
+	var i = 0;
+	while(i < size(xs)) {
+		result = result + xs(i) + delim;
+		i = i + 1;
+	}	
+
+	return result;
+}
+
+def reduce[T, R](xs: Array[T], f: (R, T) => R, z: R): R = {
+	var result = z;
+	var i = 0;
+	while (i < size(xs)) {
+		result = f(result, xs(i));
+		i = i + 1;
+	}
+
+	return result;
+}
+
+extern def makeArray(size: Int): Array[String]
+extern def size[T](xs: Array[T]): Int
