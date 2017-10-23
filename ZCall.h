@@ -3,10 +3,11 @@
 #include <string>
 #include <vector>
 #include "ZBasicTypes.h"
+#include "SymbolRef.h"
 
 class ZCall : public ZExpr {
 public:
-	ZCall(ZExpr* callee, std::vector<ZExpr*>& args, std::vector<ZType*>* typeParams = nullptr) : args(args) {
+	ZCall(ZExpr* callee, std::vector<ZExpr*>& args, std::vector<ZType*>* typeParams, SymbolRef* ref) : args(args) {
 		this->callee = callee;
 		_typeParams = typeParams;
 		adopt(callee);
@@ -32,9 +33,14 @@ public:
         return args;
     }
 
+	SymbolRef* getRef() {
+		return _ref;
+	}
+
     ZExpr* callee;
     std::vector<ZExpr*>& args;
 	std::vector<ZType*>* _typeParams;
+	SymbolRef* _ref;
 
 	void dump(std::ostream& stream, unsigned depth) override {
 		dumpTab(stream, depth);

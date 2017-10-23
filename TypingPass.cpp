@@ -68,6 +68,8 @@ void TypingPass::visit(ZCall* zcall) {
         return;
     }
 
+	zcall
+
 	for (ZExpr* arg : zcall->getArgs())
 		arg->accept(this);
 
@@ -160,7 +162,7 @@ void TypingPass::visit(ZReturn* zreturn) {
 	
     ZType* retType = zreturn->getExpr() ? zreturn->getExpr()->getType() : Void;
 
-	if (_func->_returnType != retType)
+	if (!_func->_returnType->isEqual(*retType))
 		error("Type of return statement doesn't match function return type", zreturn->getPosition());
 }
 
@@ -196,7 +198,7 @@ void TypingPass::visit(ZVarDef* zvardef) {
 
 	if (!zvardef->getVarType() || zvardef->getVarType() == Unknown)
 		zvardef->setVarType(zvardef->getInitExpr()->getType());
-	else if (zvardef->getVarType() != initExpr->getType())
+	else if (!zvardef->getVarType()->isEqual(*initExpr->getType()))
 		error("Type of variable '" + zvardef->getName() + "' doesn't match the type of init expression", zvardef->getPosition());
 			
 }

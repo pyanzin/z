@@ -357,6 +357,8 @@ ZExpr* ZParser::parseCall() {
 
 	ZExpr* callee = parseId();
 
+	_symTable.enter();
+
 	vector<ZType*>* typeParams = new vector<ZType*>;
 	if (consume(OPEN_BRACKET)) {
 		while (!consume(CLOSE_BRACKET)) {
@@ -368,6 +370,7 @@ ZExpr* ZParser::parseCall() {
 
 	if (!consume(OPEN_PAREN)) {
 		_lexer.backtrackTo(pos);
+		_symTable.exit();
 		return parseId();
 	}
 
@@ -378,7 +381,11 @@ ZExpr* ZParser::parseCall() {
 		args->push_back(arg);
 	}
 
-	ZCall* zcall = new ZCall(callee, *args, typeParams);
+	auto ref = _symTable.makeRef();
+
+	_symTable.exit();
+
+	ZCall* zcall = new ZCall(callee, *args, typeParams, ref);
 
 	zcall->withSourceRange(endRange(sr));
 

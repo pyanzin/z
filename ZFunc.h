@@ -28,6 +28,10 @@ public:
 			adopt(body);
     }
 
+	bool isGeneric() {
+		return _typeParams.size() > 0;
+	}
+
 	void accept(ZVisitor* visitor);
 
 	void replaceChild(ZAst* oldChild, ZAst* newChild) override {

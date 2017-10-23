@@ -53,7 +53,7 @@ public:
         auto otherArgs = otherType->getArgTypes();
 
         for (int i = 0; i != thisArgs.size(); ++i) {
-            if (thisArgs[i] != otherArgs[i])
+            if (!thisArgs[i]->isEqual(*otherArgs[i]))
                 return false;
         }
 
@@ -112,7 +112,7 @@ public:
 	}
 
 	bool isEqual(ZType& other) override {
-		return false;
+		return &other == this;
 	}
 
 private:

@@ -54,7 +54,7 @@ public:
         return nullptr;
     }
 
-	ZType* findType(int id, std::string& name, bool onlyCurrentScope = false) {
+	ZType* findType(int id, std::string& name) {
 		SymbolStorage* storage = this;
 		do {
 			auto entries = storage->_typeEntries;
@@ -66,9 +66,30 @@ public:
 					return entry.second;
 			}
 			id = storage->_parentNumber;
-		} while (storage = onlyCurrentScope ? nullptr : storage->getParent());
+		} while (storage = storage->getParent());
 
 		return nullptr;
+    }
+
+	ZType* resolveGeneric(ZGenericParam* param) {
+		SymbolStorage* storage = this;
+		do {
+			auto entries = storage->_typeArguments;
+			for (auto entry : entries) {				
+				if (param == entry.second)
+					return entry.second;
+			}
+		} while (storage = storage->getParent());
+
+		return nullptr;
+	}
+
+	void addTypeArgument(ZGenericParam* param, ZType* arg) {
+		_typeArguments[param] = arg;
+    }
+
+	ZType* resolve(ZGenericParam* param) {
+		return _typeArguments[param];
     }
 
     std::map<int, SymbolEntry*>& getSymbolEntries() {
@@ -85,4 +106,5 @@ private:
 
     std::map<int, SymbolEntry*> _symbolEntries;
 	std::map<int, ZType*> _typeEntries;
+	std::map<ZGenericParam*, ZType*> _typeArguments;
 };

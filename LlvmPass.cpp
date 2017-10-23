@@ -33,10 +33,12 @@ void LlvmPass::visit(ZModule* zmodule) {
 	_module = new Module("test", getGlobalContext());
 
 	for (ZFunc* func : zmodule->getFunctions())
-		addFuncDef(func);
+		if (!func->isGeneric())
+			addFuncDef(func);
 
 	for (ZFunc* func : zmodule->getFunctions())
-		func->accept(this);	
+		if (!func->isGeneric())
+			func->accept(this);	
 }
 
 void LlvmPass::addFuncDef(ZFunc* zfunc) {

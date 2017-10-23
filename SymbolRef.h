@@ -18,8 +18,8 @@ public:
         return _storage->findSymbol(_id, name, onlyCurrentScope);
     }
 
-	ZType* findTypeDef(std::string& name, bool onlyCurrentScope = false) {
-		return _storage->findType(_id, name, onlyCurrentScope);
+	ZType* findTypeDef(std::string& name) {
+		return _storage->findType(_id, name);
 	}
 private:
     SymbolStorage* _storage;
