@@ -68,8 +68,6 @@ void TypingPass::visit(ZCall* zcall) {
         return;
     }
 
-	zcall
-
 	for (ZExpr* arg : zcall->getArgs())
 		arg->accept(this);
 
@@ -125,7 +123,7 @@ void TypingPass::visit(ZBinOp* zbinop) {
 		args->push_back(zbinop->getRight());
         auto zid = new ZId(*(new std::string("concat")), zbinop->getRef());
         zid->withSourceRange(zbinop->getSourceRange());
-        auto concat = new ZCall(zid, *args);
+        auto concat = new ZCall(zid, *args, new std::vector<ZType*>, nullptr);
         concat->withSourceRange(zbinop->getSourceRange());
         parent->replaceChild(zbinop, concat);
         concat->accept(this);

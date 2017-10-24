@@ -500,16 +500,20 @@ bool ZParser::isNext(::ZLexeme lexeme) {
 }
 
 void ZParser::reqConsume(::ZLexeme lexeme) {
-    if (!consume(lexeme))
-        error("Expected: " + toString(lexeme) + ", but found: " + toString(_lexer.getNextToken()));
+	if (!consume(lexeme)) {
+		auto pos = _lexer.beginRange()->getPosition();
+		error("Expected: " + toString(lexeme) + ", but found: " + toString(_lexer.getNextToken()) + " at " + pos);
+	}
 }
 
 std::string* ZParser::reqVal(::ZLexeme lexeme) {
     std::string* value = val(lexeme);
     if (value)
         return value;
-    else
-        error("Expected: " + toString(lexeme) + ", but found: " + toString(_lexer.getNextToken()));
+	else {
+		auto pos = _lexer.beginRange()->getPosition();
+		error("Expected: " + toString(lexeme) + ", but found: " + toString(_lexer.getNextToken()) + " at " + pos);
+	}
 
 }
 
