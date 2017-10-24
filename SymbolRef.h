@@ -21,6 +21,14 @@ public:
 	ZType* findTypeDef(std::string& name) {
 		return _storage->findType(_id, name);
 	}
+
+    ZType* resolve(ZType* type) {
+        ZGenericParam* gen = dynamic_cast<ZGenericParam*>(type);
+        if (!gen)
+            return type;
+
+        return _storage->resolveGeneric(gen);
+    }
 private:
     SymbolStorage* _storage;
     int _id;
