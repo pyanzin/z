@@ -9,7 +9,7 @@ class ZCall : public ZExpr {
 public:
 	ZCall(ZExpr* callee, std::vector<ZExpr*>& args, std::vector<ZType*>* typeParams, SymbolRef* ref) : args(args) {
 		this->callee = callee;
-		_typeParams = typeParams;
+		_typeArgs = typeParams;
 		adopt(callee);
 		for (auto arg : args)
 			adopt(arg);
@@ -37,9 +37,13 @@ public:
 		return _ref;
 	}
 
+	std::vector<ZType*>* getTypeArgs() {
+		return _typeArgs;
+	}
+
     ZExpr* callee;
     std::vector<ZExpr*>& args;
-	std::vector<ZType*>* _typeParams;
+	std::vector<ZType*>* _typeArgs;
 	SymbolRef* _ref;
 
 	void dump(std::ostream& stream, unsigned depth) override {

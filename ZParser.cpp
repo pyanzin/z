@@ -59,12 +59,12 @@ ZFunc* ZParser::parseFunc() {
 
 	_symTable.enter();
 
-	std::vector<string*>* typeParams = new std::vector<string*>;
+	std::vector<ZGenericParam*>* typeParams = new std::vector<ZGenericParam*>;
 	if (consume(OPEN_BRACKET)) {
 		while (!consume(CLOSE_BRACKET)) {
-			string* typeParam = reqVal(IDENT);
+			ZGenericParam* typeParam = new ZGenericParam(*reqVal(IDENT));
 			typeParams->push_back(typeParam);
-			_symTable.addType(new ZGenericParam(*typeParam));
+			_symTable.addType(typeParam);
 			consume(COMMA);
 		}
 	}
@@ -153,7 +153,7 @@ ZExpr* ZParser::parseLambda() {
     ZBlock* block = new ZBlock(new std::vector<ZAst*> { ret });
 
 	ZFuncType* lambdaType = new ZFuncType(retType, *argTypes);
-	auto lambda = new ZFunc(new string("lambda"), retType, *args, *(new vector<string*>()), block);
+	auto lambda = new ZFunc(new string("lambda"), retType, *args, *(new vector<ZGenericParam*>()), block);
 	lambda->withSourceRange(endRange(sr));
 	return lambda;
 }

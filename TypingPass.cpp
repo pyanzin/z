@@ -76,13 +76,13 @@ void TypingPass::visit(ZCall* zcall) {
 	if (!calleeType)
 		error("Type of calee is not callable");
 
-	int calleeArgsCount = calleeType->getArgTypes().size();
+	int calleeArgsCount = calleeType->getParamTypes().size();
 	
 
 	if (calleeArgsCount != callerArgsCount)
-		error("Callee requires " + std::to_string(calleeArgsCount) + ", but caller passes " + std::to_string(callerArgsCount));
+		error("Callee requires " + std::to_string(calleeArgsCount) + " arguments, but caller passes " + std::to_string(callerArgsCount));
 	int i = 0;
-	for (ZType* calleeArgType : calleeType->getArgTypes()) {
+	for (ZType* calleeArgType : calleeType->getParamTypes()) {
 		ZType* callerArgType = zcall->getArgs()[i++]->getType();
 		if (!calleeArgType->isEqual(*callerArgType))
 			error("Callee expects argument of type " + calleeArgType->toString() 
@@ -200,3 +200,16 @@ void TypingPass::visit(ZVarDef* zvardef) {
 		error("Type of variable '" + zvardef->getName() + "' doesn't match the type of init expression", zvardef->getPosition());
 			
 }
+
+void juxtapose(ZFunc* callee, ZCall* call) {
+	auto funcType = dynamic_cast<ZFuncType*>(callee->getType());
+
+	SymbolRef* ref = call->getRef();
+
+	int i = 0;
+	for (ZGenericParam* param : callee->getTypeParams())
+		// add Unknown if call doesn't have a type args
+		ref->addResolution(param, (*call->getTypeArgs())[i++]);
+	
+}
+

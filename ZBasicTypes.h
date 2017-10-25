@@ -46,11 +46,11 @@ public:
         ZFuncType* otherType = dynamic_cast<ZFuncType*>(&other);
         if (!otherType)
             return false;
-        if (this->getArgTypes().size() != otherType->getArgTypes().size())
+        if (this->getParamTypes().size() != otherType->getParamTypes().size())
             return false;
 
-        auto thisArgs = this->getArgTypes();
-        auto otherArgs = otherType->getArgTypes();
+        auto thisArgs = this->getParamTypes();
+        auto otherArgs = otherType->getParamTypes();
 
         for (int i = 0; i != thisArgs.size(); ++i) {
             if (!thisArgs[i]->isEqual(*otherArgs[i]))
@@ -80,7 +80,7 @@ public:
 		return *res;
     };
 
-	std::vector<ZType*>& getArgTypes() {
+	std::vector<ZType*>& getParamTypes() {
 		return _argTypes;
 	}
 

@@ -9,7 +9,7 @@ class ZArg;
 
 class ZFunc : public ZExpr {
 public:	
-	ZFunc(std::string* name, ZType* returnType, std::vector<ZArg*>& args, std::vector<string*>& typeParams, ZAst* body, bool isExtern = false) : _args(args) {
+	ZFunc(std::string* name, ZType* returnType, std::vector<ZArg*>& args, std::vector<ZGenericParam*>& typeParams, ZAst* body, bool isExtern = false) : _args(args) {
         _name = name;
         _returnType = returnType;
 		_typeParams = typeParams;
@@ -32,6 +32,10 @@ public:
 		return _typeParams.size() > 0;
 	}
 
+	std::vector<ZGenericParam*> getTypeParams() {
+		return _typeParams;
+	}
+
 	void accept(ZVisitor* visitor);
 
 	void replaceChild(ZAst* oldChild, ZAst* newChild) override {
@@ -52,7 +56,7 @@ public:
     std::string* _name;
 	ZType* _returnType;
     std::vector<ZArg*> _args;
-	std::vector<string*> _typeParams;
+	std::vector<ZGenericParam*> _typeParams;
 	ZAst* _body;
 	bool _isExtern;
 };
