@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "ZVisitor.h"
+#include "ZExpr.h"
 
+class SymbolRef;
 class ZIf;
 
 class TypingPass : public ZVisitor {
@@ -12,8 +14,10 @@ public:
 	void visit(ZBlock* zblock) override;
 
 	void visit(ZVarDef* zvardef) override;
-
-	void visit(ZAssign* zassign) override;
+    void juxtapose(ZFunc* callee, ZCall* call);
+    void juxtapose(ZType* paramType, ZExpr* expr, SymbolRef* ref);
+    ZType* juxtapose(ZType* paramType, ZType* argType, SymbolRef* ref);
+    void visit(ZAssign* zassign) override;
 
 	void visit(ZCall* zcall) override;
 

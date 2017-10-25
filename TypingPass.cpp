@@ -201,15 +201,43 @@ void TypingPass::visit(ZVarDef* zvardef) {
 			
 }
 
-void juxtapose(ZFunc* callee, ZCall* call) {
+void TypingPass::juxtapose(ZFunc* callee, ZCall* call) {
 	auto funcType = dynamic_cast<ZFuncType*>(callee->getType());
 
 	SymbolRef* ref = call->getRef();
 
+    bool isTypeArgsDefined = call->getTypeArgs()->size();
 	int i = 0;
-	for (ZGenericParam* param : callee->getTypeParams())
-		// add Unknown if call doesn't have a type args
-		ref->addResolution(param, (*call->getTypeArgs())[i++]);
-	
+    for (ZGenericParam* param : callee->getTypeParams())
+        ref->addResolution(param, isTypeArgsDefined ? (*call->getTypeArgs())[i++] : Unknown);
+
+    for (int i = 0; i < call->getArgs().size(); ++i) {
+        ZType* paramType = funcType->getParamTypes()[i];
+        ZExpr* argExpr = call->getArgs()[i];
+        juxtapose(paramType, argExpr, ref);
+    }
 }
 
+void TypingPass::juxtapose(ZType* paramType, ZExpr* expr, SymbolRef* ref) {
+    expr->setType(juxtapose(paramType, expr->getType(), ref));
+}
+
+ZType* TypingPass::juxtapose(ZType* paramType, ZType* argType, SymbolRef* ref) {
+    ZGenericParam* gen = dynamic_cast<ZGenericParam*>(paramType);
+    if (gen) {
+        ZType* resolved = ref->resolve(paramType);
+        if (!resolved->isEqual(*Unknown)) {
+            if (argType->isEqual(*Unknown))
+                return resolved;
+            if (resolved->isEqual(*argType))
+                return argType;
+            error("Type mismatch: expected " + resolved->toString() + "but passed " + argType->toString()); 
+        } else {
+            if (argType->isEqual(*Unknown))
+                return argType;
+            ref->addResolution(paramType, argType);
+            return argType;
+        }
+    }
+    // juxtapose generic params of the types
+}
