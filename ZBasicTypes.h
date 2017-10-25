@@ -38,8 +38,9 @@ extern ZBasicType* Void;
 class ZFuncType : public ZType {
 public:
     ZFuncType(ZType* retType, std::vector<ZType*>& argTypes) {
-        _retType = retType;
-        _argTypes = argTypes;
+        _typeParams->push_back(retType);
+        for (ZType* argType : argTypes)
+            _typeParams->push_back(argType);
     }
 
     bool isEqual(ZType& other) override {
@@ -69,28 +70,26 @@ public:
     std::string& toString() override {
 		std::string* res = new std::string("(");
 		bool isLast = false;
-		for (auto i = _argTypes.begin(); i != _argTypes.end(); ++i) {
-			isLast = i == _argTypes.end() - 1;
+		for (auto i = _typeParams->begin() + 1; i != _typeParams->end(); ++i) {
+			isLast = i == _typeParams->end() - 1;
 			*res += (*i)->toString();
 			if (!isLast)
 				*res += ", ";
 		}
 
-		*res += ") => " + _retType->toString();
+		*res += ") => " + getRetType()->toString();
 		return *res;
     };
 
 	std::vector<ZType*>& getParamTypes() {
-		return _argTypes;
+		return (*new std::vector<ZType*>(_typeParams->begin() + 1, _typeParams->end()));
 	}
 
 	ZType* getRetType() {
-		return _retType;
+		return (*_typeParams)[0];
 	}
 
 private:
-    ZType* _retType;
-    std::vector<ZType*> _argTypes;
 };
 
 class ZGenericParam : public ZType {

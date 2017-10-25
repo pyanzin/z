@@ -35,4 +35,5 @@ public:
 
 private:
 	ZFunc* _func;
+    ZModule* _module;
 };

@@ -13,10 +13,10 @@ inline std::string& ZBasicType::toString() {
 
 llvm::Type* ZFuncType::toLlvmType() {
 	std::vector<llvm::Type*>* argTypes = new std::vector<llvm::Type*>();
-	for (auto argType : _argTypes)
+	for (auto argType : getParamTypes())
 		argTypes->push_back(argType->toLlvmType());
 
-	auto funcType = llvm::FunctionType::get(_retType->toLlvmType(), *argTypes, false);
+	auto funcType = llvm::FunctionType::get(getRetType()->toLlvmType(), *argTypes, false);
 	return llvm::PointerType::get(funcType, 0);
 }
 

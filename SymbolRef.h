@@ -30,8 +30,8 @@ public:
         return _storage->resolveGeneric(gen);
     }
 
-	void addResolution(ZType* param, ZType* arg) {
-		_storage->addTypeArgument((ZGenericParam*)param, arg);
+	void addResolution(ZGenericParam* param, ZType* arg) {
+		_storage->addTypeArgument(param, arg);
     }
 private:
     SymbolStorage* _storage;

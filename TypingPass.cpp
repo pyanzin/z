@@ -17,6 +17,7 @@
 #include "ZArrayType.h"
 
 void TypingPass::visit(ZModule* zmodule) {
+    _module = zmodule;
 	for (ZFunc* zf : zmodule->getFunctions())
 		visit(zf);
 }
@@ -81,7 +82,17 @@ void TypingPass::visit(ZCall* zcall) {
 
 	if (calleeArgsCount != callerArgsCount)
 		error("Callee requires " + std::to_string(calleeArgsCount) + " arguments, but caller passes " + std::to_string(callerArgsCount));
-	int i = 0;
+	
+    // todo: find better
+    auto name = ((ZId*)zcall->callee)->getName();
+    ZFunc* func;
+    for (auto i : _module->getFunctions())
+        if (*i->_name == name)
+            func = i;
+
+    juxtapose(func, zcall);
+    
+    int i = 0;
 	for (ZType* calleeArgType : calleeType->getParamTypes()) {
 		ZType* callerArgType = zcall->getArgs()[i++]->getType();
 		if (!calleeArgType->isEqual(*callerArgType))
@@ -235,9 +246,10 @@ ZType* TypingPass::juxtapose(ZType* paramType, ZType* argType, SymbolRef* ref) {
         } else {
             if (argType->isEqual(*Unknown))
                 return argType;
-            ref->addResolution(paramType, argType);
+            ref->addResolution(gen, argType);
             return argType;
         }
     }
-    // juxtapose generic params of the types
+    
+    return argType;
 }

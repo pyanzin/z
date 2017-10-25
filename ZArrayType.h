@@ -5,19 +5,19 @@
 class ZArrayType : public ZType {
 public:
 	ZArrayType(ZType* elemType) {
-		_elementType = elemType;
+        _typeParams->push_back(elemType);
 	}
 
 	ZType* getElementType() {
-		return  _elementType;
+		return (*_typeParams)[0];
 	}
 
 	llvm::Type* toLlvmType() override {
-		return (llvm::Type*)_elementType->toLlvmType()->getPointerTo();
+		return (llvm::Type*)(*_typeParams)[0]->toLlvmType()->getPointerTo();
 	}
 
 	std::string& toString()  override {
-	    auto elemTypeName = _elementType ? _elementType->toString() : "_";
+	    auto elemTypeName = (*_typeParams)[0] ? (*_typeParams)[0]->toString() : "_";
 	    return *(new std::string("Array[" + elemTypeName + "]"));
     }
 
@@ -32,5 +32,4 @@ public:
 		return false;		
 	}
 private:
-	ZType* _elementType;
 };
