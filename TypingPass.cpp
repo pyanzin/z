@@ -93,17 +93,17 @@ void TypingPass::visit(ZCall* zcall) {
     juxtapose(func, zcall);
     
     int i = 0;
-	for (ZType* calleeArgType : calleeType->getParamTypes()) {
-		ZType* callerArgType = zcall->getArgs()[i++]->getType();
-		if (!calleeArgType->isEqual(*callerArgType))
-			error("Callee expects argument of type " + calleeArgType->toString() 
-				+ ", but received " + callerArgType->toString() 
-				+ " at position " + std::to_string(i));
-		
-	}
-
-	ZType* retType = static_cast<ZFuncType*>(zcall->callee->getType())->getRetType();
-	zcall->setType(retType);
+	//for (ZType* calleeArgType : calleeType->getParamTypes()) {
+	//	ZType* callerArgType = zcall->getArgs()[i++]->getType();
+	//	if (!calleeArgType->isEqual(*callerArgType))
+	//		error("Callee expects argument of type " + calleeArgType->toString() 
+	//			+ ", but received " + callerArgType->toString() 
+	//			+ " at position " + std::to_string(i));
+	//	
+	//}
+	//
+	//ZType* retType = static_cast<ZFuncType*>(zcall->callee->getType())->getRetType();
+	//zcall->setType(retType);
 }
 
 void TypingPass::visit(ZSubscript* zsubscript) {
@@ -134,7 +134,7 @@ void TypingPass::visit(ZBinOp* zbinop) {
 		args->push_back(zbinop->getRight());
         auto zid = new ZId(*(new std::string("concat")), zbinop->getRef());
         zid->withSourceRange(zbinop->getSourceRange());
-        auto concat = new ZCall(zid, *args, new std::vector<ZType*>, nullptr);
+        auto concat = new ZCall(zid, *args, new std::vector<ZType*>, zbinop->getRef());
         concat->withSourceRange(zbinop->getSourceRange());
         parent->replaceChild(zbinop, concat);
         concat->accept(this);
@@ -227,6 +227,8 @@ void TypingPass::juxtapose(ZFunc* callee, ZCall* call) {
         ZExpr* argExpr = call->getArgs()[i];
         juxtapose(paramType, argExpr, ref);
     }
+
+	call->setType(juxtapose(callee->_returnType, call->getType(), ref));
 }
 
 void TypingPass::juxtapose(ZType* paramType, ZExpr* expr, SymbolRef* ref) {
@@ -242,7 +244,7 @@ ZType* TypingPass::juxtapose(ZType* paramType, ZType* argType, SymbolRef* ref) {
                 return resolved;
             if (resolved->isEqual(*argType))
                 return argType;
-            error("Type mismatch: expected " + resolved->toString() + "but passed " + argType->toString()); 
+            error("Type mismatch: expected " + resolved->toString() + ", but passed " + argType->toString()); 
         } else {
             if (argType->isEqual(*Unknown))
                 return argType;
@@ -250,6 +252,9 @@ ZType* TypingPass::juxtapose(ZType* paramType, ZType* argType, SymbolRef* ref) {
             return argType;
         }
     }
+
+	for (int i = 0; i < paramType->getTypeParams()->size(); ++i)
+		argType->setTypeParam(i, juxtapose((*paramType->getTypeParams())[i], (*argType->getTypeParams())[i], ref));
     
     return argType;
 }

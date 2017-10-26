@@ -76,12 +76,12 @@ public:
 		do {
 			auto entries = storage->_typeArguments;
 			for (auto entry : entries) {				
-				if (param == entry.second)
+				if (param->isEqual(*entry.first))
 					return entry.second;
 			}
 		} while (storage = storage->getParent());
 
-		return nullptr;
+		return Unknown;
 	}
 
 	void addTypeArgument(ZGenericParam* param, ZType* arg) {

@@ -381,7 +381,7 @@ ZExpr* ZParser::parseCall() {
 		args->push_back(arg);
 	}
 
-	auto ref = _symTable.makeRef();
+	SymbolRef* ref = _symTable.makeRef();
 
 	_symTable.exit();
 
