@@ -85,25 +85,27 @@ void TypingPass::visit(ZCall* zcall) {
 	
     // todo: find better
     auto name = ((ZId*)zcall->callee)->getName();
-    ZFunc* func;
+    ZFunc* func = nullptr;
     for (auto i : _module->getFunctions())
         if (*i->_name == name)
             func = i;
 
-    juxtapose(func, zcall);
-    
-    int i = 0;
-	//for (ZType* calleeArgType : calleeType->getParamTypes()) {
-	//	ZType* callerArgType = zcall->getArgs()[i++]->getType();
-	//	if (!calleeArgType->isEqual(*callerArgType))
-	//		error("Callee expects argument of type " + calleeArgType->toString() 
-	//			+ ", but received " + callerArgType->toString() 
-	//			+ " at position " + std::to_string(i));
-	//	
-	//}
-	//
-	//ZType* retType = static_cast<ZFuncType*>(zcall->callee->getType())->getRetType();
-	//zcall->setType(retType);
+	if (func)
+		juxtapose(func, zcall);
+	else {
+		int i = 0;
+		for (ZType* calleeArgType : calleeType->getParamTypes()) {
+			ZType* callerArgType = zcall->getArgs()[i++]->getType();
+			if (!calleeArgType->isEqual(*callerArgType))
+				error("Callee expects argument of type " + calleeArgType->toString()
+				+ ", but received " + callerArgType->toString()
+				+ " at position " + std::to_string(i));
+
+		}
+
+		ZType* retType = static_cast<ZFuncType*>(zcall->callee->getType())->getRetType();
+		zcall->setType(retType);
+	}
 }
 
 void TypingPass::visit(ZSubscript* zsubscript) {
