@@ -2,7 +2,7 @@
 #include "ZExpr.h"
 #include <string>
 #include <vector>
-#include "ZBasicTypes.h"
+#include "ZBasicType.h"
 #include "SymbolRef.h"
 
 class ZCall : public ZExpr {

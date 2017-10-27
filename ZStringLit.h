@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "ZExpr.h"
-#include "ZBasicTypes.h"
+#include "ZBasicType.h"
 
 class ZStringLit : public ZExpr {
 public:

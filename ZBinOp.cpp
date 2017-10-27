@@ -1,5 +1,5 @@
 ﻿#include "ZBinOp.h"
-#include "ZBasicTypes.h"
+#include "ZBasicType.h"
 #include "SymbolRef.h"
 
 void ZBinOp::accept(ZVisitor* visitor) {

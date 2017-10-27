@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <map>
 #include "SymbolEntry.h"
+#include "ZGenericParam.h"
 
 class SymbolStorage {
 public:

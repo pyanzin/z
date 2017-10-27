@@ -19,6 +19,12 @@
     <Filter Include="Source Files\AST">
       <UniqueIdentifier>{83a47b12-c830-4957-8c44-d5e0bbf69df8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Types">
+      <UniqueIdentifier>{313ac28f-7cbe-4bee-9f8a-b95894b3b18a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Types">
+      <UniqueIdentifier>{9a602373-7dcb-48e0-875d-6357446cdc0b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -55,9 +61,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TypingPass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ZBasicTypes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ZWhile.cpp">
@@ -102,6 +105,12 @@
     <ClCompile Include="ZCharLit.cpp">
       <Filter>Source Files\AST</Filter>
     </ClCompile>
+    <ClCompile Include="ZBasicType.cpp">
+      <Filter>Source Files\Types</Filter>
+    </ClCompile>
+    <ClCompile Include="ZFuncType.cpp">
+      <Filter>Source Files\Types</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ZLexer.h">
@@ -111,9 +120,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ZVisitor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ZBasicTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Utils.h">
@@ -206,17 +212,26 @@
     <ClInclude Include="ZNop.h">
       <Filter>Header Files\AST</Filter>
     </ClInclude>
-    <ClInclude Include="ZArrayType.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ZCast.h">
       <Filter>Header Files\AST</Filter>
     </ClInclude>
-    <ClInclude Include="ZType.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ZSubscript.h">
       <Filter>Header Files\AST</Filter>
+    </ClInclude>
+    <ClInclude Include="ZArrayType.h">
+      <Filter>Header Files\Types</Filter>
+    </ClInclude>
+    <ClInclude Include="ZType.h">
+      <Filter>Header Files\Types</Filter>
+    </ClInclude>
+    <ClInclude Include="ZFuncType.h">
+      <Filter>Header Files\Types</Filter>
+    </ClInclude>
+    <ClInclude Include="ZGenericParam.h">
+      <Filter>Header Files\Types</Filter>
+    </ClInclude>
+    <ClInclude Include="ZBasicType.h">
+      <Filter>Header Files\Types</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

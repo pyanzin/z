@@ -1,7 +1,7 @@
 ﻿#include "ZArg.h"
 #include "ZFunc.h"
 #include "ZVisitor.h"
-#include "ZBasicTypes.h"
+#include "ZBasicType.h"
 
 void ZFunc::accept(ZVisitor* visitor) {
 	visitor->visit(this);

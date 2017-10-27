@@ -1,7 +1,8 @@
-﻿#include "ZBasicTypes.h"
+﻿#include "ZBasicType.h"
 #include <llvm/IR/Function.h>
 #include <llvm/IR/LLVMContext.h>
 #include "ZArrayType.h"
+#include "ZFuncType.h"
 
 inline llvm::Type* ZBasicType::toLlvmType() {
 	return _type;
@@ -9,15 +10,6 @@ inline llvm::Type* ZBasicType::toLlvmType() {
 
 inline std::string& ZBasicType::toString() {
 	return _name;
-}
-
-llvm::Type* ZFuncType::toLlvmType() {
-	std::vector<llvm::Type*>* argTypes = new std::vector<llvm::Type*>();
-	for (auto argType : getParamTypes())
-		argTypes->push_back(argType->toLlvmType());
-
-	auto funcType = llvm::FunctionType::get(getRetType()->toLlvmType(), *argTypes, false);
-	return llvm::PointerType::get(funcType, 0);
 }
 
 // todo: fill all basic types

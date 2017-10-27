@@ -15,6 +15,7 @@
 #include "ZVarDef.h"
 #include "ZSubscript.h"
 #include "ZArrayType.h"
+#include "ZGenericParam.h"
 
 void TypingPass::visit(ZModule* zmodule) {
     _module = zmodule;

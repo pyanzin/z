@@ -15,6 +15,8 @@
 #include "ZBooleanLit.h"
 #include "ZNop.h"
 #include "ZArrayType.h"
+#include "ZGenericParam.h"
+#include "ZFuncType.h"
 
 ZParser::ZParser(ZLexer& lexer, SymbolTable& symTable): _lexer(lexer), _symTable(symTable) {
 	_ops[PLUS] = Sum;

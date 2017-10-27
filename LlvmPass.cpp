@@ -3,7 +3,7 @@
 #include "ZFunc.h"
 #include "ZModule.h"
 #include "ZArg.h"
-#include "ZBasicTypes.h"
+#include "ZBasicType.h"
 #include "ZBlock.h"
 #include "ZId.h"
 #include "ZIf.h"

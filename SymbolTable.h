@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include <string>
-#include "ZBasicTypes.h"
+#include "ZBasicType.h"
 #include "SymbolStorage.h"
 #include "SymbolRef.h"
 

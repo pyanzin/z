@@ -159,12 +159,13 @@
     <ClCompile Include="ZArg.cpp" />
     <ClCompile Include="ZAssign.cpp" />
     <ClCompile Include="ZAst.cpp" />
-    <ClCompile Include="ZBasicTypes.cpp" />
+    <ClCompile Include="ZBasicType.cpp" />
     <ClCompile Include="ZBinOp.cpp" />
     <ClCompile Include="ZBlock.cpp" />
     <ClCompile Include="ZCall.cpp" />
     <ClCompile Include="ZCharLit.cpp" />
     <ClCompile Include="ZFunc.cpp" />
+    <ClCompile Include="ZFuncType.cpp" />
     <ClCompile Include="ZIf.cpp" />
     <ClCompile Include="ZLexer.cpp" />
     <ClCompile Include="ZModule.cpp" />
@@ -190,7 +191,7 @@
     <ClInclude Include="ZArrayType.h" />
     <ClInclude Include="ZAssign.h" />
     <ClInclude Include="ZAst.h" />
-    <ClInclude Include="ZBasicTypes.h" />
+    <ClInclude Include="ZBasicType.h" />
     <ClInclude Include="ZBinOp.h" />
     <ClInclude Include="ZBlock.h" />
     <ClInclude Include="ZBooleanLit.h" />
@@ -199,6 +200,8 @@
     <ClInclude Include="ZCharLit.h" />
     <ClInclude Include="ZExpr.h" />
     <ClInclude Include="ZFunc.h" />
+    <ClInclude Include="ZFuncType.h" />
+    <ClInclude Include="ZGenericParam.h" />
     <ClInclude Include="ZIf.h" />
     <ClInclude Include="ZSubscript.h" />
     <ClInclude Include="ZIntLit.h" />

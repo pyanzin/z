@@ -2,8 +2,9 @@
 
 #include <vector>
 #include "ZExpr.h"
-#include "ZBasicTypes.h"
 #include "ZArg.h"
+#include "ZGenericParam.h"
+#include "ZFuncType.h"
 
 class ZArg;
 
