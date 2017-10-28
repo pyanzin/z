@@ -30,6 +30,7 @@ LlvmPass::LlvmPass() {
 }
 
 void LlvmPass::visit(ZModule* zmodule) {
+    _zmodule = zmodule;
 	_module = new Module("test", getGlobalContext());
 
 	for (ZFunc* func : zmodule->getFunctions())
@@ -38,48 +39,49 @@ void LlvmPass::visit(ZModule* zmodule) {
 
 	for (ZFunc* func : zmodule->getFunctions())
 		if (!func->isGeneric())
-			func->accept(this);	
+			generate(func);	
 }
 
-void LlvmPass::addFuncDef(ZFunc* zfunc) {
+Value* LlvmPass::addFuncDef(ZFunc* zfunc, string* name) {
 	auto args = std::vector<Type*>();
-	for (auto arg : zfunc->_args) {
-		auto argType = arg->getType();		
+	for (auto arg : zfunc->getArgs()) {
+		auto argType = resolve(arg->getType());		
 		args.push_back(argType->toLlvmType());
 	}
-	auto funcType = FunctionType::get(zfunc->_returnType->toLlvmType(), args, false);
+	auto funcType = FunctionType::get(resolve(zfunc->getReturnType())->toLlvmType(), args, false);
 
-	auto func = Function::Create(funcType, Function::ExternalLinkage, zfunc->_name->c_str(), _module);
+	auto func = Function::Create(funcType, Function::ExternalLinkage, name ? *name : *zfunc->getName(), _module);
 
-
-	auto zargs = zfunc->_args;
+	auto zargs = zfunc->getArgs();
 	unsigned i = 0;
 	for (auto& arg : func->args()) {
 		auto zarg = zargs[i++];
 		arg.setName(*zarg->getName());
 	}
 
-	_currentValues->add(*zfunc->_name, func);
+	_currentValues->add(name ? *name : *zfunc->getName(), func);
+
+    return func;
 }
 
-void LlvmPass::visit(ZFunc* zfunc) {
+void LlvmPass::generate(ZFunc* zfunc, string* name) {
 	if (zfunc->isExtern())
 		return;
 	
 	_currentValues->enter();
 
-	_func = static_cast<Function*>(_currentValues->get(*zfunc->_name));
+	_func = static_cast<Function*>(_currentValues->get(name ? *name : *zfunc->getName()));
 
-	auto zargs = zfunc->_args;
+	auto zargs = zfunc->getArgs();
 	unsigned i = 0;
 	for (auto& arg : _func->args()) {
 		auto zarg = zargs[i++];
 		_currentValues->add(*zarg->getName(), &arg);
 	}
 
-	generate(zfunc->_body);
+	generate(zfunc->getBody());
 
-    if (zfunc->_returnType == Void)
+    if (resolve(zfunc->getReturnType()) == Void)
     {
         auto bb = _func->getBasicBlockList().end()->getPrevNode();
         _builder->SetInsertPoint(bb);
@@ -339,9 +341,36 @@ Value* LlvmPass::getValue(ZBooleanLit* zbooleanlit) {
     return ConstantInt::get(getGlobalContext(), APInt::APInt(1, zbooleanlit->getValue() ? 1 : 0));
 }
 
-Value* LlvmPass::getValue(ZCall* zcall, BasicBlock* bb) {
-	auto callee = getValue(zcall->callee, bb);
+Value* LlvmPass::generateConcrete(ZFunc* func, SymbolRef* symbolRef) {
+    SymbolRef* oldResolver = _genericResolver;
+    _genericResolver = symbolRef;
+    auto name = new string(*func->getName());
 
+    for (auto gen : func->getTypeParams()) {
+        *name += resolve(gen)->getName();
+    }
+
+    Value* result = addFuncDef(func, name);
+    if (!func->isExtern())
+        generate(func, name);
+
+    _genericResolver = oldResolver;
+
+    return result;
+}
+
+Value* LlvmPass::getValue(ZCall* zcall, BasicBlock* bb) {
+    ZFuncType* calleeType = dynamic_cast<ZFuncType*>(zcall->callee->getType());
+
+    ZId* zid = dynamic_cast<ZId*>(zcall->callee);
+
+    ZFunc* func = _zmodule->findFunc(zid->getName());
+    llvm::Value* callee;
+    if (calleeType->hasGenericDefs())
+        callee = generateConcrete(func, zcall->getRef());
+    else
+        callee = getValue(zcall->callee, bb);
+     
 	auto args = new std::vector<Value*>();
 	for (auto arg : zcall->getArgs()) {
 	    auto value = getValue(arg, bb);
@@ -374,22 +403,22 @@ Value* LlvmPass::getValue(ZFunc* zfunc) {
     BasicBlock* previousLastBB = _lastBB;
 
 	auto args = std::vector<Type*>();
-	for (auto arg : zfunc->_args) {
-		auto argType = arg->getType();
+	for (auto arg : zfunc->getArgs()) {
+		auto argType = resolve(arg->getType());
 		if (dynamic_cast<ZFuncType*>(argType))
 			args.push_back(argType->toLlvmType());
 		else
 			args.push_back(argType->toLlvmType());
 	}
-	auto funcType = FunctionType::get(zfunc->_returnType->toLlvmType(), args, false);
+	auto funcType = FunctionType::get(resolve(zfunc->getReturnType())->toLlvmType(), args, false);
 
-	auto func = Function::Create(funcType, Function::ExternalLinkage, zfunc->_name->c_str(), _module);
+	auto func = Function::Create(funcType, Function::ExternalLinkage, zfunc->getName()->c_str(), _module);
 
 	_func = func;
 
 	_currentValues->enter();
 
-	auto zargs = zfunc->_args;
+	auto zargs = zfunc->getArgs();
 	unsigned i = 0;
 	for (auto& arg : func->args()) {
 		auto zarg = zargs[i++];
@@ -397,9 +426,9 @@ Value* LlvmPass::getValue(ZFunc* zfunc) {
 		_currentValues->add(*zarg->getName(), &arg);
 	}
 	
-	generate(zfunc->_body);
+	generate(zfunc->getBody());
 
-	if (zfunc->_returnType == Void)
+	if (resolve(zfunc->getReturnType()) == Void)
 	{
 		auto bb = _func->getBasicBlockList().end()->getPrevNode();
 		_builder->SetInsertPoint(bb);
@@ -412,6 +441,13 @@ Value* LlvmPass::getValue(ZFunc* zfunc) {
     _lastBB = previousLastBB;
 
 	return func;
+}
+
+ZType* LlvmPass::resolve(ZType* type) {
+    if (dynamic_cast<ZGenericParam*>(type))
+        return _genericResolver->resolve(type);
+    else
+        return type;
 }
 
 BasicBlock* LlvmPass::makeBB(std::string name) {

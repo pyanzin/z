@@ -92,7 +92,7 @@ ZFunc* ZParser::parseFunc() {
 		_symTable.addSymbol(arg->getType(), arg->getName());
 	}
 
-    ZType* funcType = new ZFuncType(retType, *argTypes);
+    ZType* funcType = new ZFuncType(retType, *argTypes, typeParams);
 
 	ZBlock* body = nullptr;
 	if (!isExtern)

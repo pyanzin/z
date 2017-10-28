@@ -8,6 +8,7 @@
 #include "ZStringLit.h"
 #include "ZBooleanLit.h"
 #include "ZNop.h"
+#include "SymbolRef.h"
 
 class ZCast;
 class ZExpr;
@@ -17,11 +18,10 @@ class LlvmPass : public ZVisitor
 public:
 	LlvmPass();
 
-	void visit(ZFunc* zfunc) override;
-
 	void visit(ZModule* zmodule) override;
-	void addFuncDef(ZFunc* zfunc);
-	llvm::BasicBlock* generate(ZBlock* zblock);
+	Value* addFuncDef(ZFunc* zfunc, string* name = nullptr);
+    void generate(ZFunc* zfunc, string* name = nullptr);
+    llvm::BasicBlock* generate(ZBlock* zblock);
 	llvm::BasicBlock* generate(ZAst* zast);
 
 	llvm::BasicBlock* generate(ZVarDef* zvardef);
@@ -39,10 +39,12 @@ public:
 	llvm::Value* getValue(ZIntLit* zintlit);
 	Value* getValue(ZCharLit* zintlit);
     Value* getValue(ZBooleanLit* zbooleanlit);
+    Value* generateConcrete(ZFunc* func, SymbolRef* symbolRef);
     llvm::Value* getValue(ZCall* zcall, BasicBlock* bb);
 	llvm::Value* getValue(ZAssign* zassign, llvm::BasicBlock* bb);
 	Value* getValue(ZFunc* zfunc);
-	BasicBlock* makeBB(std::string name);
+    ZType* resolve(ZType* type);
+    BasicBlock* makeBB(std::string name);
     BasicBlock* makeNopBB(std::string name);
 
     llvm::Module* getModule() {
@@ -55,4 +57,6 @@ private:
 	LlvmTable* _currentValues;
 
     llvm::IRBuilder<>* _builder;
+    SymbolRef* _genericResolver;
+    ZModule* _zmodule;
 };

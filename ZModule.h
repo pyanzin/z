@@ -18,6 +18,13 @@ public:
 		return functions;
     }
 
+    ZFunc* findFunc(string& name) {
+        for (ZFunc* func : functions)
+            if (*func->getName() == name)
+                return func;
+        return nullptr;
+	}
+
 	void dump(std::ostream& stream, unsigned depth) override {
 		dumpTab(stream, depth);
 

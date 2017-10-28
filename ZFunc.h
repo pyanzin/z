@@ -33,6 +33,22 @@ public:
 		return _typeParams.size() > 0;
 	}
 
+    string* getName() {
+        return _name;
+	}
+
+    vector<ZArg*>& getArgs() {
+        return _args;
+	}
+
+    ZType* getReturnType() {
+        return _returnType;
+	}
+
+    ZAst* getBody() {
+        return _body;
+	}
+
 	std::vector<ZGenericParam*> getTypeParams() {
 		return _typeParams;
 	}
@@ -53,10 +69,10 @@ public:
 
 	bool isExtern() { return _isExtern; }
 
-//private:
+private:
     std::string* _name;
 	ZType* _returnType;
-    std::vector<ZArg*> _args;
+    std::vector<ZArg*>& _args;
 	std::vector<ZGenericParam*> _typeParams;
 	ZAst* _body;
 	bool _isExtern;

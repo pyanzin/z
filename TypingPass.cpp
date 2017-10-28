@@ -25,11 +25,11 @@ void TypingPass::visit(ZModule* zmodule) {
 
 void TypingPass::visit(ZFunc* zfunc) {
 	_func = zfunc;
-	for (auto arg : zfunc->_args)
+	for (auto arg : zfunc->getArgs())
 		arg->accept(this);
 
 	if (!zfunc->isExtern())
-		zfunc->_body->accept(this);	
+		zfunc->getBody()->accept(this);	
 }
 
 void TypingPass::visit(ZBlock* zblock) {
@@ -88,7 +88,7 @@ void TypingPass::visit(ZCall* zcall) {
     auto name = ((ZId*)zcall->callee)->getName();
     ZFunc* func = nullptr;
     for (auto i : _module->getFunctions())
-        if (*i->_name == name)
+        if (*i->getName() == name)
             func = i;
 
 	if (func)
@@ -174,7 +174,7 @@ void TypingPass::visit(ZReturn* zreturn) {
 	
     ZType* retType = zreturn->getExpr() ? zreturn->getExpr()->getType() : Void;
 
-	if (!_func->_returnType->isEqual(*retType))
+	if (!_func->getReturnType()->isEqual(*retType))
 		error("Type of return statement doesn't match function return type", zreturn->getPosition());
 }
 
@@ -231,7 +231,7 @@ void TypingPass::juxtapose(ZFunc* callee, ZCall* call) {
         juxtapose(paramType, argExpr, ref);
     }
 
-	call->setType(juxtapose(callee->_returnType, call->getType(), ref));
+	call->setType(juxtapose(callee->getReturnType(), call->getType(), ref));
 }
 
 void TypingPass::juxtapose(ZType* paramType, ZExpr* expr, SymbolRef* ref) {

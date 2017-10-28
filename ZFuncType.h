@@ -1,14 +1,16 @@
 ﻿#pragma once
 #include "ZType.h"
 #include <vector>
+#include "ZGenericParam.h"
 
 
 class ZFuncType : public ZType {
 public:
-	ZFuncType(ZType* retType, std::vector<ZType*>& argTypes) {
+	ZFuncType(ZType* retType, std::vector<ZType*>& argTypes, std::vector<ZGenericParam*>* genericDefs = nullptr) {
 		_typeParams->push_back(retType);
 		for (ZType* argType : argTypes)
 			_typeParams->push_back(argType);
+        _genericDefs = genericDefs ? genericDefs : new std::vector<ZGenericParam*>;
 	}
 
 	bool isEqual(ZType& other) override {
@@ -57,5 +59,18 @@ public:
 		return (*_typeParams)[0];
 	}
 
+    void addGenericDef(ZGenericParam* param) {
+        _genericDefs->push_back(param);
+	}
+
+    std::vector<ZGenericParam*>* getGenericDefs() {
+        return _genericDefs;
+	}
+
+    bool hasGenericDefs() {
+        return _genericDefs->size() > 0;
+	}
+
 private:
+    std::vector<ZGenericParam*>* _genericDefs;
 };
