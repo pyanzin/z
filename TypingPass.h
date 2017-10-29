@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "ZVisitor.h"
 #include "ZExpr.h"
+#include "ZLambda.h"
 
 class SymbolRef;
 class ZIf;
@@ -18,8 +19,8 @@ public:
     void juxtapose(ZType* paramType, ZExpr* expr, SymbolRef* ref);
     ZType* juxtapose(ZType* paramType, ZType* argType, SymbolRef* ref);
     void visit(ZAssign* zassign) override;
-
-	void visit(ZCall* zcall) override;
+    void visit(ZLambda* zlambda) override;
+    void visit(ZCall* zcall) override;
 
 	void visit(ZBinOp* zbinop) override;
 

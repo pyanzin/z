@@ -42,7 +42,7 @@ public:
     Value* generateConcrete(ZFunc* func, SymbolRef* symbolRef);
     llvm::Value* getValue(ZCall* zcall, BasicBlock* bb);
 	llvm::Value* getValue(ZAssign* zassign, llvm::BasicBlock* bb);
-	Value* getValue(ZFunc* zfunc);
+	Value* getValue(ZLambda* zfunc);
     ZType* resolve(ZType* type);
     BasicBlock* makeBB(std::string name);
     BasicBlock* makeNopBB(std::string name);
@@ -50,6 +50,8 @@ public:
     llvm::Module* getModule() {
 		return _module;
 	}
+
+    string& getNextLambdaName();
 private:
 	llvm::Module* _module;
 	llvm::Function* _func;
@@ -59,4 +61,5 @@ private:
     llvm::IRBuilder<>* _builder;
     SymbolRef* _genericResolver;
     ZModule* _zmodule;
+    int _lambdaCounter;
 };

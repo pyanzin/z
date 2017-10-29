@@ -233,5 +233,8 @@
     <ClInclude Include="ZBasicType.h">
       <Filter>Header Files\Types</Filter>
     </ClInclude>
+    <ClInclude Include="ZLambda.h">
+      <Filter>Header Files\AST</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

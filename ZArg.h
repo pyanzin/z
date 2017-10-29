@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "ZAst.h"
+#include <vector>
 
 class ZVisitor;
 class ZType;
@@ -16,12 +17,15 @@ public:
         return _type;
     }
 
+    void setType(ZType* type) {
+        _type = type;
+    }
+
     std::string* getName() {
         return _name;
     }
 
 	virtual void accept(ZVisitor* visitor);
-
 private:
 	ZType* _type;
     std::string* _name;

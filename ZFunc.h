@@ -10,7 +10,7 @@ class ZArg;
 
 class ZFunc : public ZExpr {
 public:	
-	ZFunc(std::string* name, ZType* returnType, std::vector<ZArg*>& args, std::vector<ZGenericParam*>& typeParams, ZAst* body, bool isExtern = false) : _args(args) {
+	ZFunc(std::string* name, ZType* returnType, vector<ZArg*>& args, vector<ZGenericParam*>& typeParams, ZAst* body, bool isExtern = false) : _args(args) {
         _name = name;
         _returnType = returnType;
 		_typeParams = typeParams;

@@ -7,13 +7,11 @@ class ZType;
 
 class ZExpr : public ZAst {
 public:
-    //virtual llvm::Value* codegen(llvm::Function * func) = 0;
-
-	ZType* getType() {
+	virtual ZType* getType() {
 		return _type;
 	}
 
-	void setType(ZType* type) {
+	virtual void setType(ZType* type) {
 		_type = type;
 	}
 

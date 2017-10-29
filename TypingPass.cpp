@@ -16,6 +16,7 @@
 #include "ZSubscript.h"
 #include "ZArrayType.h"
 #include "ZGenericParam.h"
+#include "ZLambda.h"
 
 void TypingPass::visit(ZModule* zmodule) {
     _module = zmodule;
@@ -55,6 +56,13 @@ void TypingPass::visit(ZAssign* zassign) {
 	zassign->setType(zassign->getRight()->getType());
 }
 
+void TypingPass::visit(ZLambda* zlambda) {
+    for (auto arg : *zlambda->getArgs())
+        arg->accept(this);
+
+    zlambda->getBody()->accept(this);
+}
+
 void TypingPass::visit(ZCall* zcall) {
 	zcall->callee->accept(this);
 
@@ -91,7 +99,7 @@ void TypingPass::visit(ZCall* zcall) {
         if (*i->getName() == name)
             func = i;
 
-	if (func)
+	if (false)
 		juxtapose(func, zcall);
 	else {
 		int i = 0;

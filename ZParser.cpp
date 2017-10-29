@@ -17,6 +17,7 @@
 #include "ZArrayType.h"
 #include "ZGenericParam.h"
 #include "ZFuncType.h"
+#include "ZLambda.h"
 
 ZParser::ZParser(ZLexer& lexer, SymbolTable& symTable): _lexer(lexer), _symTable(symTable) {
 	_ops[PLUS] = Sum;
@@ -149,13 +150,9 @@ ZExpr* ZParser::parseLambda() {
 	ZExpr* expr = parseExpr();
 
 	_symTable.exit();
-
-    ZReturn* ret = new ZReturn(expr);
-
-    ZBlock* block = new ZBlock(new std::vector<ZAst*> { ret });
-
+    
 	ZFuncType* lambdaType = new ZFuncType(retType, *argTypes);
-	auto lambda = new ZFunc(new string("lambda"), retType, *args, *(new vector<ZGenericParam*>()), block);
+    auto lambda = new ZLambda(args, expr);
 	lambda->withSourceRange(endRange(sr));
 	return lambda;
 }

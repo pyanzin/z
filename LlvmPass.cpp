@@ -21,12 +21,14 @@
 #include "ZNop.h"
 #include "ZCast.h"
 #include "ZSubscript.h"
+#include "ZLambda.h"
 
 using namespace llvm;
 
 LlvmPass::LlvmPass() {
 	_builder = new IRBuilder<>(getGlobalContext());
 	_currentValues = new LlvmTable;
+    _lambdaCounter = 0;
 }
 
 void LlvmPass::visit(ZModule* zmodule) {
@@ -261,13 +263,13 @@ Value* LlvmPass::getValue(ZExpr* zexpr, BasicBlock* bb) {
 	if (zcast)
 		return getValue(zcast);
 
-	ZFunc* zfunc = dynamic_cast<ZFunc*>(zexpr);
-	if (zfunc)
-		getValue(zfunc);
+    ZLambda* zlambda = dynamic_cast<ZLambda*>(zexpr);
+	if (zlambda)
+		return getValue(zlambda);
 
     ZSubscript* zsubscript = dynamic_cast<ZSubscript*>(zexpr);
     if (zsubscript)
-        getValue(zsubscript, bb);
+        return getValue(zsubscript, bb);
 }
 
 llvm::Value* LlvmPass::getValue(ZCast* zcast) {
@@ -371,6 +373,8 @@ Value* LlvmPass::getValue(ZCall* zcall, BasicBlock* bb) {
     else
         callee = getValue(zcall->callee, bb);
      
+    _builder->SetInsertPoint(bb);
+
 	auto args = new std::vector<Value*>();
 	for (auto arg : zcall->getArgs()) {
 	    auto value = getValue(arg, bb);
@@ -398,42 +402,36 @@ Value* LlvmPass::getValue(ZAssign* zassign, BasicBlock* bb) {
     return rightValue;
 }
 
-Value* LlvmPass::getValue(ZFunc* zfunc) {
+Value* LlvmPass::getValue(ZLambda* zlambda) {
 	Function* previousFunc = _func;
     BasicBlock* previousLastBB = _lastBB;
 
-	auto args = std::vector<Type*>();
-	for (auto arg : zfunc->getArgs()) {
-		auto argType = resolve(arg->getType());
-		if (dynamic_cast<ZFuncType*>(argType))
-			args.push_back(argType->toLlvmType());
-		else
-			args.push_back(argType->toLlvmType());
-	}
-	auto funcType = FunctionType::get(resolve(zfunc->getReturnType())->toLlvmType(), args, false);
+    auto args = std::vector<Type*>();
+    for (auto arg : *zlambda->getArgs()) {
+        auto argType = resolve(arg->getType());
+        args.push_back(argType->toLlvmType());
+    }
+    auto funcType = FunctionType::get(resolve(zlambda->getReturnType())->toLlvmType(), args, false);
 
-	auto func = Function::Create(funcType, Function::ExternalLinkage, zfunc->getName()->c_str(), _module);
+	auto func = Function::Create(
+        funcType, 
+        Function::ExternalLinkage, 
+        getNextLambdaName(), 
+        _module);
 
 	_func = func;
 
 	_currentValues->enter();
 
-	auto zargs = zfunc->getArgs();
+	vector<ZArg*>* zargs = zlambda->getArgs();
 	unsigned i = 0;
 	for (auto& arg : func->args()) {
-		auto zarg = zargs[i++];
-		arg.setName(*zarg->getName());
+		ZArg* zarg = (*zargs)[i++];
+		arg.setName(zarg->getName()->c_str());
 		_currentValues->add(*zarg->getName(), &arg);
 	}
 	
-	generate(zfunc->getBody());
-
-	if (resolve(zfunc->getReturnType()) == Void)
-	{
-		auto bb = _func->getBasicBlockList().end()->getPrevNode();
-		_builder->SetInsertPoint(bb);
-		_builder->CreateRetVoid();
-	}
+	generate(zlambda->getBody());
 
 	_currentValues->exit();
 
@@ -461,4 +459,8 @@ BasicBlock* LlvmPass::makeNopBB(std::string name) {
 
     return _lastBB = bb;
 
+}
+
+string& LlvmPass::getNextLambdaName() {
+    return *(new string("lambda" + _lambdaCounter));
 }
