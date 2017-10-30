@@ -16,7 +16,7 @@ public:
 		return (llvm::Type*)(*_typeParams)[0]->toLlvmType()->getPointerTo();
 	}
 
-	std::string& toString()  override {
+	std::string& toString() override {
 	    auto elemTypeName = (*_typeParams)[0] ? (*_typeParams)[0]->toString() : "_";
 	    return *(new std::string("Array[" + elemTypeName + "]"));
     }
@@ -25,11 +25,10 @@ public:
 		return *(new std::string("Array"));
 	}
 
-	bool isEqual(ZType& other)  override  {
+	bool isEqual(ZType& other) override {
 		auto otherArray = dynamic_cast<ZArrayType*>(&other);
 		if (otherArray && otherArray->getElementType()->isEqual(*getElementType()))
 			return true;
 		return false;		
 	}
-private:
 };

@@ -37,6 +37,7 @@ ZParser::ZParser(ZLexer& lexer, SymbolTable& symTable): _lexer(lexer), _symTable
 	_symTable.addType(Boolean);
 	_symTable.addType(Double);
 	_symTable.addType(Void);
+	_symTable.addType(Any);
 	_symTable.addType(new ZArrayType(nullptr));
 }
 

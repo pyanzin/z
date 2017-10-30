@@ -27,10 +27,13 @@ private:
     std::string _name;
 };
 
+extern ZBasicType* Void;
+extern ZBasicType* Any;
 extern ZBasicType* Unknown;
+
 extern ZBasicType* Int;
 extern ZBasicType* Double;
 extern ZBasicType* Char;
 extern ZBasicType* Boolean;
 extern ZBasicType* String;
-extern ZBasicType* Void;
+
