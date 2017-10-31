@@ -32,13 +32,11 @@ public:
 	}
 
 	std::string getPosition() {
-		return getSourceRange()->getPosition();
+		SourceRange* sr = getSourceRange();
+		return sr ? sr->getPosition() : string("0:0");
 	}
 
     SourceRange* getSourceRange() {
-        if (!_sourceRange)
-            throw std::exception("Source range is not set before using");
-
         return _sourceRange;
 	}
 

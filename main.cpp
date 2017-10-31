@@ -27,7 +27,7 @@
 llvm::Module* makeLLVMModule();
 
 int main(int argc, char* args[]) {
-    //try {
+    try {
 
         std::ifstream srcFile;
         std::stringstream stream;
@@ -128,10 +128,10 @@ int main(int argc, char* args[]) {
 
         //getchar();
 
-    //}
-    //catch (std::exception ex) {
-    //    cout << "Error: " + std::string(ex.what()) << '\n';
-    //    getchar();
-    //}
+    }
+    catch (std::exception ex) {
+        cout << "Error: " + std::string(ex.what()) << '\n';
+        getchar();
+    }
     return 0;
 }
