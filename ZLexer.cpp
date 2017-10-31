@@ -118,7 +118,7 @@ ZLexeme ZLexer::getNextToken() {
         return INPUT_END;
     }
 
-    if (isalpha(ch)) {
+    if (isalpha(ch) || ch == '_') {
         std::string id;
         id += ch;
         while (isalnum(ch = getNextChar()))

@@ -261,7 +261,7 @@ Value* LlvmPass::getValue(ZExpr* zexpr, BasicBlock* bb) {
 
 	ZCast* zcast = dynamic_cast<ZCast*>(zexpr);
 	if (zcast)
-		return getValue(zcast);
+		return getValue(zcast, bb);
 
     ZLambda* zlambda = dynamic_cast<ZLambda*>(zexpr);
 	if (zlambda)
@@ -272,8 +272,7 @@ Value* LlvmPass::getValue(ZExpr* zexpr, BasicBlock* bb) {
         return getValue(zsubscript, bb);
 }
 
-llvm::Value* LlvmPass::getValue(ZCast* zcast) {
-	BasicBlock* bb = makeBB("zcast");
+llvm::Value* LlvmPass::getValue(ZCast* zcast, BasicBlock* bb) {
 	Value* exprValue = getValue(zcast->getExpr(), bb);
 	return _builder->CreateCast(Instruction::BitCast, exprValue, zcast->getTargetType()->toLlvmType());
 }
@@ -462,5 +461,5 @@ BasicBlock* LlvmPass::makeNopBB(std::string name) {
 }
 
 string& LlvmPass::getNextLambdaName() {
-    return *(new string("lambda" + to_string(_lambdaCounter)));
+    return *(new string("__lambda" + to_string(_lambdaCounter)));
 }

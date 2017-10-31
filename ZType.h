@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include <string>
+#include <llvm/IR/Type.h>
 
 class ZType {
 public:
@@ -9,6 +11,8 @@ public:
 	virtual std::string& toString() = 0;
 
 	virtual bool isEqual(ZType& other) = 0;
+
+	virtual bool canBeCastedTo(ZType& other);
 
     std::vector<ZType*>* getTypeParams() {
         return _typeParams;

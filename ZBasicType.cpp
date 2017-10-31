@@ -2,6 +2,7 @@
 #include <llvm/IR/Function.h>
 #include <llvm/IR/LLVMContext.h>
 #include "ZArrayType.h"
+#include "ZWildcardType.h"
 
 inline llvm::Type* ZBasicType::toLlvmType() {
 	return _type;
@@ -21,3 +22,5 @@ ZBasicType* Char = new ZBasicType(llvm::IntegerType::get(llvm::getGlobalContext(
 ZBasicType* Double = new ZBasicType(llvm::Type::getFloatTy(llvm::getGlobalContext()), "Double");
 ZBasicType* Boolean = new ZBasicType(llvm::IntegerType::get(llvm::getGlobalContext(), 1), "Boolean");
 ZBasicType* String = new ZBasicType(llvm::Type::getInt8PtrTy(llvm::getGlobalContext()), "String");
+
+ZWildcardType* Wildcard = new ZWildcardType();

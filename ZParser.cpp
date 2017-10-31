@@ -39,6 +39,7 @@ ZParser::ZParser(ZLexer& lexer, SymbolTable& symTable): _lexer(lexer), _symTable
 	_symTable.addType(Void);
 	_symTable.addType(Any);
 	_symTable.addType(new ZArrayType(nullptr));
+	_symTable.addType(Wildcard);
 }
 
 ZModule* ZParser::parseModule() {

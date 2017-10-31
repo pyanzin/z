@@ -17,6 +17,7 @@
 #include "ZArrayType.h"
 #include "ZGenericParam.h"
 #include "ZLambda.h"
+#include "ZCast.h"
 
 void TypingPass::visit(ZModule* zmodule) {
     _module = zmodule;
@@ -87,7 +88,6 @@ void TypingPass::visit(ZCall* zcall) {
 		error("Type of calee is not callable");
 
 	int calleeArgsCount = calleeType->getParamTypes().size();
-	
 
 	if (calleeArgsCount != callerArgsCount)
 		error("Callee requires " + std::to_string(calleeArgsCount) + " arguments, but caller passes " + std::to_string(callerArgsCount));
@@ -104,9 +104,16 @@ void TypingPass::visit(ZCall* zcall) {
 	else {
 		int i = 0;
 		for (ZType* calleeArgType : calleeType->getParamTypes()) {
-			ZType* callerArgType = zcall->getArgs()[i++]->getType();
-			if (!calleeArgType->isEqual(*callerArgType))
-				error("Callee expects argument of type " + calleeArgType->toString()
+			ZExpr* arg = zcall->getArgs()[i++];
+			ZType* callerArgType = arg->getType();
+			if (calleeArgType->isEqual(*callerArgType))
+				continue;
+			if (callerArgType->canBeCastedTo(*calleeArgType)) {
+				ZCast* cast = new ZCast(arg, calleeArgType);
+				zcall->replaceChild(arg, cast);
+				continue;
+			}
+			error("Callee expects argument of type " + calleeArgType->toString()
 				+ ", but received " + callerArgType->toString()
 				+ " at position " + std::to_string(i));
 

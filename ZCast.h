@@ -5,6 +5,7 @@ class ZCast : public ZExpr {
 public:
 	ZCast(ZExpr* expr, ZType* targetType) {
 		_expr = expr;
+		setType(_expr->getType());
 		_targetType = targetType;
 		adopt(expr);
 	}

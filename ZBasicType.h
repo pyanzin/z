@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <llvm/IR/Type.h>
 #include "ZType.h"
+#include "ZWildcardType.h"
 
 class ZArrayType;
 
@@ -37,3 +38,4 @@ extern ZBasicType* Char;
 extern ZBasicType* Boolean;
 extern ZBasicType* String;
 
+extern ZWildcardType* Wildcard;
