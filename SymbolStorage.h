@@ -3,9 +3,9 @@
 #include "SymbolEntry.h"
 #include "ZGenericParam.h"
 
-class SymbolStorage {
+class SymbolScope {
 public:
-    SymbolStorage(SymbolStorage* parent = nullptr) {
+	SymbolScope(SymbolScope* parent = nullptr) {
         _parent = parent;
         _number = 0;
         if (_parent)
@@ -14,7 +14,7 @@ public:
             _parentNumber = -1;            
     }
 
-    SymbolStorage* getParent() {
+    SymbolScope* getParent() {
         return _parent;
     }
 
@@ -30,8 +30,8 @@ public:
 		return id;
 	}
 
-    SymbolStorage* makeChild() {
-        return new SymbolStorage(this);
+    SymbolScope* makeChild() {
+        return new SymbolScope(this);
     }
 
 	bool isTopLevel() {
@@ -39,7 +39,7 @@ public:
     }
 
     SymbolEntry* findSymbol(int id, std::string& name, bool onlyCurrentScope = false) {
-        SymbolStorage* storage = this;
+        SymbolScope* storage = this;
         do {
 			auto entries = storage->_symbolEntries;
 			for (auto entry : entries) {
@@ -56,7 +56,7 @@ public:
     }
 
 	ZType* findType(int id, std::string& name) {
-		SymbolStorage* storage = this;
+		SymbolScope* storage = this;
 		do {
 			auto entries = storage->_typeEntries;
 			for (auto entry : entries) {
@@ -73,7 +73,7 @@ public:
     }
 
 	ZType* resolveGeneric(ZGenericParam* param) {
-		SymbolStorage* storage = this;
+		SymbolScope* storage = this;
 		do {
 			auto entries = storage->_typeArguments;
 			for (auto entry : entries) {				
@@ -102,7 +102,7 @@ public:
 	}
 private:
     int _number;
-    SymbolStorage* _parent;
+    SymbolScope* _parent;
     int _parentNumber;
 
     std::map<int, SymbolEntry*> _symbolEntries;

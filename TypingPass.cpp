@@ -92,15 +92,10 @@ void TypingPass::visit(ZCall* zcall) {
 	if (calleeArgsCount != callerArgsCount)
 		error("Callee requires " + std::to_string(calleeArgsCount) + " arguments, but caller passes " + std::to_string(callerArgsCount));
 	
-    // todo: find better
-    auto name = ((ZId*)zcall->callee)->getName();
-    ZFunc* func = nullptr;
-    for (auto i : _module->getFunctions())
-        if (*i->getName() == name)
-            func = i;
+	bool calleeIsGeneric = calleeType->hasGenericDefs();
 
-	if (false)
-		juxtapose(func, zcall);
+	if (calleeIsGeneric)
+		juxtapose(calleeType, zcall);
 	else {
 		int i = 0;
 		for (ZType* calleeArgType : calleeType->getParamTypes()) {
@@ -230,14 +225,14 @@ void TypingPass::visit(ZVarDef* zvardef) {
 			
 }
 
-void TypingPass::juxtapose(ZFunc* callee, ZCall* call) {
-	auto funcType = dynamic_cast<ZFuncType*>(callee->getType());
+void TypingPass::juxtapose(ZType* calleeType, ZCall* call) {
+	auto funcType = dynamic_cast<ZFuncType*>(calleeType);
 
 	SymbolRef* ref = call->getRef();
 
     bool isTypeArgsDefined = call->getTypeArgs()->size();
 	int i = 0;
-    for (ZGenericParam* param : callee->getTypeParams())
+	for (ZGenericParam* param : *funcType->getGenericDefs())
         ref->addResolution(param, isTypeArgsDefined ? (*call->getTypeArgs())[i++] : Unknown);
 
     for (int i = 0; i < call->getArgs().size(); ++i) {
@@ -246,7 +241,8 @@ void TypingPass::juxtapose(ZFunc* callee, ZCall* call) {
         juxtapose(paramType, argExpr, ref);
     }
 
-	call->setType(juxtapose(callee->getReturnType(), call->getType(), ref));
+
+	call->setType(juxtapose(funcType->getRetType(), call->getType(), ref));
 }
 
 void TypingPass::juxtapose(ZType* paramType, ZExpr* expr, SymbolRef* ref) {
@@ -271,8 +267,9 @@ ZType* TypingPass::juxtapose(ZType* paramType, ZType* argType, SymbolRef* ref) {
         }
     }
 
-	for (int i = 0; i < paramType->getTypeParams()->size(); ++i)
-		argType->setTypeParam(i, juxtapose((*paramType->getTypeParams())[i], (*argType->getTypeParams())[i], ref));
+	if (paramType->getTypeParams()->size() == argType->getTypeParams()->size())	
+		for (int i = 0; i < paramType->getTypeParams()->size(); ++i)
+			argType->setTypeParam(i, juxtapose((*paramType->getTypeParams())[i], (*argType->getTypeParams())[i], ref));
     
     return argType;
 }

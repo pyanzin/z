@@ -7,7 +7,7 @@
 class SymbolTable {
 public:
 	SymbolTable() {
-		storage = new SymbolStorage();
+		storage = new SymbolScope();
 	}
 	void enter() {
 		storage = storage->makeChild();
@@ -32,5 +32,5 @@ public:
     }
 
 private:
-    SymbolStorage* storage;
+    SymbolScope* storage;
 };

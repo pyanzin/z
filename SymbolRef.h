@@ -5,7 +5,7 @@ class SymbolEntry;
 
 class SymbolRef {
 public:
-    SymbolRef(SymbolStorage* storage, int id) {
+    SymbolRef(SymbolScope* storage, int id) {
         _storage = storage;
         _id = id;
     }
@@ -34,6 +34,6 @@ public:
 		_storage->addTypeArgument(param, arg);
     }
 private:
-    SymbolStorage* _storage;
+    SymbolScope* _storage;
     int _id;
 };
