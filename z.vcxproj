@@ -200,6 +200,7 @@
     <ClInclude Include="ZCast.h" />
     <ClInclude Include="ZCharLit.h" />
     <ClInclude Include="ZExpr.h" />
+    <ClInclude Include="ZFor.h" />
     <ClInclude Include="ZFunc.h" />
     <ClInclude Include="ZFuncType.h" />
     <ClInclude Include="ZGenericParam.h" />

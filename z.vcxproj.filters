@@ -242,5 +242,8 @@
     <ClInclude Include="ZWildcardType.h">
       <Filter>Header Files\Types</Filter>
     </ClInclude>
+    <ClInclude Include="ZFor.h">
+      <Filter>Header Files\AST</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
