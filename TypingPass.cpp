@@ -18,6 +18,7 @@
 #include "ZGenericParam.h"
 #include "ZLambda.h"
 #include "ZCast.h"
+#include "ZFor.h"
 
 void TypingPass::visit(ZModule* zmodule) {
     _module = zmodule;
@@ -206,6 +207,20 @@ void TypingPass::visit(ZWhile* zwhile) {
 		error("Condition of while statement must be of Boolean type", zwhile->getPosition());	
 
 	zwhile->getBody()->accept(this);
+}
+
+void TypingPass::visit(ZFor* zfor) {
+	zfor->getPre()->accept(this);
+
+	zfor->getCond()->accept(this);
+
+	if (zfor->getCond()->getType() != Boolean)
+		error("Condition of for statement must be of Boolean type", zfor->getPosition());
+
+	if (zfor->getPost())
+		zfor->getPost()->accept(this);
+
+	zfor->getBody()->accept(this);
 }
 
 void TypingPass::visit(ZVarDef* zvardef) {

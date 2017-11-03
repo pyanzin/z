@@ -9,6 +9,7 @@ enum ZLexeme {
 	IF,
 	ELSE,
 	WHILE,
+	FOR,
     STRING_LIT,
 	INT_LIT,
 	CHAR_LIT,

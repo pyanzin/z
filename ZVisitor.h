@@ -16,6 +16,7 @@ class ZIf;
 class ZWhile;
 class ZSubscript;
 class ZLambda;
+class ZFor;
 
 class ZVisitor {
 public:
@@ -46,6 +47,8 @@ public:
 	virtual void visit(ZIf* zif) { };
 
 	virtual void visit(ZWhile* zwhile) { };
+
+	virtual void visit(ZFor* zfor) { };
 
     virtual void visit(ZSubscript* zsubscript) { };
 

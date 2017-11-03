@@ -18,6 +18,7 @@
 #include "ZGenericParam.h"
 #include "ZFuncType.h"
 #include "ZLambda.h"
+#include "ZFor.h"
 
 ZParser::ZParser(ZLexer& lexer, SymbolTable& symTable): _lexer(lexer), _symTable(symTable) {
 	_ops[PLUS] = Sum;
@@ -232,6 +233,8 @@ ZAst* ZParser::parseStatement() {
 		return parseIf();
 	if (isNext(WHILE))
 		return parseWhile();
+	if (isNext(FOR))
+		return parseFor();
 
 	ZAst* result;
 	if (isNext(VAR))
@@ -287,6 +290,40 @@ ZAst* ZParser::parseWhile() {
 	sr = endRange(sr);
 
 	return (new ZWhile(cond, body))->withSourceRange(sr);
+}
+
+ZAst* ZParser::parseFor() {
+	auto sr = beginRange();
+
+	_symTable.enter();
+
+	reqConsume(FOR);
+	reqConsume(OPEN_PAREN);
+	ZAst* pre = parseBlockOrStatement();
+
+	ZExpr* cond;
+	if (isNext(SEMICOLON))
+		cond = new ZBooleanLit(true);
+	else {
+		cond = parseExpr();
+		reqConsume(SEMICOLON);
+	}
+
+	ZExpr* post;
+	if (isNext(CLOSE_PAREN))
+		post = nullptr;
+	else
+		post = parseExpr();	
+
+	reqConsume(CLOSE_PAREN);
+
+	ZAst* body = parseBlockOrStatement();
+
+	_symTable.exit();
+
+	sr = endRange(sr);
+
+	return (new ZFor(body, pre, cond, post))->withSourceRange(sr);
 }
 
 ZVarDef* ZParser::parseVarDef() {

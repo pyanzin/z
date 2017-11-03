@@ -57,6 +57,7 @@ private:
 		_keywords.insert(std::make_pair("extern", EXTERN));
         _keywords.insert(std::make_pair("true", BOOL_LIT));
         _keywords.insert(std::make_pair("false", BOOL_LIT));
+        _keywords.insert(std::make_pair("for", FOR));
     }
 };
 

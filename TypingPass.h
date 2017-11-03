@@ -32,6 +32,8 @@ public:
 
 	void visit(ZWhile* zwhile) override;
 
+	void visit(ZFor* zfor) override;
+
     void visit(ZSubscript* zsubscript) override;
 
 private:

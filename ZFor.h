@@ -28,6 +28,18 @@ public:
 		return _post;
 	}
 
+	void dump(std::ostream& stream, unsigned depth) override {
+		dumpTab(stream, depth);
+		stream << "for\n";
+		_pre->dump(stream, depth + 1);
+		_cond->dump(stream, depth + 1);
+		_post->dump(stream, depth + 1);
+
+		dumpTab(stream, depth);
+		stream << "do\n";
+		_body->dump(stream, depth + 1);
+	}
+
 private:
 	ZAst* _body;
 	ZAst* _pre;

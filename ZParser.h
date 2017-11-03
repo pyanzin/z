@@ -34,6 +34,8 @@ public:
 
 	ZAst* parseWhile();
 
+	ZAst* parseFor();
+
 	ZAst* parseStatement();
 
 	ZVarDef* parseVarDef();
