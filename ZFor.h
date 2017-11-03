@@ -12,6 +12,31 @@ public:
 		_post = post;
 	}
 
+    void replaceChild(ZAst* oldChild, ZAst* newChild) override {
+        if (_body == oldChild) {
+            _body = static_cast<ZExpr*>(newChild);
+            return;
+        }
+        
+        if (_pre == oldChild) {
+            _pre = newChild;
+            return;
+        }
+
+        adopt(newChild);
+        if (_cond == oldChild) {
+            _cond = static_cast<ZExpr*>(newChild);
+            return;
+        }
+
+        if (_post == oldChild) {
+            _post = static_cast<ZExpr*>(newChild);
+            return;
+        }
+
+        throw exception("wrong call to replaceChild in ZFor");
+    }
+
 	ZAst* getBody() {
 		return _body;
 	}
@@ -27,6 +52,10 @@ public:
 	ZExpr* getPost() {
 		return _post;
 	}
+
+    void accept(ZVisitor* visitor) override {
+        visitor->visit(this);
+    }
 
 	void dump(std::ostream& stream, unsigned depth) override {
 		dumpTab(stream, depth);

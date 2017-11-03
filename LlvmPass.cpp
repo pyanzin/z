@@ -22,6 +22,7 @@
 #include "ZCast.h"
 #include "ZSubscript.h"
 #include "ZLambda.h"
+#include "ZFor.h"
 
 using namespace llvm;
 
@@ -139,6 +140,10 @@ BasicBlock* LlvmPass::generate(ZAst* zast) {
 	if (zwhile)
 		return generate(zwhile);
 
+    ZFor* zfor = dynamic_cast<ZFor*>(zast);
+    if (zfor)
+        return generate(zfor);
+
 	ZNop* znop = dynamic_cast<ZNop*>(zast);
 	if (znop)
 		return generate(znop);
@@ -218,6 +223,38 @@ BasicBlock* LlvmPass::generate(ZWhile* zwhile) {
 	_builder->CreateCondBr(condValue, bodyBB, afterBB);
 
 	return condBB;
+}
+
+BasicBlock* LlvmPass::generate(ZFor* zfor) {
+    BasicBlock* preBB = generate(zfor->getPre());
+    
+    BasicBlock* condBB = makeBB("for_cond");
+    Value* condValue = getValue(zfor->getCond(), condBB);
+
+    BasicBlock* postBB = makeBB("for_post");
+    if (zfor->getPost())
+        getValue(zfor->getPost(), postBB);
+
+    BasicBlock* bodyBB = generate(zfor->getBody());
+    BasicBlock* bodyLastBB = _lastBB;
+
+    BasicBlock* finalBB = makeNopBB("for_final");
+
+    _builder->SetInsertPoint(preBB);
+    _builder->CreateBr(condBB);
+
+    _builder->SetInsertPoint(condBB);
+    _builder->CreateCondBr(condValue, bodyBB, finalBB);
+
+    _builder->SetInsertPoint(bodyLastBB);
+    _builder->CreateBr(postBB);
+
+    _builder->SetInsertPoint(postBB);
+    _builder->CreateBr(condBB);
+
+    _lastBB = finalBB;
+
+    return preBB;
 }
 
 BasicBlock* LlvmPass::generate(ZNop* znop) {

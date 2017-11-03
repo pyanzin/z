@@ -28,7 +28,8 @@ public:
 	llvm::BasicBlock* generate(ZReturn* zreturn);
 	llvm::BasicBlock* generate(ZIf* zif);
 	llvm::BasicBlock* generate(ZWhile* zwhile);
-	BasicBlock* generate(ZNop* znop);
+    BasicBlock* generate(ZFor* zfor);
+    BasicBlock* generate(ZNop* znop);
 	llvm::Value* getValue(ZExpr* zexpr, llvm::BasicBlock* bb);
 	llvm::Value* getValue(ZCast* zcast, llvm::BasicBlock* bb);
 
