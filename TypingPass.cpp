@@ -52,7 +52,7 @@ void TypingPass::visit(ZAssign* zassign) {
     if (!assignee)
         error("Left part of the assignment expression is not suitable for assignment", zassign->getPosition());
 
-    if (assignee->getType() != zassign->getRight()->getType())
+    if (!dynamic_cast<ZSubscript*>(assignee) && assignee->getType() != zassign->getRight()->getType())
         error("Type of the left hand expression doesn't match the type of right hand expression", assignee->getPosition());
 
 	zassign->setType(zassign->getRight()->getType());
@@ -70,7 +70,7 @@ void TypingPass::visit(ZCall* zcall) {
 
     int callerArgsCount = zcall->getArgs().size();
 
-    if (zcall->callee->getType()->getName() == "Array") {
+    if (dynamic_cast<ZArrayType*>(zcall->callee->getType())) {
         if (callerArgsCount != 1)
             error("Array subsciprt operator requires 1 argument");
 
@@ -95,7 +95,7 @@ void TypingPass::visit(ZCall* zcall) {
 	
 	bool calleeIsGeneric = calleeType->hasGenericDefs();
 
-	if (calleeIsGeneric)
+	if (false)
 		juxtapose(calleeType, zcall);
 	else {
 		int i = 0;
@@ -115,8 +115,10 @@ void TypingPass::visit(ZCall* zcall) {
 
 		}
 
+        SymbolRef* ref = zcall->getRef();
+
 		ZType* retType = static_cast<ZFuncType*>(zcall->callee->getType())->getRetType();
-		zcall->setType(retType);
+		zcall->setType(ref->resolve(retType));
 	}
 }
 

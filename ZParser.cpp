@@ -302,7 +302,7 @@ ZAst* ZParser::parseFor() {
 	ZAst* pre = parseBlockOrStatement();
 
 	ZExpr* cond;
-	if (isNext(SEMICOLON))
+	if (consume(SEMICOLON))
 		cond = new ZBooleanLit(true);
 	else {
 		cond = parseExpr();

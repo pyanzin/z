@@ -23,6 +23,7 @@
 #include "ZSubscript.h"
 #include "ZLambda.h"
 #include "ZFor.h"
+#include "ZArrayType.h"
 
 using namespace llvm;
 
@@ -382,6 +383,9 @@ Value* LlvmPass::getValue(ZBooleanLit* zbooleanlit) {
 Value* LlvmPass::generateConcrete(ZFunc* func, SymbolRef* symbolRef) {
     SymbolRef* oldResolver = _genericResolver;
     _genericResolver = symbolRef;
+    auto oldLastBB = _lastBB;
+    auto oldfunc = _func;
+
     auto name = new string(*func->getName());
 
     for (auto gen : func->getTypeParams()) {
@@ -393,6 +397,9 @@ Value* LlvmPass::generateConcrete(ZFunc* func, SymbolRef* symbolRef) {
         generate(func, name);
 
     _genericResolver = oldResolver;
+    _lastBB = oldLastBB;
+    _func = oldfunc;
+    _builder->SetInsertPoint(_lastBB);
 
     return result;
 }
@@ -465,14 +472,24 @@ Value* LlvmPass::getValue(ZLambda* zlambda) {
 		ZArg* zarg = (*zargs)[i++];
 		arg.setName(zarg->getName()->c_str());
 		_currentValues->add(*zarg->getName(), &arg);
-	}
-	
-	generate(zlambda->getBody());
+	}	
+
+    if (zlambda->getBody()->getType() == Void) {
+        generate(zlambda->getBody());
+        _builder->SetInsertPoint(_lastBB);
+        _builder->CreateRetVoid();
+    } else {
+        BasicBlock* bb = makeBB("lambda_body");
+        Value* retExpr = getValue(zlambda->getBody(), bb);
+        _builder->SetInsertPoint(bb);
+        _builder->CreateRet(retExpr);
+    }
 
 	_currentValues->exit();
 
 	_func = previousFunc;
     _lastBB = previousLastBB;
+    _builder->SetInsertPoint(_lastBB);
 
 	return func;
 }
@@ -480,8 +497,22 @@ Value* LlvmPass::getValue(ZLambda* zlambda) {
 ZType* LlvmPass::resolve(ZType* type) {
     if (dynamic_cast<ZGenericParam*>(type))
         return _genericResolver->resolve(type);
-    else
+    else {
+        ZArrayType* arrayType = dynamic_cast<ZArrayType*>(type);
+        if (arrayType)
+            return new ZArrayType(resolve(arrayType->getElementType()));
+
+        ZFuncType* funcType = dynamic_cast<ZFuncType*>(type);
+        if (funcType) {
+            auto resolvedParamTypes = std::vector<ZType*>();
+            for (auto paramType : funcType->getParamTypes())
+                resolvedParamTypes.push_back(resolve(paramType));
+            
+            return new ZFuncType(resolve(funcType->getRetType()), resolvedParamTypes);
+        }
+        
         return type;
+    }
 }
 
 BasicBlock* LlvmPass::makeBB(std::string name) {

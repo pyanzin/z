@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include "SymbolStorage.h"
+#include "ZFuncType.h"
+#include "ZArrayType.h"
 
 class SymbolEntry;
 
@@ -24,10 +26,21 @@ public:
 
     ZType* resolve(ZType* type) {
         ZGenericParam* gen = dynamic_cast<ZGenericParam*>(type);
-        if (!gen)
-            return type;
+        if (gen)
+            return _storage->resolveGeneric(gen);
 
-        return _storage->resolveGeneric(gen);
+        ZArrayType* arrayType = dynamic_cast<ZArrayType*>(type);
+        if (arrayType)
+            return new ZArrayType(resolve(arrayType->getElementType()));
+
+        ZFuncType* funcType = dynamic_cast<ZFuncType*>(type);
+        if (funcType) {
+            auto resolvedParamTypes = std::vector<ZType*>();
+            for (auto paramType : funcType->getParamTypes())
+                resolvedParamTypes.push_back(resolve(paramType));
+
+            return new ZFuncType(resolve(funcType->getRetType()), resolvedParamTypes);
+        }
     }
 
 	void addResolution(ZGenericParam* param, ZType* arg) {

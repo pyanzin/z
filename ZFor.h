@@ -62,7 +62,8 @@ public:
 		stream << "for\n";
 		_pre->dump(stream, depth + 1);
 		_cond->dump(stream, depth + 1);
-		_post->dump(stream, depth + 1);
+        if (_post)
+            _post->dump(stream, depth + 1);
 
 		dumpTab(stream, depth);
 		stream << "do\n";
