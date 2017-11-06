@@ -26,8 +26,14 @@ public:
 
     ZType* resolve(ZType* type) {
         ZGenericParam* gen = dynamic_cast<ZGenericParam*>(type);
-        if (gen)
-            return _storage->resolveGeneric(gen);
+        if (gen) {
+            auto resolved = _storage->resolveGeneric(gen);
+            if (resolved && !resolved->isEqual(*Unknown))            
+                return resolved;
+            if (_storage->findType(_id, gen->getName()))
+                return type;
+            return nullptr;
+        }
 
         ZArrayType* arrayType = dynamic_cast<ZArrayType*>(type);
         if (arrayType)
@@ -41,6 +47,8 @@ public:
 
             return new ZFuncType(resolve(funcType->getRetType()), resolvedParamTypes);
         }
+
+        return type;
     }
 
 	void addResolution(ZGenericParam* param, ZType* arg) {

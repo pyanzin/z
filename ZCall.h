@@ -4,6 +4,7 @@
 #include <vector>
 #include "ZBasicType.h"
 #include "SymbolRef.h"
+#include "ZVisitor.h"
 
 class ZCall : public ZExpr {
 public:
@@ -16,7 +17,9 @@ public:
 			adopt(arg);
     }
 
-	void accept(ZVisitor* visitor) override;
+	void accept(ZVisitor* visitor) override {
+        visitor->visit(this);
+    };
 
 	void replaceChild(ZAst* oldChild, ZAst* newChild) override {
 		adopt(newChild);

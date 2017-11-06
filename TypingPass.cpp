@@ -95,8 +95,15 @@ void TypingPass::visit(ZCall* zcall) {
 	
 	bool calleeIsGeneric = calleeType->hasGenericDefs();
 
-	if (false)
-		juxtapose(calleeType, zcall);
+    if (calleeIsGeneric) {
+        for (int i = 0; i < calleeType->getGenericDefs()->size(); ++i) {
+            auto param = (*calleeType->getGenericDefs())[i];
+            auto arg = (*zcall->getTypeArgs())[i];
+            zcall->getRef()->addResolution(param, arg);
+        }
+
+        juxtapose(calleeType, zcall);
+    }
 	else {
 		int i = 0;
 		for (ZType* calleeArgType : calleeType->getParamTypes()) {
@@ -112,14 +119,13 @@ void TypingPass::visit(ZCall* zcall) {
 			error("Callee expects argument of type " + calleeArgType->toString()
 				+ ", but received " + callerArgType->toString()
 				+ " at position " + std::to_string(i));
-
-		}
-
-        SymbolRef* ref = zcall->getRef();
-
-		ZType* retType = static_cast<ZFuncType*>(zcall->callee->getType())->getRetType();
-		zcall->setType(ref->resolve(retType));
+		}       
 	}
+
+    SymbolRef* ref = zcall->getRef();
+
+    ZType* retType = calleeType->getRetType();
+    zcall->setType(ref->resolve(retType));
 }
 
 void TypingPass::visit(ZSubscript* zsubscript) {

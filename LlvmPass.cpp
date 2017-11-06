@@ -495,24 +495,7 @@ Value* LlvmPass::getValue(ZLambda* zlambda) {
 }
 
 ZType* LlvmPass::resolve(ZType* type) {
-    if (dynamic_cast<ZGenericParam*>(type))
-        return _genericResolver->resolve(type);
-    else {
-        ZArrayType* arrayType = dynamic_cast<ZArrayType*>(type);
-        if (arrayType)
-            return new ZArrayType(resolve(arrayType->getElementType()));
-
-        ZFuncType* funcType = dynamic_cast<ZFuncType*>(type);
-        if (funcType) {
-            auto resolvedParamTypes = std::vector<ZType*>();
-            for (auto paramType : funcType->getParamTypes())
-                resolvedParamTypes.push_back(resolve(paramType));
-            
-            return new ZFuncType(resolve(funcType->getRetType()), resolvedParamTypes);
-        }
-        
-        return type;
-    }
+    return _genericResolver->resolve(type);
 }
 
 BasicBlock* LlvmPass::makeBB(std::string name) {

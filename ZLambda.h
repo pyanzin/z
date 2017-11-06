@@ -10,6 +10,10 @@ public:
     ZLambda(std::vector<ZArg*>* args, ZExpr* body) {
         _args = args;
         _body = body;
+
+        adopt(_body);
+        for (auto arg : *_args)
+            adopt(arg);
     }
 
     ZType* getType() override {
