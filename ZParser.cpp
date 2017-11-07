@@ -497,14 +497,11 @@ ZExpr* ZParser::parseNumber() {
 }
 
 ZExpr* ZParser::parseBoolean() {
-    auto value = val(BOOL_LIT);
-    if (!value)
-        return nullptr;
-
-    if (string("true") == *value)
+    if(consume(BOOL_TRUE_LIT))
         return new ZBooleanLit(true);
-    else
+	else if (consume(BOOL_FALSE_LIT))
         return new ZBooleanLit(false);
+	return nullptr;
 }
 
 std::string* ZParser::val(::ZLexeme lexeme) {
