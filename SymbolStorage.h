@@ -100,6 +100,23 @@ public:
 	int incrementNumber() {
 		return _number++;
 	}
+
+	bool isDefined(int id, ZType* type) {
+		SymbolScope* storage = this;
+		do {
+			auto entries = storage->_typeEntries;
+			for (auto entry : entries) {
+				if (entry.first >= id && !storage->isTopLevel())
+					break;
+
+				if (type == entry.second)
+					return true;
+			}
+			id = storage->_parentNumber;
+		} while (storage = storage->getParent());
+
+		return false;
+	}
 private:
     int _number;
     SymbolScope* _parent;

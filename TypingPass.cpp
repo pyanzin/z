@@ -102,7 +102,7 @@ void TypingPass::visit(ZCall* zcall) {
             zcall->getRef()->addResolution(param, arg);
         }
 
-        juxtapose(calleeType, zcall);
+        //juxtapose(calleeType, zcall);
     }
 	else {
 		int i = 0;

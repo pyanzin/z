@@ -25,14 +25,15 @@ public:
 	}
 
     ZType* resolve(ZType* type) {
-        ZGenericParam* gen = dynamic_cast<ZGenericParam*>(type);
-        if (gen) {
-            auto resolved = _storage->resolveGeneric(gen);
-            if (resolved && !resolved->isEqual(*Unknown))            
-                return resolved;
-            if (_storage->findType(_id, gen->getName()))
-                return type;
-            return nullptr;
+		if (dynamic_cast<ZGenericParam*>(type)) {
+			while (dynamic_cast<ZGenericParam*>(type)) {
+				if (_storage->isDefined(_id, type))
+					return type;
+
+				type = _storage->resolveGeneric(dynamic_cast<ZGenericParam*>(type));
+			}
+
+			return type;
         }
 
         ZArrayType* arrayType = dynamic_cast<ZArrayType*>(type);
