@@ -9,6 +9,7 @@
 #include "ZBooleanLit.h"
 #include "ZNop.h"
 #include "SymbolRef.h"
+#include <stack>
 
 class ZCast;
 class ZExpr;
@@ -60,7 +61,7 @@ private:
 	LlvmTable* _currentValues;
 
     llvm::IRBuilder<>* _builder;
-    SymbolRef* _genericResolver;
+    vector<SymbolRef*> _genericResolutionChain;
     ZModule* _zmodule;
     int _lambdaCounter;
 };

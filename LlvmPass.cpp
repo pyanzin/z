@@ -381,8 +381,7 @@ Value* LlvmPass::getValue(ZBooleanLit* zbooleanlit) {
 }
 
 Value* LlvmPass::generateConcrete(ZFunc* func, SymbolRef* symbolRef) {
-    SymbolRef* oldResolver = _genericResolver;
-    _genericResolver = symbolRef;
+    _genericResolutionChain.push_back(symbolRef);
     auto oldLastBB = _lastBB;
     auto oldfunc = _func;
 
@@ -392,11 +391,15 @@ Value* LlvmPass::generateConcrete(ZFunc* func, SymbolRef* symbolRef) {
         *name += resolve(gen)->getName();
     }
 
+	auto alreadyExisting = _module->getFunction(*name);
+	if (alreadyExisting)
+		return alreadyExisting;
+
     Value* result = addFuncDef(func, name);
     if (!func->isExtern())
         generate(func, name);
 
-    _genericResolver = oldResolver;
+    _genericResolutionChain.pop_back();
     _lastBB = oldLastBB;
     _func = oldfunc;
     _builder->SetInsertPoint(_lastBB);
@@ -495,7 +498,13 @@ Value* LlvmPass::getValue(ZLambda* zlambda) {
 }
 
 ZType* LlvmPass::resolve(ZType* type) {
-    return _genericResolver->resolve(type);
+	int depth = _genericResolutionChain.size() - 1;
+	while (type->containsGenerics()) {
+		type = _genericResolutionChain[depth]->resolve(type);
+		--depth;
+	}
+
+	return type;
 }
 
 BasicBlock* LlvmPass::makeBB(std::string name) {

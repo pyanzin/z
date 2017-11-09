@@ -21,6 +21,8 @@ public:
     void setTypeParam(int n, ZType* type) {
         (*_typeParams)[n] = type;
     }
+
+	bool containsGenerics();
 protected:
     std::vector<ZType*>* _typeParams = new std::vector<ZType*>();
 };
