@@ -4,7 +4,7 @@
 #include <windows.h>
 
 char* concat(char* s1, char* s2) {
-	int resLen = strlen(s1) + strlen(s2);
+	int resLen = strlen(s1) + strlen(s2) + 1;
 	char* res = malloc(resLen);
 	strcpy(res, s1);
 	strcat(res, s2);
@@ -13,7 +13,8 @@ char* concat(char* s1, char* s2) {
 }
 
 int compare(char* s1, char* s2) {
-    return strcmp(s1, s2);
+	auto res = strcmp(s1, s2);
+	return res;
 }
 
 int len(char* str) {
@@ -53,8 +54,12 @@ void* Array(size_t elemSize, int count) {
 	return typePtr + 1;
 }
 
-char** makeArray(int size) {
-	return Array(sizeof(char**), size);
+int* ArrayInt(int size) {
+	return Array(sizeof(int), size);
+}
+
+char** ArrayString(int size) {
+	return Array(sizeof(char*), size);
 }
 
 int size(void* xs) {

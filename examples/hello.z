@@ -2,12 +2,11 @@ extern def concat(s1: String, s2: String): String
 extern def print(s: String): None
 extern def getchar(): Char
 extern def len(s: String): Int
-extern def fork(fn: () => None): None
-extern def pause(n: Int): None
+//extern def fork(fn: () => None): None
+//extern def pause(n: Int): None
 extern def compare(s1: String, s2: String): Int
 extern def int2string(i: Int): String
 extern def Array[T](size: Int): Array[T]
-extern def makeArray(size: Int): Array[String]
 extern def size(xs: Array[_]): Int
 
 def main(): None = {
@@ -16,48 +15,59 @@ def main(): None = {
    arr(1) = "an albino";
    arr(2) = "a mosquito";
    arr(3) = "my libido";
-   print(int2string(size(arr)) + "\n");
-   print(join(arr, ", ") + "\n\0");
+   
+   foreach[String](arr, (x: String): None => print(x + "\n"));
 
-   getchar();
+   var cnt = count[String](arr, (x: String): Boolean => len(x) == 9);
+   print(int2string(cnt));
+
+   //getchar();
 }
 
 def join(xs: Array[String], delim: String): String = {
    var result = "";
-   var i = 0;
-   while(i < size(xs)) {
-      result = result + xs(i) + delim;
-      i = i + 1;
-   }  
+   for (var i = 0; i < size(xs); i = i + 1) {
+      result = result + xs(i);
+      if (i != (size(xs) - 1))
+         result = result + delim;      
+   }
 
    return result;
 }
 
-def reduce[T, R](xs: Array[T], f: (R, T) => R, z: R): R = {
+def foreach[T](xs: Array[T], f: (T) => None): None = {
+   for (var i = 0; i < size(xs); i = i + 1)
+      f(xs(i));
+}
+
+def reduce[T, R](xs: Array[T], z: R, f: (R, T) => R): R = {
    var result = z;
-   var i = 0;
-   while (i < size(xs)) {
-      result = f(result, xs(i));
-      i = i + 1;
-   }
+   for (var i = 0; i < size(xs); i = i + 1)
+      result = f(result, xs(i));   
 
    return result;
 }
 
 def count[T](xs: Array[T], f: (T) => Boolean): Int = {
    var result = 0;
-   var i = 0;
-   while (i < size(xs)) {
+   
+   for (var i = 0; i < size(xs); i = i + 1)
       if (f(xs(i)))
-         result = result + 1;
-         i = i + 1;
-   }
+         result = result + 1;   
 
    return result;
 }
 
+def any[T](xs: Array[T], f: (T) => Boolean): Boolean = {
+   for (var i = 0; i < size(xs); i = i + 1) {
+      if (f(xs(i)))
+         return true;
+   }
+   return false;
+}
+
 def filter[T](xs: Array[T], f: (T) => Boolean): Array[T] = {
-   var result = Array[T](count(xs, f));
+   var result = Array[T](count[T](xs, f));
 
    var i = 0;
    var j = 0;
