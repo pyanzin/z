@@ -1,8 +1,8 @@
 Compiler for some statically typed language.
 
+``` scala
 extern def print(s: String): None
 
-``` scala
 def main(): None = {
    var arr = Array[String](4);
    arr(0) = "a mulatto";
@@ -24,6 +24,11 @@ def map[A, B](xs: Array[A], f: (A) => B): Array[B] = {
    }
 
    return result;
+}
+
+def printLine(s: String): None = {
+   print(s);
+   print("\n");
 }
 
 def foreach[T](xs: Array[T], f: (T) => None): None = {
