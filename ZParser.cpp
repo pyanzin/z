@@ -79,7 +79,7 @@ ZFunc* ZParser::parseFunc() {
 
 	std::vector<ZArg*>* args = new std::vector<ZArg*>();
 	while (!consume(CLOSE_PAREN)) {
-		args->push_back(parseArg());
+		args->push_back(parseFullArg());
 		consume(COMMA);
 	}
 
@@ -119,48 +119,58 @@ ZExpr* ZParser::parseLambda() {
 
 	auto sr = beginRange();	
 
-	if (!consume(OPEN_PAREN)) {
+	if (!isNext(OPEN_PAREN) && !isNext(IDENT)) {
 		_lexer.backtrackTo(pos);
-		return parseNumber();
+		return parseAssign();
 	}
-
-	_symTable.enter();
 
 	std::vector<ZArg*>* args = new std::vector<ZArg*>();
-	while (!consume(CLOSE_PAREN)) {
-		ZArg* arg = parseArg();
-		if (!arg) {
-			_symTable.exit();
-			_lexer.backtrackTo(pos);
-			return parseNumber();
-		}
-		args->push_back(arg);
-		consume(COMMA);
-	}
+    ZType* retType;
 
-	std::vector<ZType*>* argTypes = new std::vector<ZType*>();
-	for (ZArg* arg : *args) {
-		argTypes->push_back(arg->getType());
-		_symTable.addSymbol(arg->getType(), arg->getName());
-	}
+    if (consume(OPEN_PAREN)) {
+        while (!consume(CLOSE_PAREN)) {
+            ZArg* arg = parseVagueArg();
+            if (!arg) {
+                _lexer.backtrackTo(pos);
+                return parseAssign();
+            }
+            args->push_back(arg);
+            consume(COMMA);
+        }
+        
+        std::vector<ZType*>* argTypes = new std::vector<ZType*>();
+        for (ZArg* arg : *args)
+            argTypes->push_back(arg->getType());        
+                
+        if (consume(COLON))
+            retType = parseType();
+        else
+            retType = Unknown;
+    } else {
+        string* id = val(IDENT);
+        args->push_back(new ZArg(Unknown, id));
+    }
 
-	reqConsume(COLON);
+    if (!consume(FAT_ARROW)) {
+        _lexer.backtrackTo(pos);
+        return parseAssign();
+    }
 
-	ZType* retType = parseType();
+    _symTable.enter();
 
-	reqConsume(FAT_ARROW);
+    for (ZArg* arg : *args)
+        _symTable.addSymbol(arg->getType(), arg->getName());
 
 	ZExpr* expr = parseExpr();
-
+    
 	_symTable.exit();
     
-	ZFuncType* lambdaType = new ZFuncType(retType, *argTypes);
     auto lambda = new ZLambda(args, expr);
 	lambda->withSourceRange(endRange(sr));
 	return lambda;
 }
 
-ZArg* ZParser::parseArg() {
+ZArg* ZParser::parseFullArg() {
 	std::string* name = val(IDENT);
 	if (!name)
 		return nullptr;
@@ -171,6 +181,20 @@ ZArg* ZParser::parseArg() {
 	ZType* type = parseType();
 
 	return new ZArg(type, name);
+}
+
+ZArg* ZParser::parseVagueArg() {
+    std::string* name = val(IDENT);
+    if (!name)
+        return nullptr;
+
+    ZType* type;
+    if (consume(COLON))
+        type = parseType();
+    else
+        type = Unknown;
+
+    return new ZArg(type, name);
 }
 
 ZType* ZParser::parseType() {
@@ -462,7 +486,7 @@ ZExpr* ZParser::parseChar() {
 	auto sr = beginRange();
 
 	if (!isNext(CHAR_LIT))
-		return parseLambda();
+		return parseNumber();
 	
 
 	std::string* value = val(CHAR_LIT);

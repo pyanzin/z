@@ -22,9 +22,9 @@ public:
 
     ZFunc* parseFunc();
 	ZExpr* parseLambda();
-	ZArg* parseArg();
-
-	ZType* parseType();
+	ZArg* parseFullArg();
+    ZArg* parseVagueArg();
+    ZType* parseType();
 
 	ZBlock* parseBlock();
 	ZAst* parseBlockOrStatement();
@@ -41,7 +41,7 @@ public:
 	ZVarDef* parseVarDef();
 
     ZExpr* parseExpr() {
-        return parseAssign();  
+        return parseLambda();  
     }
 
 	ZExpr* parseAssign();
