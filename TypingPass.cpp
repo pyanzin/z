@@ -52,7 +52,7 @@ void TypingPass::visit(ZAssign* zassign) {
     if (!assignee)
         error("Left part of the assignment expression is not suitable for assignment", zassign->getPosition());
 
-    if (!dynamic_cast<ZSubscript*>(assignee) && assignee->getType() != zassign->getRight()->getType())
+    if (!dynamic_cast<ZSubscript*>(assignee) && !assignee->getType()->isEqual(*zassign->getRight()->getType()))
         error("Type of the left hand expression doesn't match the type of right hand expression", assignee->getPosition());
 
 	zassign->setType(zassign->getRight()->getType());
