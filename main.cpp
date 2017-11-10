@@ -106,7 +106,7 @@ int main(int argc, char* args[]) {
         module->setDataLayout(TargetMachine->createDataLayout());
         module->setTargetTriple(targetTriple);
 
-        auto Filename = "output.o";
+        auto Filename = "output.obj";
         std::error_code EC;
         raw_fd_ostream dest(Filename, EC, sys::fs::F_None);
 

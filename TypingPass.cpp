@@ -70,7 +70,7 @@ void TypingPass::visit(ZCall* zcall) {
 
     int callerArgsCount = zcall->getArgs().size();
 
-    if (dynamic_cast<ZArrayType*>(zcall->callee->getType())) {
+	if (dynamic_cast<ZArrayType*>(zcall->callee->getType()) || zcall->callee->getType()->isEqual(*String)) {
         if (callerArgsCount != 1)
             error("Array subsciprt operator requires 1 argument");
 
@@ -131,17 +131,19 @@ void TypingPass::visit(ZCall* zcall) {
 void TypingPass::visit(ZSubscript* zsubscript) {
     ZExpr* target = zsubscript->getTarget();
     target->accept(this);
-    ZArrayType* targetType = dynamic_cast<ZArrayType*>(target->getType());
+    ZArrayType* arrayType = dynamic_cast<ZArrayType*>(target->getType());
 
-    if (!targetType)
-        error("Subscript operator is only applicable for expressions of array type");
+	if (arrayType) 
+		zsubscript->setType(arrayType->getElementType());
+	else if (target->getType()->isEqual(*String))
+		zsubscript->setType(Char);
+	else
+        error("Subscript operator is only applicable for expressions of array or string type");
 
     ZExpr* index = zsubscript->getIndex();
     index->accept(this);
     if (index->getType() != Int && index->getType() != Char)
         error("Subscript index must have integer type");
-
-    zsubscript->setType(targetType->getElementType());
 }
 
 

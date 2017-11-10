@@ -6,6 +6,7 @@ extern def len(s: String): Int
 //extern def pause(n: Int): None
 extern def compare(s1: String, s2: String): Int
 extern def int2string(i: Int): String
+extern def char2string(ch: Char): String
 extern def Array[T](size: Int): Array[T]
 extern def size(xs: Array[_]): Int
 
@@ -16,12 +17,27 @@ def main(): None = {
    arr(2) = "a mosquito";
    arr(3) = "my libido";
    
+   arr = filter[String](arr, (x: String): Boolean => len(x) == 9);
+
    foreach[String](arr, (x: String): None => print(x + "\n"));
 
    var cnt = count[String](arr, (x: String): Boolean => len(x) == 9);
    print(int2string(cnt));
 
-   //getchar();
+   getchar();
+}
+
+def printLine(s: String): None = {
+   print(s);
+   print("\n");
+}
+
+def reverse(x: String): String = {
+   var result = "";
+   for (var i = len(x) - 1; i >= 0; i = i - 1)
+      result = result + char2string(x(i));
+
+   return result;
 }
 
 def join(xs: Array[String], delim: String): String = {
@@ -50,10 +66,12 @@ def reduce[T, R](xs: Array[T], z: R, f: (R, T) => R): R = {
 
 def count[T](xs: Array[T], f: (T) => Boolean): Int = {
    var result = 0;
-   
+
    for (var i = 0; i < size(xs); i = i + 1)
       if (f(xs(i)))
          result = result + 1;   
+
+   print(int2string(result));
 
    return result;
 }

@@ -38,6 +38,13 @@ char* int2string(int i) {
 	return buf;
 }
 
+char* char2string(char ch) {
+	char* res = malloc(2);
+	*res = ch;
+	*(res + 1) = '\0';
+	return res;
+}
+
 void pause(int millis) {
 	Sleep(millis);
 }
@@ -47,11 +54,11 @@ void* allocate(size_t elemSize) {
 }
 
 void* Array(size_t elemSize, int count) {
-	int* sizePtr = calloc(count * elemSize + sizeof(int) + sizeof(int), sizeof(char));
+	int* sizePtr = calloc(count * elemSize + sizeof(int), sizeof(char));
 	*sizePtr = count;
-	int* typePtr = sizePtr + 1;
-	*typePtr = 0;
-	return typePtr + 1;
+	//int* typePtr = sizePtr + 1;
+	//*typePtr = 0;
+	return sizePtr + 1;
 }
 
 int* ArrayInt(int size) {
@@ -63,7 +70,7 @@ char** ArrayString(int size) {
 }
 
 int size(void* xs) {
-	int* size = (int*)xs - 2;
+	int* size = (int*)xs - 1;
 	return *size;
 }
 
