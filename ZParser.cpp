@@ -163,9 +163,11 @@ ZExpr* ZParser::parseLambda() {
 
 	ZExpr* expr = parseExpr();
     
+    SymbolRef* ref = _symTable.makeRef();
+
 	_symTable.exit();
     
-    auto lambda = new ZLambda(args, expr);
+    auto lambda = new ZLambda(args, expr, ref);
 	lambda->withSourceRange(endRange(sr));
 	return lambda;
 }

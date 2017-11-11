@@ -80,9 +80,6 @@ void TypingPass::visit(ZCall* zcall) {
         return;
     }
 
-	for (ZExpr* arg : zcall->getArgs())
-		arg->accept(this);
-
 	ZFuncType* calleeType = dynamic_cast<ZFuncType*>(zcall->callee->getType());
 
 	if (!calleeType)
@@ -96,15 +93,18 @@ void TypingPass::visit(ZCall* zcall) {
 	bool calleeIsGeneric = calleeType->hasGenericDefs();
 
     if (calleeIsGeneric) {
+        bool typeArgsPassed = zcall->getTypeArgs() && zcall->getTypeArgs()->size() > 0;
         for (int i = 0; i < calleeType->getGenericDefs()->size(); ++i) {
             auto param = (*calleeType->getGenericDefs())[i];
-            auto arg = (*zcall->getTypeArgs())[i];
+            auto arg = typeArgsPassed ? (*zcall->getTypeArgs())[i] : Unknown;
             zcall->getRef()->addResolution(param, arg);
         }
 
-        //juxtapose(calleeType, zcall);
-    }
-	else {
+        juxtapose(calleeType, zcall);
+    } else {
+        for (ZExpr* arg : zcall->getArgs())
+            arg->accept(this);
+
 		int i = 0;
 		for (ZType* calleeArgType : calleeType->getParamTypes()) {
 			ZExpr* arg = zcall->getArgs()[i++];
@@ -266,12 +266,20 @@ void TypingPass::juxtapose(ZType* calleeType, ZCall* call) {
         juxtapose(paramType, argExpr, ref);
     }
 
-
 	call->setType(juxtapose(funcType->getRetType(), call->getType(), ref));
 }
 
-void TypingPass::juxtapose(ZType* paramType, ZExpr* expr, SymbolRef* ref) {
-    expr->setType(juxtapose(paramType, expr->getType(), ref));
+void TypingPass::juxtapose(ZType* paramType, ZExpr* expr, SymbolRef* ref) {    
+    ZType* type;
+    auto lambda = dynamic_cast<ZLambda*>(expr);
+    if (lambda) {
+        type = juxtapose(paramType, expr->getType(), ref);
+        expr->setType(type);
+        expr->accept(this);
+    } else {
+        expr->accept(this);
+        type = juxtapose(paramType, expr->getType(), ref);
+    }
 }
 
 ZType* TypingPass::juxtapose(ZType* paramType, ZType* argType, SymbolRef* ref) {
@@ -292,9 +300,12 @@ ZType* TypingPass::juxtapose(ZType* paramType, ZType* argType, SymbolRef* ref) {
         }
     }
 
-	if (paramType->getTypeParams()->size() == argType->getTypeParams()->size())	
-		for (int i = 0; i < paramType->getTypeParams()->size(); ++i)
-			argType->setTypeParam(i, juxtapose((*paramType->getTypeParams())[i], (*argType->getTypeParams())[i], ref));
-    
+    if (argType->isEqual(*Unknown))
+        argType = paramType->copyStem();
+
+    for (int i = 0; i < paramType->getTypeParams()->size(); ++i)
+        argType->setTypeParam(i, juxtapose((*paramType->getTypeParams())[i], (*argType->getTypeParams())[i], ref));
+        
     return argType;
 }
+

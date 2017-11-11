@@ -164,6 +164,7 @@
     <ClCompile Include="ZFunc.cpp" />
     <ClCompile Include="ZFuncType.cpp" />
     <ClCompile Include="ZIf.cpp" />
+    <ClCompile Include="ZLambda.cpp" />
     <ClCompile Include="ZLexer.cpp" />
     <ClCompile Include="ZModule.cpp" />
     <ClCompile Include="ZParser.cpp" />

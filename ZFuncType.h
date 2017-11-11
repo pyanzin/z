@@ -67,6 +67,8 @@ public:
         return _genericDefs;
 	}
 
+    ZType* copyStem() override;
+
     bool hasGenericDefs() {
         return _genericDefs->size() > 0;
 	}

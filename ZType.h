@@ -14,6 +14,8 @@ public:
 
 	virtual bool canBeCastedTo(ZType& other);
 
+    virtual ZType* copyStem();
+
     std::vector<ZType*>* getTypeParams() {
         return _typeParams;
     }

@@ -38,4 +38,8 @@ public:
 			return true;
 		return false;
 	}
+
+    ZType* copyStem() override {
+        return new ZArrayType(Unknown); 
+    }
 };

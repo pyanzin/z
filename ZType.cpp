@@ -8,6 +8,10 @@ bool ZType::canBeCastedTo(ZType& other) {
 	return false;
 }
 
+ZType* ZType::copyStem() {
+    return this;
+}
+
 bool ZType::containsGenerics() {
 	if (dynamic_cast<ZGenericParam*>(this))
 		return true;

@@ -4,12 +4,14 @@
 #include "ZVisitor.h"
 #include "ZArg.h"
 #include "ZFuncType.h"
+#include "SymbolRef.h"
 
 class ZLambda : public ZExpr {
 public:
-    ZLambda(std::vector<ZArg*>* args, ZExpr* body) {
+    ZLambda(std::vector<ZArg*>* args, ZExpr* body, SymbolRef* ref) {
         _args = args;
         _body = body;
+        _ref = ref;
 
         adopt(_body);
         for (auto arg : *_args)
@@ -26,17 +28,7 @@ public:
         return new ZFuncType(retType, *argTypes);
     }
 
-    void setType(ZType* type) override {
-        ZFuncType* funcType = dynamic_cast<ZFuncType*>(type);
-
-        if (!funcType)
-            throw std::exception(string("Unable to assign type " + type->toString() + " to lambda").c_str());
-
-        for (int i = 0; i < _args->size(); ++i)
-            (*_args)[i]->setType(funcType->getParamTypes()[i]);
-
-        _body->setType(funcType->getRetType());
-    }
+    void setType(ZType* type) override;
 
     void accept(ZVisitor* visitor) override {
         visitor->visit(this);
@@ -78,8 +70,13 @@ public:
     ZType* getReturnType() {
         return _body->getType();
     }
+
+    SymbolRef* getRef() {
+        return _ref;
+    }
 private:
     vector<ZArg*>* _args;
     ZExpr* _body;
+    SymbolRef* _ref;
 
 };
