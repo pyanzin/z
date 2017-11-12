@@ -39,6 +39,8 @@ ZLexeme ZLexer::getNextToken() {
         return COLON;
 	case ',':
 		return COMMA;
+    case '.':
+        return DOT;
     case ';':
         return SEMICOLON;
     case '{':

@@ -3,6 +3,7 @@
 enum ZLexeme {
     IDENT,
     DEF,
+    STRUCT,
 	EXTERN,
     VAR,
 	RETURN,
@@ -32,6 +33,7 @@ enum ZLexeme {
 	CLOSE_BRACKET,
     FAT_ARROW,
     COMMA,
+    DOT,
     PLUS,
     MINUS,
     ASTERISK,
