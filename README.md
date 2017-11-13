@@ -10,9 +10,9 @@ def main(): None = {
    arr(2) = "a mosquito";
    arr(3) = "my libido";
 
-   var reversed = map[String, String](arr, reverse);
+   var reversed = map(arr, reverse);
 
-   foreach[String](reversed, printLine);
+   foreach(reversed, printLine);
 }
 
 def map[A, B](xs: Array[A], f: (A) => B): Array[B] = {
