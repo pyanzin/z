@@ -248,5 +248,8 @@
     <ClInclude Include="GenericResolutionChain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ZStructType.h">
+      <Filter>Header Files\Types</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

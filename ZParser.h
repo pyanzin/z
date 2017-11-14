@@ -20,6 +20,8 @@ public:
 
     ZModule* parseModule();
 
+	void parseStruct();
+
     ZFunc* parseFunc();
 	ZExpr* parseLambda();
 	ZArg* parseFullArg();

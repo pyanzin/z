@@ -19,6 +19,7 @@
 #include "ZFuncType.h"
 #include "ZLambda.h"
 #include "ZFor.h"
+#include "ZStructType.h"
 
 ZParser::ZParser(ZLexer& lexer, SymbolTable& symTable): _lexer(lexer), _symTable(symTable) {
 	_ops[PLUS] = Sum;
@@ -46,11 +47,34 @@ ZParser::ZParser(ZLexer& lexer, SymbolTable& symTable): _lexer(lexer), _symTable
 ZModule* ZParser::parseModule() {
     auto modName = new std::string("test"); // TODO: user real mod name
     ZModule* module = new ZModule(*modName);
-    ZFunc* func;
-    while (func = parseFunc())
-        module->addFunction(func);
+
+	while (!isNext(INPUT_END)) {
+		if (isNext(DEF) || isNext(EXTERN))
+			module->addFunction(parseFunc());
+		else if (isNext(STRUCT))
+			parseStruct();
+		else
+			error("Expected function or stuct definition, but found: " + toString(_lexer.getNextToken()));
+	}
 
     return module;
+}
+
+void ZParser::parseStruct() {
+	reqConsume(STRUCT);
+
+	std::string* name = reqVal(IDENT);
+	reqConsume(OPEN_PAREN);
+
+	std::vector<ZArg*>* members = new std::vector<ZArg*>();
+	while (!consume(CLOSE_PAREN)) {
+		members->push_back(parseFullArg());
+		consume(COMMA);
+	}
+
+	auto structType = new ZStructType(name, members);
+
+	_symTable.addType(structType);
 }
 
 ZFunc* ZParser::parseFunc() {
