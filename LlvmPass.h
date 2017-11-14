@@ -10,6 +10,7 @@
 #include "ZNop.h"
 #include "SymbolRef.h"
 #include <stack>
+#include "GenericResolutionChain.h"
 
 class ZCast;
 class ZExpr;
@@ -61,7 +62,7 @@ private:
 	LlvmTable* _currentValues;
 
     llvm::IRBuilder<>* _builder;
-    vector<SymbolRef*> _genericResolutionChain;
+    GenericResolutionChain _resolutionChain;
     ZModule* _zmodule;
     int _lambdaCounter;
 };

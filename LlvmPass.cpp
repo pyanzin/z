@@ -381,7 +381,7 @@ Value* LlvmPass::getValue(ZBooleanLit* zbooleanlit) {
 }
 
 Value* LlvmPass::generateConcrete(ZFunc* func, SymbolRef* symbolRef) {
-    _genericResolutionChain.push_back(symbolRef);
+    _resolutionChain.push(symbolRef);
     auto oldLastBB = _lastBB;
     auto oldfunc = _func;
 
@@ -399,7 +399,7 @@ Value* LlvmPass::generateConcrete(ZFunc* func, SymbolRef* symbolRef) {
     if (!func->isExtern())
         generate(func, name);
 
-    _genericResolutionChain.pop_back();
+    _resolutionChain.pop();
     _lastBB = oldLastBB;
     _func = oldfunc;
     _builder->SetInsertPoint(_lastBB);
@@ -498,13 +498,7 @@ Value* LlvmPass::getValue(ZLambda* zlambda) {
 }
 
 ZType* LlvmPass::resolve(ZType* type) {
-	int depth = _genericResolutionChain.size() - 1;
-	while (type->containsGenerics()) {
-		type = _genericResolutionChain[depth]->resolve(type);
-		--depth;
-	}
-
-	return type;
+	return _resolutionChain.resolve(type);
 }
 
 BasicBlock* LlvmPass::makeBB(std::string name) {

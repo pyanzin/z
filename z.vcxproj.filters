@@ -245,5 +245,8 @@
     <ClInclude Include="ZFor.h">
       <Filter>Header Files\AST</Filter>
     </ClInclude>
+    <ClInclude Include="GenericResolutionChain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
