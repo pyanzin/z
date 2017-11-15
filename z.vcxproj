@@ -205,6 +205,7 @@
     <ClInclude Include="ZGenericParam.h" />
     <ClInclude Include="ZIf.h" />
     <ClInclude Include="ZLambda.h" />
+    <ClInclude Include="ZSelector.h" />
     <ClInclude Include="ZStructType.h" />
     <ClInclude Include="ZSubscript.h" />
     <ClInclude Include="ZIntLit.h" />

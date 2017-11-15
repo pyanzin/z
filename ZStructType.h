@@ -15,14 +15,38 @@ public:
 				_typeParams->push_back(gen);			
 	}
 
-	llvm::Type* toLlvmType() override {
+	llvm::StructType* getStructType() {
 		auto memberLlvmTypes = new std::vector<llvm::Type*>();
 		for (ZArg* member : *_members)
 			memberLlvmTypes->push_back(member->getType()->toLlvmType());
 
-		llvm::StructType* type = llvm::StructType::get(llvm::getGlobalContext(), memberLlvmTypes);
+		auto type = llvm::StructType::create(llvm::getGlobalContext());
+		type->setBody(*memberLlvmTypes);
+		return type;
+	}
+
+	llvm::Type* toLlvmType() override {
+		llvm::StructType* type = getStructType();
 
 		return llvm::PointerType::get(type, 0);
+	}
+
+	int getSize() {
+		return getStructType()->getPrimitiveSizeInBits() / 8;
+	}
+
+	int indexOfMember(std::string& name) {
+		for (int i = 0; i < _members->size(); ++i)
+			if (*(*_members)[i]->getName() == name)
+				return i;
+		return -1;
+	}
+
+	ZArg* getMember(string& name) {
+		for (int i = 0; i < _members->size(); ++i)
+			if (*(*_members)[i]->getName() == name)
+				return (*_members)[i];
+		return nullptr;
 	}
 
 	std::string& getName() override {
@@ -36,6 +60,7 @@ public:
 	bool isEqual(ZType& other) override {
 		return this == &other;
 	}
+
 private:
 	std::vector<ZArg*>* _members;
 	std::string* _name;

@@ -17,6 +17,7 @@ class ZWhile;
 class ZSubscript;
 class ZLambda;
 class ZFor;
+class ZSelector;
 
 class ZVisitor {
 public:
@@ -35,6 +36,8 @@ public:
 	virtual void visit(ZAssign* zassign) { }		
 
 	virtual void visit(ZBinOp* zbinop) { }
+
+	virtual void visit(ZSelector* zselector) { }
 
     virtual void visit(ZLambda* zlambda) { }
 

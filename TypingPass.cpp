@@ -19,6 +19,8 @@
 #include "ZLambda.h"
 #include "ZCast.h"
 #include "ZFor.h"
+#include "ZSelector.h"
+#include "ZStructType.h"
 
 void TypingPass::visit(ZModule* zmodule) {
     _module = zmodule;
@@ -179,6 +181,18 @@ void TypingPass::visit(ZBinOp* zbinop) {
 
 	error("Unable to apply operation " + toString(zbinop->getOp()) + " for "
 		+ zbinop->getLeft()->getType()->toString() + " and " + zbinop->getRight()->getType()->toString(), zbinop->getPosition());
+}
+
+void TypingPass::visit(ZSelector* zselector) {
+	zselector->getTarget()->accept(this);
+
+	ZStructType* structType = dynamic_cast<ZStructType*>(zselector->getTarget()->getType());
+
+	if (!structType)
+		;// error
+
+	ZArg* member = structType->getMember(*zselector->getMember());
+	zselector->setType(member->getType());
 }
 
 void TypingPass::visit(ZId* zid) {

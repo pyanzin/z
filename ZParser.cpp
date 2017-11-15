@@ -20,6 +20,7 @@
 #include "ZLambda.h"
 #include "ZFor.h"
 #include "ZStructType.h"
+#include "ZSelector.h"
 
 ZParser::ZParser(ZLexer& lexer, SymbolTable& symTable): _lexer(lexer), _symTable(symTable) {
 	_ops[PLUS] = Sum;
@@ -75,6 +76,8 @@ void ZParser::parseStruct() {
 	auto structType = new ZStructType(name, members);
 
 	_symTable.addType(structType);
+
+	new ZFunc(name, structType, *members, *new vector<ZGenericParam*>(), nullptr);
 }
 
 ZFunc* ZParser::parseFunc() {
@@ -420,12 +423,12 @@ ZExpr* ZParser::parseBinOp() {
 
 	auto sr = beginRange();
 
-	ZExpr* left = parseCall();
+	ZExpr* left = parseSelector();
 	auto next = _lexer.getNextToken();
 
 	if (_ops.find(next) == _ops.end()) {
 		_lexer.backtrackTo(pos);
-		return parseCall();
+		return parseSelector();
 	}
 
 	auto right = parseExpr();
@@ -435,6 +438,20 @@ ZExpr* ZParser::parseBinOp() {
 	zbinop->withSourceRange(endRange(sr));
 
 	return zbinop;
+}
+
+
+ZExpr* ZParser::parseSelector() {
+	auto sr = beginRange();
+
+	auto target = parseCall();
+	if (!consume(DOT))
+		return target;
+	auto member = reqVal(IDENT);
+
+	auto selector = new ZSelector(target, member);
+	selector->withSourceRange(endRange(sr));
+	return selector;	
 }
 
 ZExpr* ZParser::parseCall() {

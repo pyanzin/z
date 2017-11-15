@@ -2,6 +2,7 @@
 #include "ZVisitor.h"
 #include "ZExpr.h"
 #include "ZLambda.h"
+#include "ZSelector.h"
 
 class SymbolRef;
 class ZIf;
@@ -23,8 +24,8 @@ public:
     void visit(ZCall* zcall) override;
 
 	void visit(ZBinOp* zbinop) override;
-
-    void visit(ZId* zid) override;
+	void visit(ZSelector* zselector) override;
+	void visit(ZId* zid) override;
 
 	void visit(ZReturn* zreturn) override;
 

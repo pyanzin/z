@@ -51,7 +51,7 @@ public:
 	ZExpr* parseBinOp();
 
 	ZExpr* parseCall();
-
+	ZExpr* parseSelector();
 	ZExpr* parseId();
 
 	ZExpr* parseString();

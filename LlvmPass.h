@@ -37,7 +37,8 @@ public:
 
 	llvm::Value* getValue(ZId* zvar);
     Value* getValue(ZSubscript* zsubscript, llvm::BasicBlock* bb);
-    llvm::Value* getValue(ZBinOp* zbinop, llvm::BasicBlock* bb);
+	Value* getValue(ZSelector* zselector, BasicBlock* bb);
+	llvm::Value* getValue(ZBinOp* zbinop, llvm::BasicBlock* bb);
 	Value* getValue(ZStringLit* zstringlit);
 	llvm::Value* getValue(ZIntLit* zintlit);
 	Value* getValue(ZCharLit* zintlit);

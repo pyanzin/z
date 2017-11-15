@@ -24,6 +24,7 @@
 #include "ZLambda.h"
 #include "ZFor.h"
 #include "ZArrayType.h"
+#include "ZSelector.h"
 
 using namespace llvm;
 
@@ -308,6 +309,10 @@ Value* LlvmPass::getValue(ZExpr* zexpr, BasicBlock* bb) {
     ZSubscript* zsubscript = dynamic_cast<ZSubscript*>(zexpr);
     if (zsubscript)
         return getValue(zsubscript, bb);
+
+	ZSelector* zselector = dynamic_cast<ZSelector*>(zexpr);
+	if (zselector)
+		return getValue(zselector, bb);
 }
 
 llvm::Value* LlvmPass::getValue(ZCast* zcast, BasicBlock* bb) {
@@ -331,6 +336,16 @@ Value* LlvmPass::getValue(ZSubscript* zsubscript, BasicBlock* bb) {
 
     auto gep = _builder->CreateGEP(targetValue, indexValue);
     return _builder->CreateLoad(gep);
+}
+
+Value* LlvmPass::getValue(ZSelector* zselector, BasicBlock* bb) {
+	_builder->SetInsertPoint(bb);
+	Value* targetValue = getValue(zselector->getTarget(), bb);
+
+	int index = zselector->getMemberIndex();
+
+	auto gep = _builder->CreateGEP(targetValue, ConstantInt::get(getGlobalContext(), APInt::APInt(32, index)));
+	return _builder->CreateLoad(gep);
 }
 
 Value* LlvmPass::getValue(ZBinOp* zbinop, BasicBlock* bb) {
