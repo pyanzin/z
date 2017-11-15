@@ -20,8 +20,7 @@ public:
 		for (ZArg* member : *_members)
 			memberLlvmTypes->push_back(member->getType()->toLlvmType());
 
-		auto type = llvm::StructType::create(llvm::getGlobalContext());
-		type->setBody(*memberLlvmTypes);
+		auto type = llvm::StructType::create(llvm::getGlobalContext(), *memberLlvmTypes);
 		return type;
 	}
 

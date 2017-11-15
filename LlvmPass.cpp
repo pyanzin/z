@@ -344,7 +344,12 @@ Value* LlvmPass::getValue(ZSelector* zselector, BasicBlock* bb) {
 
 	int index = zselector->getMemberIndex();
 
-	auto gep = _builder->CreateGEP(targetValue, ConstantInt::get(getGlobalContext(), APInt::APInt(32, index)));
+	auto gepArgs = vector<Value*>() = { 
+		ConstantInt::get(getGlobalContext(), APInt(32, 0)), 
+		ConstantInt::get(getGlobalContext(), APInt(32, index)) 
+	};
+
+	auto gep = _builder->CreateGEP(targetValue, gepArgs);
 	return _builder->CreateLoad(gep);
 }
 
