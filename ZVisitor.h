@@ -18,6 +18,7 @@ class ZSubscript;
 class ZLambda;
 class ZFor;
 class ZSelector;
+class ZCast;
 
 class ZVisitor {
 public:
@@ -32,6 +33,8 @@ public:
 	virtual void visit(ZBlock* zblock) { }
 
 	virtual void visit(ZVarDef* zvardef) { }
+
+	virtual void visit(ZCast* zcast) { }
 
 	virtual void visit(ZAssign* zassign) { }		
 

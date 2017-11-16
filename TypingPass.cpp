@@ -51,6 +51,9 @@ void TypingPass::visit(ZAssign* zassign) {
     if (!assignee)
         assignee = dynamic_cast<ZSubscript*>(zassign->getLeft());
 
+	if (!assignee)
+		assignee = dynamic_cast<ZSelector*>(zassign->getLeft());
+
     if (!assignee)
         error("Left part of the assignment expression is not suitable for assignment", zassign->getPosition());
 
@@ -257,11 +260,15 @@ void TypingPass::visit(ZVarDef* zvardef) {
 
 	initExpr->accept(this);
 
-	if (!zvardef->getVarType() || zvardef->getVarType() == Unknown)
+	if (!zvardef->getVarType() || zvardef->getVarType()->isEqual(*Unknown))
 		zvardef->setVarType(zvardef->getInitExpr()->getType());
 	else if (!zvardef->getVarType()->isEqual(*initExpr->getType()))
 		error("Type of variable '" + zvardef->getName() + "' doesn't match the type of init expression", zvardef->getPosition());
 			
+}
+
+void TypingPass::visit(ZCast* zcast) {
+	zcast->getExpr()->accept(this);
 }
 
 void TypingPass::juxtapose(ZType* calleeType, ZCall* call) {

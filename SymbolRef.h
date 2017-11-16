@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "SymbolStorage.h"
+#include "SymbolScope.h"
 #include "ZFuncType.h"
 #include "ZArrayType.h"
 

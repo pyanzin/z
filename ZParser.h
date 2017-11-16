@@ -80,6 +80,8 @@ private:
     ZLexer _lexer;
     SymbolTable _symTable;
 
+	ZModule* _module;
+
 	std::map<std::string, ZType*> _types;
 
 	std::map<ZLexeme, BinOps> _ops;

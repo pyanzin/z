@@ -5,7 +5,7 @@ class ZCast : public ZExpr {
 public:
 	ZCast(ZExpr* expr, ZType* targetType) {
 		_expr = expr;
-		setType(_expr->getType());
+		setType(targetType);
 		_targetType = targetType;
 		adopt(expr);
 	}
@@ -18,6 +18,10 @@ public:
 		}
 
 		throw exception("wrong call to replaceChild in ZCast");
+	}
+
+	void accept(ZVisitor* visitor) override {
+		visitor->visit(this);
 	}
 
 	ZExpr* getExpr() {

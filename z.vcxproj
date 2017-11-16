@@ -149,7 +149,6 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SymbolEntry.cpp" />
     <ClCompile Include="SymbolRef.cpp" />
-    <ClCompile Include="SymbolStorage.cpp" />
     <ClCompile Include="SymbolTable.cpp" />
     <ClCompile Include="TypingPass.cpp" />
     <ClCompile Include="Utils.cpp" />
@@ -183,7 +182,7 @@
     <ClInclude Include="SourceRange.h" />
     <ClInclude Include="SymbolEntry.h" />
     <ClInclude Include="SymbolRef.h" />
-    <ClInclude Include="SymbolStorage.h" />
+    <ClInclude Include="SymbolScope.h" />
     <ClInclude Include="SymbolTable.h" />
     <ClInclude Include="TypingPass.h" />
     <ClInclude Include="Utils.h" />

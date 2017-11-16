@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <string>
 #include "ZBasicType.h"
-#include "SymbolStorage.h"
+#include "SymbolScope.h"
 #include "SymbolRef.h"
 
 class SymbolTable {

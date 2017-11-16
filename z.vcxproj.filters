@@ -36,9 +36,6 @@
     <ClCompile Include="SymbolEntry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SymbolStorage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SymbolTable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -129,9 +126,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SymbolTable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SymbolStorage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SymbolEntry.h">
@@ -253,6 +247,9 @@
     </ClInclude>
     <ClInclude Include="ZSelector.h">
       <Filter>Header Files\AST</Filter>
+    </ClInclude>
+    <ClInclude Include="SymbolScope.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

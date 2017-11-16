@@ -21,6 +21,7 @@
 #include "ZFor.h"
 #include "ZStructType.h"
 #include "ZSelector.h"
+#include "ZCast.h"
 
 ZParser::ZParser(ZLexer& lexer, SymbolTable& symTable): _lexer(lexer), _symTable(symTable) {
 	_ops[PLUS] = Sum;
@@ -47,18 +48,18 @@ ZParser::ZParser(ZLexer& lexer, SymbolTable& symTable): _lexer(lexer), _symTable
 
 ZModule* ZParser::parseModule() {
     auto modName = new std::string("test"); // TODO: user real mod name
-    ZModule* module = new ZModule(*modName);
+    _module = new ZModule(*modName);
 
 	while (!isNext(INPUT_END)) {
 		if (isNext(DEF) || isNext(EXTERN))
-			module->addFunction(parseFunc());
+			_module->addFunction(parseFunc());
 		else if (isNext(STRUCT))
 			parseStruct();
 		else
 			error("Expected function or stuct definition, but found: " + toString(_lexer.getNextToken()));
 	}
 
-    return module;
+	return _module;
 }
 
 void ZParser::parseStruct() {
@@ -67,17 +68,47 @@ void ZParser::parseStruct() {
 	std::string* name = reqVal(IDENT);
 	reqConsume(OPEN_PAREN);
 
+	_symTable.enter();
+
 	std::vector<ZArg*>* members = new std::vector<ZArg*>();
 	while (!consume(CLOSE_PAREN)) {
-		members->push_back(parseFullArg());
+		auto member = parseFullArg();
+		members->push_back(member);
+
+		_symTable.addSymbol(member->getType(), member->getName());
+
 		consume(COMMA);
 	}
 
 	auto structType = new ZStructType(name, members);
 
-	_symTable.addType(structType);
+	auto varName = new string("__constructee");
 
-	new ZFunc(name, structType, *members, *new vector<ZGenericParam*>(), nullptr);
+	auto objDef = new ZVarDef(*varName, *_symTable.makeRef(), structType, new ZCast(new ZCall(new ZId(*new string("allocate"), _symTable.makeRef()),
+		*new vector<ZExpr*>() = { new ZIntLit(structType->getSize()) }, new std::vector<ZType*>, _symTable.makeRef()), structType));
+
+	_symTable.addSymbol(structType, varName);
+
+	auto stmts = new std::vector<ZAst*>();
+
+	stmts->push_back(objDef);
+
+	for (auto member : *members) {
+		auto init = new ZAssign(new ZSelector(new ZId(*varName, _symTable.makeRef()), member->getName()), new ZId(*member->getName(), _symTable.makeRef()));
+		stmts->push_back(init);
+	}
+
+	stmts->push_back(new ZReturn(new ZId(*varName, _symTable.makeRef())));
+
+	_symTable.exit();
+
+	auto ctor = new ZFunc(name, structType, *members, *new vector<ZGenericParam*>(), new ZBlock(stmts));
+
+	_module->addFunction(ctor);
+
+	_symTable.addSymbol(ctor->getType(), name);
+
+	_symTable.addType(structType);
 }
 
 ZFunc* ZParser::parseFunc() {
@@ -405,7 +436,7 @@ ZExpr* ZParser::parseAssign() {
 
 	int pos = _lexer.getPos();
 
-	ZExpr* left = parseCall();
+	ZExpr* left = parseSelector();
 
 	if (left && consume(EQUAL)) {
 		auto right = parseAssign();

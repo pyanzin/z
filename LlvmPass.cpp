@@ -459,13 +459,30 @@ Value* LlvmPass::getValue(ZAssign* zassign, BasicBlock* bb) {
     }
 
     ZSubscript* zsubscript = dynamic_cast<ZSubscript*>(zassign->getLeft());
-    Value* targetValue = getValue(zsubscript->getTarget(), bb);
-    Value* indexValue = getValue(zsubscript->getIndex(), bb);
-    auto gep = _builder->CreateGEP(targetValue, indexValue);
+	if (zsubscript) {
+		Value* targetValue = getValue(zsubscript->getTarget(), bb);
+		Value* indexValue = getValue(zsubscript->getIndex(), bb);
+		auto gep = _builder->CreateGEP(targetValue, indexValue);
 
-    _builder->CreateStore(rightValue, gep);
+		_builder->CreateStore(rightValue, gep);
 
-    return rightValue;
+		return rightValue;
+	}
+
+	ZSelector* zselector = dynamic_cast<ZSelector*>(zassign->getLeft());
+	if (zselector) {
+		Value* targetValue = getValue(zselector->getTarget(), bb);
+		int index = zselector->getMemberIndex();
+		auto gepArgs = vector<Value*>() = {
+			ConstantInt::get(getGlobalContext(), APInt(32, 0)),
+			ConstantInt::get(getGlobalContext(), APInt(32, index))
+		};
+		auto gep = _builder->CreateGEP(targetValue, gepArgs);
+
+		_builder->CreateStore(rightValue, gep);
+
+		return rightValue;
+	}
 }
 
 Value* LlvmPass::getValue(ZLambda* zlambda) {
