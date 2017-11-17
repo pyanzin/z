@@ -68,6 +68,13 @@ void TypingPass::visit(ZLambda* zlambda) {
         arg->accept(this);
 
     zlambda->getBody()->accept(this);
+
+    auto bodyType = zlambda->getBody()->getType();
+
+    if (!zlambda->getReturnType()->isEqual(*Unknown))
+        zlambda->setRetType(bodyType);
+    else if (zlambda->getReturnType()->isEqual(*bodyType))
+        error("Return type doesn't match the type of lambda body");
 }
 
 void TypingPass::visit(ZCall* zcall) {
@@ -297,6 +304,8 @@ void TypingPass::juxtapose(ZType* paramType, ZExpr* expr, SymbolRef* ref) {
         type = juxtapose(paramType, expr->getType(), ref);
         expr->setType(type);
         expr->accept(this);
+        type = juxtapose(paramType, expr->getType(), ref);
+
     } else {
         expr->accept(this);
         type = juxtapose(paramType, expr->getType(), ref);

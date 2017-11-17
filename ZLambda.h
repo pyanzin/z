@@ -8,11 +8,12 @@
 
 class ZLambda : public ZExpr {
 public:
-    ZLambda(std::vector<ZArg*>* args, ZExpr* body, SymbolRef* ref) {
+    ZLambda(std::vector<ZArg*>* args, ZType* retType, ZExpr* body, SymbolRef* ref) {
         _args = args;
+        _retType = retType;
         _body = body;
         _ref = ref;
-
+        
         adopt(_body);
         for (auto arg : *_args)
             adopt(arg);
@@ -49,12 +50,14 @@ public:
         stream << "lambda " << "(";
         for (auto i = _args->begin(); i < _args->end(); ++i) {
             bool isLast = i == _args->end() - 1;
-            stream << (*i)->getName() << ": " << (*i)->getType()->toString();
+            stream << (*(*i)->getName()) << ": " << (*i)->getType()->toString();
             if (!isLast)
                 stream << ", ";
         }
 
-        stream << ")\n";
+
+        stream << ") : " << getReturnType()->toString() << "\n";
+
 
         _body->dump(stream, depth + 1);
     }
@@ -74,9 +77,13 @@ public:
     SymbolRef* getRef() {
         return _ref;
     }
+
+    void setRetType(ZType* retType) {
+        _retType = retType;
+    }
 private:
     vector<ZArg*>* _args;
+    ZType* _retType;
     ZExpr* _body;
     SymbolRef* _ref;
-
 };

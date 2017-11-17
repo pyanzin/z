@@ -14,5 +14,5 @@ void ZLambda::setType(ZType* type) {
         _ref->findSymbolDef(*argName)->setType(funcType->getParamTypes()[i]);
     }
 
-    _body->setType(funcType->getRetType());
+    _retType = funcType->getRetType();
 }

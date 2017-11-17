@@ -183,7 +183,7 @@ ZExpr* ZParser::parseLambda() {
 	}
 
 	std::vector<ZArg*>* args = new std::vector<ZArg*>();
-    ZType* retType;
+    ZType* retType = Unknown;
 
     if (consume(OPEN_PAREN)) {
         while (!consume(CLOSE_PAREN)) {
@@ -225,7 +225,10 @@ ZExpr* ZParser::parseLambda() {
 
 	_symTable.exit();
     
-    auto lambda = new ZLambda(args, expr, ref);
+    auto lambda = new ZLambda(args, retType, expr, ref);
+
+    lambda->setRetType(retType);
+
 	lambda->withSourceRange(endRange(sr));
 	return lambda;
 }

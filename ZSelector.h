@@ -14,6 +14,15 @@ public:
 		visitor->visit(this);
 	}
 
+    void dump(std::ostream& stream, unsigned depth) override {
+        dumpTab(stream, depth);
+        stream << "selector : ";
+        stream << getType()->toString() << "\n";
+        _target->dump(stream, depth + 1);
+
+        dumpTab(stream, depth + 1);
+        stream << *getMember() << "\n";
+    }
 	ZExpr* getTarget() {
 		return _target;
 	}
