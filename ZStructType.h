@@ -10,6 +10,7 @@ public:
 	ZStructType(std::string* name, std::vector<ZArg*>* members, std::vector<ZGenericParam*>* genericDefs = nullptr) {
 		_name = name;
 		_members = members;
+		_structType = nullptr;
 		if (genericDefs)
 			for (ZGenericParam* gen : *genericDefs)
 				_typeParams->push_back(gen);			
@@ -25,9 +26,13 @@ public:
 	}
 
 	llvm::Type* toLlvmType() override {
-		llvm::StructType* type = getStructType();
+		if (_structType)
+			return _structType;
 
-		return llvm::PointerType::get(type, 0);
+		llvm::StructType* type = getStructType();
+		_structType = llvm::PointerType::get(type, 0);
+
+		return _structType;
 	}
 
 	int getSize() {
@@ -63,4 +68,6 @@ public:
 private:
 	std::vector<ZArg*>* _members;
 	std::string* _name;
+
+	llvm::Type* _structType;
 };
