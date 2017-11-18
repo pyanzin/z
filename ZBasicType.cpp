@@ -24,3 +24,5 @@ ZBasicType* Boolean = new ZBasicType(llvm::IntegerType::get(llvm::getGlobalConte
 ZBasicType* String = new ZBasicType(llvm::Type::getInt8PtrTy(llvm::getGlobalContext()), "String");
 
 ZWildcardType* Wildcard = new ZWildcardType();
+
+ZBasicType* Ref = new ZBasicType(llvm::PointerType::get(llvm::IntegerType::get(llvm::getGlobalContext(), 8), 0), "Ref");

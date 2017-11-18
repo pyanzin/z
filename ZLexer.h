@@ -59,6 +59,8 @@ private:
         _keywords.insert(std::make_pair("false", BOOL_FALSE_LIT));
         _keywords.insert(std::make_pair("for", FOR));
         _keywords.insert(std::make_pair("struct", STRUCT));
+        _keywords.insert(std::make_pair("sizeof", SIZEOF));
+        _keywords.insert(std::make_pair("as", AS));
     }
 };
 

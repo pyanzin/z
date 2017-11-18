@@ -12,6 +12,7 @@
 #include <stack>
 #include "GenericResolutionChain.h"
 
+class ZSizeOf;
 class ZCast;
 class ZExpr;
 
@@ -34,6 +35,8 @@ public:
     BasicBlock* generate(ZNop* znop);
 	llvm::Value* getValue(ZExpr* zexpr, llvm::BasicBlock* bb);
 	llvm::Value* getValue(ZCast* zcast, llvm::BasicBlock* bb);
+    llvm::Value* getValue(ZSizeOf* zsizeof, llvm::BasicBlock* bb);
+
 
 	llvm::Value* getValue(ZId* zvar);
     Value* getValue(ZSubscript* zsubscript, llvm::BasicBlock* bb);

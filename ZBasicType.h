@@ -39,3 +39,4 @@ extern ZBasicType* Boolean;
 extern ZBasicType* String;
 
 extern ZWildcardType* Wildcard;
+extern ZBasicType* Ref;

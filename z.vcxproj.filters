@@ -251,5 +251,8 @@
     <ClInclude Include="SymbolScope.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ZSizeOf.h">
+      <Filter>Header Files\AST</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

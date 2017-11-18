@@ -25,6 +25,7 @@
 #include "ZFor.h"
 #include "ZArrayType.h"
 #include "ZSelector.h"
+#include "ZSizeOf.h"
 
 using namespace llvm;
 
@@ -313,11 +314,23 @@ Value* LlvmPass::getValue(ZExpr* zexpr, BasicBlock* bb) {
 	ZSelector* zselector = dynamic_cast<ZSelector*>(zexpr);
 	if (zselector)
 		return getValue(zselector, bb);
+
+    ZSizeOf* zsizeof = dynamic_cast<ZSizeOf*>(zexpr);
+    if (zsizeof)
+        return getValue(zsizeof, bb);
 }
 
 llvm::Value* LlvmPass::getValue(ZCast* zcast, BasicBlock* bb) {
 	Value* exprValue = getValue(zcast->getExpr(), bb);
-	return _builder->CreateCast(Instruction::BitCast, exprValue, zcast->getTargetType()->toLlvmType());
+	return _builder->CreateCast(Instruction::BitCast, exprValue, resolve(zcast->getTargetType())->toLlvmType());
+}
+
+llvm::Value* LlvmPass::getValue(ZSizeOf* zsizeof, llvm::BasicBlock* bb) {
+    _builder->SetInsertPoint(bb);
+    auto resolvedType = resolve(zsizeof->getWrappedType())->toLlvmType();
+    DataLayout dataLayout = DataLayout(_module);
+    int typeSize = dataLayout.getTypeAllocSize(resolvedType);
+    return ConstantInt::get(getGlobalContext(), APInt(32, typeSize));
 }
 
 Value* LlvmPass::getValue(ZId* zid) {

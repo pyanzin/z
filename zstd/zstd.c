@@ -53,20 +53,12 @@ void* allocate(size_t elemSize) {
 	return malloc(elemSize);
 }
 
-void* Array(size_t elemSize, int count) {
+void* allocateArray(int count, size_t elemSize) {
 	int* sizePtr = calloc(count * elemSize + sizeof(int), sizeof(char));
 	*sizePtr = count;
 	//int* typePtr = sizePtr + 1;
 	//*typePtr = 0;
 	return sizePtr + 1;
-}
-
-int* ArrayInt(int size) {
-	return Array(sizeof(int), size);
-}
-
-char** ArrayString(int size) {
-	return Array(sizeof(char*), size);
 }
 
 int size(void* xs) {

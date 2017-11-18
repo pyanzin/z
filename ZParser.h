@@ -54,6 +54,9 @@ public:
 	ZExpr* parseSelector();
 	ZExpr* parseId();
 
+    ZExpr* parseSizeOf();
+    ZExpr* parseAsCast();
+
 	ZExpr* parseString();
 
 	ZExpr* parseNumber();

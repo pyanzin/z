@@ -39,5 +39,7 @@ enum ZLexeme {
     ASTERISK,
 	EXCLAM,
     SLASH,
+    SIZEOF,
+    AS,
     INPUT_END
 };

@@ -22,6 +22,7 @@
 #include "ZStructType.h"
 #include "ZSelector.h"
 #include "ZCast.h"
+#include "ZSizeOf.h"
 
 ZParser::ZParser(ZLexer& lexer, SymbolTable& symTable): _lexer(lexer), _symTable(symTable) {
 	_ops[PLUS] = Sum;
@@ -42,6 +43,7 @@ ZParser::ZParser(ZLexer& lexer, SymbolTable& symTable): _lexer(lexer), _symTable
 	_symTable.addType(Double);
 	_symTable.addType(Void);
 	_symTable.addType(Any);
+    _symTable.addType(Ref);
 	_symTable.addType(new ZArrayType(nullptr));
 	_symTable.addType(Wildcard);
 }
@@ -61,6 +63,8 @@ ZModule* ZParser::parseModule() {
 
 	return _module;
 }
+
+
 
 void ZParser::parseStruct() {
 	reqConsume(STRUCT);
@@ -105,9 +109,7 @@ void ZParser::parseStruct() {
 	auto ctor = new ZFunc(name, structType, *members, *new vector<ZGenericParam*>(), new ZBlock(stmts));
 
 	_module->addFunction(ctor);
-
 	_symTable.addSymbol(ctor->getType(), name);
-
 	_symTable.addType(structType);
 }
 
@@ -457,12 +459,12 @@ ZExpr* ZParser::parseBinOp() {
 
 	auto sr = beginRange();
 
-	ZExpr* left = parseSelector();
+	ZExpr* left = parseAsCast();
 	auto next = _lexer.getNextToken();
 
 	if (_ops.find(next) == _ops.end()) {
 		_lexer.backtrackTo(pos);
-		return parseSelector();
+		return parseAsCast();
 	}
 
 	auto right = parseExpr();
@@ -474,6 +476,20 @@ ZExpr* ZParser::parseBinOp() {
 	return zbinop;
 }
 
+ZExpr* ZParser::parseAsCast() {
+    auto sr = beginRange();
+    ZExpr* expr = parseSelector();
+
+    if (!consume(AS))
+        return expr;
+
+    ZType* toType = parseType();
+
+    ZCast* zcast = new ZCast(expr, toType);
+    zcast->withSourceRange(endRange(sr));
+
+    return zcast;
+}
 
 ZExpr* ZParser::parseSelector() {
 	auto sr = beginRange();
@@ -536,7 +552,7 @@ ZExpr* ZParser::parseId() {
 
     std::string* name = val(IDENT);
 	if (!name)
-		return parseString();
+		return parseSizeOf();
     SymbolRef* ref = _symTable.makeRef();
 
 	ZExpr* zid = new ZId(*name, ref);
@@ -544,6 +560,22 @@ ZExpr* ZParser::parseId() {
 	zid->withSourceRange(endRange(sr));
 
 	return zid;
+}
+
+ZExpr* ZParser::parseSizeOf() {
+    auto sr = beginRange();
+    if (!consume(SIZEOF))
+        return parseString();
+    reqConsume(OPEN_BRACKET);
+
+    ZType* type = parseType();
+
+    reqConsume(CLOSE_BRACKET);
+
+    auto zsizeof = new ZSizeOf(type);
+    zsizeof->withSourceRange(endRange(sr));
+
+    return zsizeof;
 }
 
 ZExpr* ZParser::parseString() {
