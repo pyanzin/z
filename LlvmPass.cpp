@@ -525,15 +525,18 @@ Value* LlvmPass::getValue(ZLambda* zlambda) {
 		ZArg* zarg = (*zargs)[i++];
 		arg.setName(zarg->getName()->c_str());
 		_currentValues->add(*zarg->getName(), &arg);
-	}	
+	}
 
-    if (zlambda->getBody()->getType() == Void) {
+    ZExpr* exprBody = dynamic_cast<ZExpr*>(zlambda->getBody());
+
+    if (!exprBody) {
         generate(zlambda->getBody());
         _builder->SetInsertPoint(_lastBB);
-        _builder->CreateRetVoid();
+        if (zlambda->getReturnType() == Void)
+            _builder->CreateRetVoid();
     } else {
         BasicBlock* bb = makeBB("lambda_body");
-        Value* retExpr = getValue(zlambda->getBody(), bb);
+        Value* retExpr = getValue(exprBody, bb);
         _builder->SetInsertPoint(bb);
         _builder->CreateRet(retExpr);
     }

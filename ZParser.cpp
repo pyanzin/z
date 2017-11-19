@@ -221,13 +221,17 @@ ZExpr* ZParser::parseLambda() {
     for (ZArg* arg : *args)
         _symTable.addSymbol(arg->getType(), arg->getName());
 
-	ZExpr* expr = parseExpr();
+    ZAst* body;
+    if (isNext(OPEN_BRACE))
+        body = parseBlock();
+    else
+        body = parseExpr();
     
     SymbolRef* ref = _symTable.makeRef();
 
 	_symTable.exit();
     
-    auto lambda = new ZLambda(args, retType, expr, ref);
+    auto lambda = new ZLambda(args, retType, body, ref);
 
     lambda->setRetType(retType);
 

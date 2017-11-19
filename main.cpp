@@ -77,9 +77,9 @@ int main(int argc, char* args[]) {
 
         fpm->doInitialization();
 
-        fpm->run(*module->getFunction("main"));
+        //fpm->run(*module->getFunction("main"));
 
-        module->dump();
+        //module->dump();
 
         InitializeAllTargetInfos();
         InitializeAllTargets();

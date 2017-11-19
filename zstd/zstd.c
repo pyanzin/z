@@ -50,7 +50,7 @@ void pause(int millis) {
 }
 
 void* allocate(size_t elemSize) {
-	return malloc(elemSize);
+	return calloc(1, elemSize);
 }
 
 void* allocateArray(int count, size_t elemSize) {

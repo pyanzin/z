@@ -69,11 +69,13 @@ void TypingPass::visit(ZLambda* zlambda) {
 
     zlambda->getBody()->accept(this);
 
-    auto bodyType = zlambda->getBody()->getType();
+    ZExpr* exprBody = dynamic_cast<ZExpr*>(zlambda->getBody());
 
-    if (!zlambda->getReturnType()->isEqual(*Unknown))
+    auto bodyType = exprBody ? exprBody->getType() : Unknown;
+
+    if (zlambda->getReturnType()->isEqual(*Unknown))
         zlambda->setRetType(bodyType);
-    else if (zlambda->getReturnType()->isEqual(*bodyType))
+    else if (exprBody && !zlambda->getReturnType()->isEqual(*bodyType))
         error("Return type doesn't match the type of lambda body");
 }
 
