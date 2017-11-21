@@ -531,15 +531,17 @@ Value* LlvmPass::getValue(ZLambda* zlambda) {
 
     if (!exprBody) {
         generate(zlambda->getBody());
-        _builder->SetInsertPoint(_lastBB);
-        if (zlambda->getReturnType() == Void)
-            _builder->CreateRetVoid();
+        _builder->SetInsertPoint(_lastBB);        
     } else {
         BasicBlock* bb = makeBB("lambda_body");
         Value* retExpr = getValue(exprBody, bb);
         _builder->SetInsertPoint(bb);
-        _builder->CreateRet(retExpr);
+		if (!(zlambda->getReturnType()->isEqual(*Void)))
+			_builder->CreateRet(retExpr);
     }
+
+	if (zlambda->getReturnType()->isEqual(*Void))
+		_builder->CreateRetVoid();
 
 	_currentValues->exit();
 

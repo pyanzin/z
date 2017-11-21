@@ -203,7 +203,7 @@ void TypingPass::visit(ZSelector* zselector) {
 	ZStructType* structType = dynamic_cast<ZStructType*>(zselector->getTarget()->getType());
 
 	if (!structType)
-		;// error
+		error("Unable to apply selector for non-structural type", zselector->getSourceRange()->getPosition());
 
 	ZArg* member = structType->getMember(*zselector->getMember());
 	zselector->setType(member->getType());
@@ -283,7 +283,30 @@ void TypingPass::visit(ZCast* zcast) {
 }
 
 void TypingPass::visit(ZFuncCast* zfunccast) {
-    
+	// TODO: drag Symbol Ref here
+
+	ZAst* parent = zfunccast->getParent();
+
+	ZFuncType* targetType = zfunccast->getTargetType();
+	std::vector<ZArg*>* targetParams = new std::vector<ZArg*>();
+	std::vector<ZExpr*>* originArgs = new std::vector<ZExpr*>();
+	int i = 0;
+	for (ZType* paramType : targetType->getParamTypes()) {
+		std::string* paramName = new string("__p" + i++);
+		targetParams->push_back(new ZArg(paramType, paramName));
+		originArgs->push_back(new ZCast(new ZId(*paramName, nullptr), paramType));
+	}
+
+	ZCall* callToOriginal = new ZCall(zfunccast->getExpr(), *originArgs, new std::vector<ZType*>, nullptr);
+
+	ZExpr* body = new ZCast(callToOriginal, zfunccast->getTargetType());
+
+	ZLambda* wrapperLambda = new ZLambda(targetParams, targetType->getRetType(), body, nullptr);
+
+	parent->replaceChild(zfunccast, wrapperLambda);
+
+	wrapperLambda->accept(this);
+
 }
 
 void TypingPass::juxtapose(ZType* calleeType, ZCall* call) {

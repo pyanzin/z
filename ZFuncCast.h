@@ -2,6 +2,7 @@
 #include "ZFuncType.h"
 
 class ZFuncCast : public ZExpr {
+public:
     ZFuncCast(ZExpr* expr, ZFuncType* targetType) {
         _expr = expr;
         _targetType = targetType;

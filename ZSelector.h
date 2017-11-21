@@ -14,6 +14,16 @@ public:
 		visitor->visit(this);
 	}
 
+	void replaceChild(ZAst* oldChild, ZAst* newChild) override {
+		adopt(newChild);
+		if (_target == oldChild) {
+			_target = static_cast<ZExpr*>(newChild);
+			return;
+		}
+		
+		throw exception("wrong call to replaceChild in ZSelector");
+	}
+
     void dump(std::ostream& stream, unsigned depth) override {
         dumpTab(stream, depth);
         stream << "selector : ";
