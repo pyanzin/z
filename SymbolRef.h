@@ -55,6 +55,10 @@ public:
 	void addResolution(ZGenericParam* param, ZType* arg) {
 		_storage->addTypeArgument(param, arg);
     }
+
+	SymbolScope* getStorage() {
+		return _storage;
+    }
 private:
     SymbolScope* _storage;
     int _id;

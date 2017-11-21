@@ -3,6 +3,8 @@
 #include "SymbolEntry.h"
 #include "ZGenericParam.h"
 
+class SymbolRef;
+
 class SymbolScope {
 public:
 	SymbolScope(SymbolScope* parent = nullptr) {
@@ -117,6 +119,9 @@ public:
 
 		return false;
 	}
+
+	SymbolRef* makeRef();
+
 private:
     int _number;
     SymbolScope* _parent;

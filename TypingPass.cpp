@@ -283,7 +283,8 @@ void TypingPass::visit(ZCast* zcast) {
 }
 
 void TypingPass::visit(ZFuncCast* zfunccast) {
-	// TODO: drag Symbol Ref here
+	SymbolRef* initRef = zfunccast->getRef();
+	SymbolScope* newScope = initRef->getStorage()->makeChild();
 
 	ZAst* parent = zfunccast->getParent();
 
@@ -294,14 +295,20 @@ void TypingPass::visit(ZFuncCast* zfunccast) {
 	for (ZType* paramType : targetType->getParamTypes()) {
 		std::string* paramName = new string("__p" + i++);
 		targetParams->push_back(new ZArg(paramType, paramName));
-		originArgs->push_back(new ZCast(new ZId(*paramName, nullptr), paramType));
+		newScope->add(new SymbolEntry(paramType, *paramName));
 	}
 
-	ZCall* callToOriginal = new ZCall(zfunccast->getExpr(), *originArgs, new std::vector<ZType*>, nullptr);
+	int j = 0;
+	for (ZType* paramType : targetType->getParamTypes()) {
+		std::string* paramName = new string("__p" + j++);
+		originArgs->push_back(new ZCast(new ZId(*paramName, newScope->makeRef()), paramType));
+	}
+
+	ZCall* callToOriginal = new ZCall(zfunccast->getExpr(), *originArgs, new std::vector<ZType*>, newScope->makeRef());
 
 	ZExpr* body = new ZCast(callToOriginal, zfunccast->getTargetType());
 
-	ZLambda* wrapperLambda = new ZLambda(targetParams, targetType->getRetType(), body, nullptr);
+	ZLambda* wrapperLambda = new ZLambda(targetParams, targetType->getRetType(), body, initRef);
 
 	parent->replaceChild(zfunccast, wrapperLambda);
 
