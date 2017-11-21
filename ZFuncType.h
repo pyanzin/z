@@ -73,6 +73,27 @@ public:
         return _genericDefs->size() > 0;
 	}
 
+    bool canBeCastedTo(ZType* other) override {
+        ZFuncType* otherFunc = dynamic_cast<ZFuncType*>(other);
+        if (!otherFunc)
+            return false;
+
+        if (!otherFunc->getRetType()->canBeCastedTo(this->getRetType()))
+            return false;
+
+        if (otherFunc->getParamTypes().size() != this->getParamTypes().size())
+            return false;
+
+        for (int i = 0; i < this->getParamTypes().size(); ++i) {
+            auto thisParam = this->getParamTypes()[i];
+            auto otherParam = otherFunc->getParamTypes()[i];
+            if (!thisParam->canBeCastedTo(otherParam))
+                return false;
+        }
+
+        return true;
+    }
+
 private:
     std::vector<ZGenericParam*>* _genericDefs;
 };

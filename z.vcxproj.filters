@@ -254,5 +254,8 @@
     <ClInclude Include="ZSizeOf.h">
       <Filter>Header Files\AST</Filter>
     </ClInclude>
+    <ClInclude Include="ZFuncCast.h">
+      <Filter>Header Files\AST</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

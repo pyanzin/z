@@ -2,8 +2,8 @@
 #include "ZBasicType.h"
 #include "ZGenericParam.h"
 
-bool ZType::canBeCastedTo(ZType& other) {
-	if (other.isEqual(*Wildcard))
+bool ZType::canBeCastedTo(ZType* other) {
+	if (other->isEqual(*Wildcard))
 		return true;
 	return false;
 }

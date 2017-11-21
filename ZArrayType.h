@@ -32,9 +32,9 @@ public:
 		return false;		
 	}
 
-	bool canBeCastedTo(ZType& other) override {
-		ZArrayType* arrayType = dynamic_cast<ZArrayType*>(&other);
-		if (arrayType && getElementType()->canBeCastedTo(*arrayType->getElementType()))
+	bool canBeCastedTo(ZType* other) override {
+		ZArrayType* arrayType = dynamic_cast<ZArrayType*>(other);
+		if (arrayType && getElementType()->canBeCastedTo(arrayType->getElementType()))
 			return true;
 		return false;
 	}

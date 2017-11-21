@@ -4,6 +4,7 @@
 #include "ZLambda.h"
 #include "ZSelector.h"
 #include "ZCast.h"
+#include "ZFuncCast.h"
 
 class SymbolRef;
 class ZIf;
@@ -18,7 +19,8 @@ public:
 
 	void visit(ZVarDef* zvardef) override;
 	void visit(ZCast* zcast) override;
-	void juxtapose(ZType* calleeType, ZCall* call);
+    void visit(ZFuncCast* zfunccast);
+    void juxtapose(ZType* calleeType, ZCall* call);
     void juxtapose(ZType* paramType, ZExpr* expr, SymbolRef* ref);
     ZType* juxtapose(ZType* paramType, ZType* argType, SymbolRef* ref);
     void visit(ZAssign* zassign) override;

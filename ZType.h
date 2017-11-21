@@ -12,7 +12,7 @@ public:
 
 	virtual bool isEqual(ZType& other) = 0;
 
-	virtual bool canBeCastedTo(ZType& other);
+	virtual bool canBeCastedTo(ZType* other);
 
     virtual ZType* copyStem();
 

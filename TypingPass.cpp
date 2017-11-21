@@ -22,6 +22,8 @@
 #include "ZSelector.h"
 #include "ZStructType.h"
 
+class ZFuncCast;
+
 void TypingPass::visit(ZModule* zmodule) {
     _module = zmodule;
 	for (ZFunc* zf : zmodule->getFunctions())
@@ -125,7 +127,7 @@ void TypingPass::visit(ZCall* zcall) {
 			ZType* callerArgType = arg->getType();
 			if (calleeArgType->isEqual(*callerArgType))
 				continue;
-			if (callerArgType->canBeCastedTo(*calleeArgType)) {
+			if (callerArgType->canBeCastedTo(calleeArgType)) {
 				ZCast* cast = new ZCast(arg, calleeArgType);
 				zcall->replaceChild(arg, cast);
 				continue;
@@ -278,6 +280,10 @@ void TypingPass::visit(ZVarDef* zvardef) {
 
 void TypingPass::visit(ZCast* zcast) {
 	zcast->getExpr()->accept(this);
+}
+
+void TypingPass::visit(ZFuncCast* zfunccast) {
+    
 }
 
 void TypingPass::juxtapose(ZType* calleeType, ZCall* call) {
