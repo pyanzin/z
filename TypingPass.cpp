@@ -283,10 +283,11 @@ void TypingPass::visit(ZCast* zcast) {
 	zcast->getExpr()->accept(this);
     auto expr = zcast->getExpr();
     ZFuncType* funcTargetType = dynamic_cast<ZFuncType*>(zcast->getTargetType());
-    if (dynamic_cast<ZFuncType*>(expr->getType())
-        && funcTargetType) {
+    if (dynamic_cast<ZFuncType*>(expr->getType()) && funcTargetType) {
         auto parent = zcast->getParent();
         auto zfunccast = new ZFuncCast(expr, funcTargetType, zcast->getRef());
+        parent->replaceChild(zcast, zfunccast);
+        zfunccast->accept(this);
     }
 }
 
