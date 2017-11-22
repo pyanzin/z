@@ -128,8 +128,9 @@ void TypingPass::visit(ZCall* zcall) {
 			if (calleeArgType->isEqual(*callerArgType))
 				continue;
 			if (callerArgType->canBeCastedTo(calleeArgType)) {
-				ZCast* cast = new ZCast(arg, calleeArgType);
+				ZCast* cast = new ZCast(arg, calleeArgType, zcall->getRef());
 				zcall->replaceChild(arg, cast);
+                cast->accept(this);
 				continue;
 			}
 			error("Callee expects argument of type " + calleeArgType->toString()
@@ -280,6 +281,13 @@ void TypingPass::visit(ZVarDef* zvardef) {
 
 void TypingPass::visit(ZCast* zcast) {
 	zcast->getExpr()->accept(this);
+    auto expr = zcast->getExpr();
+    ZFuncType* funcTargetType = dynamic_cast<ZFuncType*>(zcast->getTargetType());
+    if (dynamic_cast<ZFuncType*>(expr->getType())
+        && funcTargetType) {
+        auto parent = zcast->getParent();
+        auto zfunccast = new ZFuncCast(expr, funcTargetType, zcast->getRef());
+    }
 }
 
 void TypingPass::visit(ZFuncCast* zfunccast) {
@@ -301,12 +309,12 @@ void TypingPass::visit(ZFuncCast* zfunccast) {
 	int j = 0;
 	for (ZType* paramType : targetType->getParamTypes()) {
 		std::string* paramName = new string("__p" + j++);
-		originArgs->push_back(new ZCast(new ZId(*paramName, newScope->makeRef()), paramType));
+		originArgs->push_back(new ZCast(new ZId(*paramName, newScope->makeRef()), paramType, initRef));
 	}
 
 	ZCall* callToOriginal = new ZCall(zfunccast->getExpr(), *originArgs, new std::vector<ZType*>, newScope->makeRef());
 
-	ZExpr* body = new ZCast(callToOriginal, zfunccast->getTargetType());
+	ZExpr* body = new ZCast(callToOriginal, zfunccast->getTargetType(), initRef);
 
 	ZLambda* wrapperLambda = new ZLambda(targetParams, targetType->getRetType(), body, initRef);
 

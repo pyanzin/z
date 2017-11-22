@@ -3,6 +3,7 @@
 #include "ZType.h"
 #include "ZWildcardType.h"
 
+class ZNumberType;
 class ZArrayType;
 
 class ZBasicType : public ZType {
@@ -28,15 +29,15 @@ private:
     std::string _name;
 };
 
-extern ZBasicType* Void;
-extern ZBasicType* Any;
-extern ZBasicType* Unknown;
+extern ZType* Void;
+extern ZType* Any;
+extern ZType* Unknown;
 
-extern ZBasicType* Int;
-extern ZBasicType* Double;
-extern ZBasicType* Char;
-extern ZBasicType* Boolean;
-extern ZBasicType* String;
+extern ZType* Int;
+extern ZType* Double;
+extern ZType* Char;
+extern ZType* Boolean;
+extern ZType* String;
 
 extern ZWildcardType* Wildcard;
 extern ZBasicType* Ref;

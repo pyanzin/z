@@ -3,7 +3,7 @@
 #include "ZGenericParam.h"
 
 bool ZType::canBeCastedTo(ZType* other) {
-	if (other->isEqual(*Wildcard))
+	if (other->isEqual(*Wildcard) || other->isEqual(*Void) || other->isEqual(*Any))
 		return true;
 	return false;
 }

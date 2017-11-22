@@ -260,5 +260,8 @@
     <ClInclude Include="ZFuncCast.h">
       <Filter>Header Files\AST</Filter>
     </ClInclude>
+    <ClInclude Include="ZNumberType.h">
+      <Filter>Header Files\Types</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

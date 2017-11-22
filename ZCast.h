@@ -3,10 +3,11 @@
 
 class ZCast : public ZExpr {
 public:
-	ZCast(ZExpr* expr, ZType* targetType) {
+    ZCast(ZExpr* expr, ZType* targetType, SymbolRef* ref) {
 		_expr = expr;
 		setType(targetType);
 		_targetType = targetType;
+        _ref = ref;
 		adopt(expr);
 	}
 
@@ -32,7 +33,12 @@ public:
 		return _targetType;
 	}
 
+    SymbolRef* getRef() {
+        return _ref;
+    }
+
 private:
 	ZExpr* _expr;
 	ZType* _targetType;
+    SymbolRef* _ref;
 };

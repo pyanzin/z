@@ -33,6 +33,8 @@ public:
 	}
 
 	bool canBeCastedTo(ZType* other) override {
+        if (other->isEqual(*Wildcard))
+            return true;
 		ZArrayType* arrayType = dynamic_cast<ZArrayType*>(other);
 		if (arrayType && getElementType()->canBeCastedTo(arrayType->getElementType()))
 			return true;
