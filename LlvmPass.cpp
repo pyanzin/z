@@ -38,6 +38,7 @@ LlvmPass::LlvmPass() {
 void LlvmPass::visit(ZModule* zmodule) {
     _zmodule = zmodule;
 	_module = new Module("test", getGlobalContext());
+	_diBuilder = new DIBuilder(*_module);
 
 	for (ZFunc* func : zmodule->getFunctions())
 		if (!func->isGeneric())

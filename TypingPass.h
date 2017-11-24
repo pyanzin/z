@@ -20,9 +20,6 @@ public:
 	void visit(ZVarDef* zvardef) override;
 	void visit(ZCast* zcast) override;
     void visit(ZFuncCast* zfunccast);
-    void juxtapose(ZType* calleeType, ZCall* call);
-    void juxtapose(ZType* paramType, ZExpr* expr, SymbolRef* ref);
-    ZType* juxtapose(ZType* paramType, ZType* argType, SymbolRef* ref);
     void visit(ZAssign* zassign) override;
     void visit(ZLambda* zlambda) override;
     void visit(ZCall* zcall) override;

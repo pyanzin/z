@@ -2,6 +2,7 @@
 #include <llvm/IR/Module.h>
 #include "ZVisitor.h"
 #include <llvm/IR/IRBuilder.h>
+#include <llvm/IR/DIBuilder.h>
 #include "ZIntLit.h"
 #include "LlvmTable.h"
 #include "ZCharLit.h"
@@ -66,7 +67,10 @@ private:
 	LlvmTable* _currentValues;
 
     llvm::IRBuilder<>* _builder;
+	llvm::DIBuilder* _diBuilder;
+
     GenericResolutionChain _resolutionChain;
     ZModule* _zmodule;
+
     int _lambdaCounter;
 };

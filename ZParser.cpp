@@ -53,6 +53,7 @@ ZModule* ZParser::parseModule() {
     _module = new ZModule(*modName);
 
 	while (!isNext(INPUT_END)) {
+
 		if (isNext(DEF) || isNext(EXTERN))
 			_module->addFunction(parseFunc());
 		else if (isNext(STRUCT))
