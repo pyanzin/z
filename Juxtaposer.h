@@ -2,6 +2,19 @@
 
 #include "TypingPass.h"
 #include "ZCall.h"
+#include <set>
+
+struct JuxtaposeResult {
+    JuxtaposeResult(ZType* type = nullptr, bool advances = false, bool completed = false) {
+        this->type = type;
+        this->advances = advances;
+        this->completed = completed;
+    }
+
+    ZType* type;
+    bool advances;
+    bool completed;
+};
 
 class Juxtaposer {
 public:
@@ -9,7 +22,7 @@ public:
 		_typingPass = typingPass;
 	}
 
-	void juxtapose(ZType* calleeType, ZCall* call) {
+	bool juxtapose(ZType* calleeType, ZCall* call) {
 		auto funcType = dynamic_cast<ZFuncType*>(calleeType);
 
 		SymbolRef* ref = call->getRef();
@@ -19,56 +32,91 @@ public:
 		for (ZGenericParam* param : *funcType->getGenericDefs())
 			ref->addResolution(param, isTypeArgsDefined ? (*call->getTypeArgs())[i++] : Unknown);
 
-		for (int i = 0; i < call->getArgs().size(); ++i) {
-			ZType* paramType = funcType->getParamTypes()[i];
-			ZExpr* argExpr = call->getArgs()[i];
-			juxtapose(paramType, argExpr, ref);
-		}
+        auto paramTypes = funcType->getParamTypes();
+        auto argExprs = call->getArgs();
 
-		call->setType(juxtapose(funcType->getRetType(), call->getType(), ref));
+        std::set<ZExpr*> resolved;
+        for (;;) {
+            if (resolved.size() == argExprs.size())
+                break;
+            int advances = false;
+            for (int i = 0; i < argExprs.size(); ++i) {
+                auto res = juxtapose(paramTypes[i], argExprs[i], ref);
+                if (res.advances)
+                    advances = true;
+                if (res.completed)
+                    resolved.insert(argExprs[i]);
+            }
+            if (!advances)
+                return false;
+        }
+
+		call->setType(juxtapose(funcType->getRetType(), call->getType(), ref).type);
+
+        return true;
 	}
 
-	void juxtapose(ZType* paramType, ZExpr* expr, SymbolRef* ref) {
-		ZType* type;
+	JuxtaposeResult juxtapose(ZType* paramType, ZExpr* expr, SymbolRef* ref) {
+        JuxtaposeResult res;
 		auto lambda = dynamic_cast<ZLambda*>(expr);
 		if (lambda) {
-			type = juxtapose(paramType, expr->getType(), ref);
-			expr->setType(type);
-			expr->accept(_typingPass);
-			type = juxtapose(paramType, expr->getType(), ref);
+			res = juxtapose(paramType, expr->getType(), ref);           
+			expr->setType(res.type);
+
+            if (allParamTypesKnown(dynamic_cast<ZFuncType*>(res.type))) {
+                expr->accept(_typingPass);
+                res = juxtapose(paramType, expr->getType(), ref);
+            }
 		}
 		else {
 			expr->accept(_typingPass);
-			type = juxtapose(paramType, expr->getType(), ref);
+			res = juxtapose(paramType, expr->getType(), ref);
 		}
+
+        return res;
 	}
 
-	ZType* juxtapose(ZType* paramType, ZType* argType, SymbolRef* ref) {
+    bool allParamTypesKnown(ZFuncType* type) {
+        for (auto paramType : type->getParamTypes())
+            if (paramType->isEqual(*Unknown))
+                return false;
+        return true;
+	}
+
+    JuxtaposeResult juxtapose(ZType* paramType, ZType* argType, SymbolRef* ref) {
 		ZGenericParam* gen = dynamic_cast<ZGenericParam*>(paramType);
 		if (gen) {
-			ZType* resolved = ref->resolve(paramType);
-			if (!resolved->isEqual(*Unknown)) {
+			ZType* resolvedType = ref->resolve(paramType);
+			if (!resolvedType->isEqual(*Unknown)) {
 				if (argType->isEqual(*Unknown))
-					return resolved;
-				if (resolved->isEqual(*argType))
-					return argType;
-				throw ("Type mismatch: expected " + resolved->toString() + ", but passed " + argType->toString());
+					return JuxtaposeResult(resolvedType, true, true);
+				if (resolvedType->isEqual(*argType))
+					return JuxtaposeResult(argType, false, true);
+				throw ("Type mismatch: expected " + resolvedType->toString() + ", but passed " + argType->toString());
 			}
 			else {
 				if (argType->isEqual(*Unknown))
-					return argType;
+					return JuxtaposeResult(argType, false, false);
 				ref->addResolution(gen, argType);
-				return argType;
+				return JuxtaposeResult(argType, true, true);
 			}
 		}
 
 		if (argType->isEqual(*Unknown))
 			argType = paramType->copyStem();
 
-		for (int i = 0; i < paramType->getTypeParams()->size(); ++i)
-			argType->setTypeParam(i, juxtapose((*paramType->getTypeParams())[i], (*argType->getTypeParams())[i], ref));
+        bool advances = false;
+        bool completed = true;
+        for (int i = 0; i < paramType->getTypeParams()->size(); ++i) {
+            auto res = juxtapose((*paramType->getTypeParams())[i], (*argType->getTypeParams())[i], ref);
+            if (res.advances)
+                advances = true;
+            if (!res.completed)
+                completed = false;
+            argType->setTypeParam(i, res.type);
+        }
 
-		return argType;
+		return JuxtaposeResult(argType, advances, completed);
 	}
 
 private:

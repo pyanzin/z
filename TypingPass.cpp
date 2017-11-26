@@ -318,7 +318,11 @@ void TypingPass::visit(ZFuncCast* zfunccast) {
 
 	ZCall* callToOriginal = new ZCall(zfunccast->getExpr(), *originArgs, new std::vector<ZType*>, newScope->makeRef());
 
-	ZExpr* body = new ZCast(callToOriginal, zfunccast->getTargetType(), initRef);
+    ZExpr* body;
+    if (targetType->getRetType()->isEqual(*Void))
+        body = callToOriginal;
+    else
+	    body = new ZCast(callToOriginal, zfunccast->getTargetType(), initRef);
 
 	ZLambda* wrapperLambda = new ZLambda(targetParams, targetType->getRetType(), body, initRef);
 

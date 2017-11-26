@@ -263,9 +263,6 @@
     <ClInclude Include="ZNumberType.h">
       <Filter>Header Files\Types</Filter>
     </ClInclude>
-    <ClInclude Include="JuxtaposeResult.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Juxtaposer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
