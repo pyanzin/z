@@ -266,5 +266,11 @@
     <ClInclude Include="Juxtaposer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ParserError.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="JuxtaposeResult.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
