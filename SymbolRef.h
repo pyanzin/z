@@ -2,6 +2,7 @@
 #include "SymbolScope.h"
 #include "ZFuncType.h"
 #include "ZArrayType.h"
+#include "ZDelayedType.h"
 
 class SymbolEntry;
 
@@ -50,6 +51,22 @@ public:
         }
 
         return type;
+    }
+
+	ZType* findTypeOrDelayed(std::string& name) {
+		ZType* type = findTypeDef(name);
+		if (!type)
+			return new ZDelayedType(name);
+		else
+			return type;
+    }
+
+	ZType* resolveIfDelayed(ZType* type) {
+		ZDelayedType* delayed = dynamic_cast<ZDelayedType*>(type);
+		if (delayed)
+			return findTypeDef(delayed->getName());
+		else
+			return type;
     }
 
 	void addResolution(ZGenericParam* param, ZType* arg) {
