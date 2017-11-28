@@ -199,6 +199,7 @@
     <ClInclude Include="ZCall.h" />
     <ClInclude Include="ZCast.h" />
     <ClInclude Include="ZCharLit.h" />
+    <ClInclude Include="ZDelayedType.h" />
     <ClInclude Include="ZExpr.h" />
     <ClInclude Include="ZFor.h" />
     <ClInclude Include="ZFunc.h" />
