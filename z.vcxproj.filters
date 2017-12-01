@@ -266,6 +266,12 @@
     <ClInclude Include="Juxtaposer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ParserError.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="JuxtaposeResult.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="ZDelayedType.h">
       <Filter>Header Files\Types</Filter>
     </ClInclude>

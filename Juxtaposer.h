@@ -3,18 +3,8 @@
 #include "TypingPass.h"
 #include "ZCall.h"
 #include <set>
-
-struct JuxtaposeResult {
-    JuxtaposeResult(ZType* type = nullptr, bool advances = false, bool completed = false) {
-        this->type = type;
-        this->advances = advances;
-        this->completed = completed;
-    }
-
-    ZType* type;
-    bool advances;
-    bool completed;
-};
+#include "ParserError.h"
+#include "JuxtaposeResult.h"
 
 class Juxtaposer {
 public:
@@ -119,7 +109,15 @@ public:
 		return JuxtaposeResult(argType, advances, completed);
 	}
 
+    void addError(ParserError* error) {
+        _errors.push_back(error);
+	}
+
+    std::vector<ParserError*> getErrors() {
+        return _errors;
+	}
+
 private:
 	TypingPass* _typingPass;
-
+    std::vector<ParserError*> _errors;
 };

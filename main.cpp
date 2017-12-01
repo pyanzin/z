@@ -9,10 +9,6 @@
 #include "LlvmPass.h"
 #include "llvm/ExecutionEngine/ExecutionEngine.h"
 #include "llvm/IR/LegacyPassManager.h"
-#include "llvm/IR/BasicBlock.h"
-#include "llvm/IR/DerivedTypes.h"
-#include "llvm/IR/Function.h"
-#include "llvm/IR/IRBuilder.h"
 #include "llvm/Transforms/Scalar.h"
 #include "llvm/IR/Verifier.h"
 #include "llvm/Support/TargetRegistry.h"
@@ -22,13 +18,8 @@
 #include <fstream>
 #include <sstream>
 
-//using namespace llvm;
-
-llvm::Module* makeLLVMModule();
-
 int main(int argc, char* args[]) {
     try {
-
         std::ifstream srcFile;
         std::stringstream stream;
         srcFile.open(args[1]);

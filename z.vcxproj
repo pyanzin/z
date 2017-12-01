@@ -178,9 +178,11 @@
   <ItemGroup>
     <ClInclude Include="GenericResolutionChain.h" />
     <ClInclude Include="Juxtaposer.h" />
+    <ClInclude Include="JuxtaposeResult.h" />
     <ClInclude Include="LlvmPass.h" />
     <ClInclude Include="LlvmStorage.h" />
     <ClInclude Include="LlvmTable.h" />
+    <ClInclude Include="ParserError.h" />
     <ClInclude Include="SourceRange.h" />
     <ClInclude Include="SymbolEntry.h" />
     <ClInclude Include="SymbolRef.h" />
