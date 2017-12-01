@@ -9,12 +9,29 @@ enum BinOps {
     Sub,
     Mul,
     Div,
+	Mod,
 	Equal,
 	NotEqual,
 	Less,
 	LessOrEqual,
 	More,
-	MoreOrEqual
+	MoreOrEqual,
+	BooleanOr,
+	BooleanAnd,
+	BooleanXor,
+	BitwiseOr,
+	BitwiseAnd
+};
+
+enum UnaryOps {
+	Negation,
+	BitwiseInvert,
+	UnaryPlus,
+	UnaryMinus,
+	PreIncrement,
+	PreDecrement,
+	PostIncrement,
+	PostDecrement
 };
 
 std::string toString(ZLexeme lexeme);

@@ -51,21 +51,42 @@ ZLexeme ZLexer::getNextToken() {
 		return OPEN_BRACKET;
 	case ']':
 		return CLOSE_BRACKET;
-    case '+':
-        return PLUS;
+	case '+':
+		if (getNextChar() == '+')
+			return DOUBLE_PLUS;
+		backtrackBy(1);
+		return PLUS;
     case '-':
-        return MINUS;
+		if (getNextChar() == '+')
+			return DOUBLE_MINUS;
+		backtrackBy(1);
+		return MINUS;
     case '*':
         return ASTERISK;
+	case '%':
+		return PERCENT;
     case '/':
 		if (getNextChar() == '/') {
 			while (getNextChar() != '\n')
 				;
 			return getNextToken();
-		} else {
-			backtrackBy(1);
-			return SLASH;
-	    }
+		}
+		backtrackBy(1);
+		return SLASH;	
+	case '|':
+		if (getNextChar() == '|')
+			return DOUBLE_PIPE;
+		backtrackBy(1);
+		return PIPE;
+	case '&':
+		if (getNextChar() == '|')
+			return DOUBLE_AMPERSAND;
+		backtrackBy(1);
+		return AMPERSAND;
+	case '^':
+		return CIRCUMFLEX;
+	case '~':
+		return TILDA;
 	case '<':
 		ch = getNextChar();
 		if (ch == '=')
