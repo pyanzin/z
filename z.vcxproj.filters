@@ -275,5 +275,8 @@
     <ClInclude Include="ZDelayedType.h">
       <Filter>Header Files\Types</Filter>
     </ClInclude>
+    <ClInclude Include="ZUnaryOp.h">
+      <Filter>Header Files\AST</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

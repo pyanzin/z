@@ -29,7 +29,7 @@ public:
         for (;;) {
             if (resolved.size() == argExprs.size())
                 break;
-            int advances = false;
+            bool advances = false;
             for (int i = 0; i < argExprs.size(); ++i) {
                 auto res = juxtapose(paramTypes[i], argExprs[i], ref);
                 if (res.advances)

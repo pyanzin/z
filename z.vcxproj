@@ -225,6 +225,7 @@
     <ClInclude Include="ZReturn.h" />
     <ClInclude Include="ZStringLit.h" />
     <ClInclude Include="ZType.h" />
+    <ClInclude Include="ZUnaryOp.h" />
     <ClInclude Include="ZVarDef.h" />
     <ClInclude Include="ZVisitor.h" />
     <ClInclude Include="ZWhile.h" />

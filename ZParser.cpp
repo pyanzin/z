@@ -25,16 +25,23 @@
 #include "ZSizeOf.h"
 
 ZParser::ZParser(ZLexer& lexer, SymbolTable& symTable): _lexer(lexer), _symTable(symTable) {
-	_ops[PLUS] = Sum;
-	_ops[MINUS] = Sub;
-	_ops[ASTERISK] = Mul;
-	_ops[SLASH] = Div;
-	_ops[DOUBLE_EQUAL] = Equal;
-	_ops[NOT_EQUAL] = NotEqual;
-	_ops[LESS] = Less;
-	_ops[LESS_OR_EQUAL] = LessOrEqual;
-	_ops[MORE] = More;
-	_ops[MORE_OR_EQUAL] = MoreOrEqual;
+	_binOps[PLUS] = Sum;
+	_binOps[MINUS] = Sub;
+	_binOps[ASTERISK] = Mul;
+	_binOps[SLASH] = Div;
+	_binOps[DOUBLE_EQUAL] = Equal;
+	_binOps[NOT_EQUAL] = NotEqual;
+	_binOps[LESS] = Less;
+	_binOps[LESS_OR_EQUAL] = LessOrEqual;
+	_binOps[MORE] = More;
+	_binOps[MORE_OR_EQUAL] = MoreOrEqual;
+
+    _unaryOps[EXCLAM] = Negation;
+    _unaryOps[TILDA] = BitwiseInvert;
+    _unaryOps[PLUS] = UnaryPlus;
+    _unaryOps[MINUS] = UnaryMinus;
+    _unaryOps[DOUBLE_PLUS] = PreIncrement;
+    _unaryOps[DOUBLE_MINUS] = PreDecrement;
 
 	_symTable.addType(Int);
 	_symTable.addType(Char);
@@ -467,14 +474,14 @@ ZExpr* ZParser::parseBinOp() {
 	ZExpr* left = parseAsCast();
 	auto next = _lexer.getNextToken();
 
-	if (_ops.find(next) == _ops.end()) {
+	if (_binOps.find(next) == _binOps.end()) {
 		_lexer.backtrackTo(pos);
 		return parseAsCast();
 	}
 
 	auto right = parseExpr();
 
-	auto zbinop = new ZBinOp(left, right, _ops[next], _symTable.makeRef());
+	auto zbinop = new ZBinOp(left, right, _binOps[next], _symTable.makeRef());
 
 	zbinop->withSourceRange(endRange(sr));
 
@@ -483,7 +490,7 @@ ZExpr* ZParser::parseBinOp() {
 
 ZExpr* ZParser::parseAsCast() {
     auto sr = beginRange();
-    ZExpr* expr = parseSelector();
+    ZExpr* expr = parseUnaryOp();
 
     if (!consume(AS))
         return expr;
@@ -495,6 +502,35 @@ ZExpr* ZParser::parseAsCast() {
 
     return zcast;
 }
+
+ZExpr* ZParser::parseUnaryOp() {
+    int pos = _lexer.getPos();
+    auto sr = beginRange();
+
+    auto next = _lexer.getNextToken();
+
+    if (_unaryOps.find(next) == _unaryOps.end()) {
+        _lexer.backtrackTo(pos);
+        ZExpr* target = parseSelector();
+        ZLexeme nextToken = _lexer.getNextToken();
+        if (nextToken == DOUBLE_PLUS) {
+            ZExpr* unaryOp = new ZUnaryOp(target, PostIncrement);
+            unaryOp->withSourceRange(endRange(sr));
+            return unaryOp;
+        }
+        if (nextToken == DOUBLE_MINUS) {
+            ZExpr* unaryOp = new ZUnaryOp(target, PostDecrement);
+            unaryOp->withSourceRange(endRange(sr));
+            return unaryOp;
+        }
+        return target;             
+    }
+
+    auto unaryOp = new ZUnaryOp(parseSelector(), _unaryOps[next]);
+    unaryOp->withSourceRange(endRange(sr));
+    return unaryOp;
+}
+
 
 ZExpr* ZParser::parseSelector() {
 	auto sr = beginRange();

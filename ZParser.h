@@ -6,6 +6,7 @@
 #include "ZBlock.h"
 #include "ZVarDef.h"
 #include "ZLexer.h"
+#include "ZUnaryOp.h"
 
 class SymbolTable;
 class ZArg;
@@ -51,6 +52,9 @@ public:
 	ZExpr* parseBinOp();
 
 	ZExpr* parseCall();
+
+    ZExpr* parseUnaryOp();
+
 	ZExpr* parseSelector();
 	ZExpr* parseId();
 
@@ -87,5 +91,6 @@ private:
 
 	std::map<std::string, ZType*> _types;
 
-	std::map<ZLexeme, BinOps> _ops;
+	std::map<ZLexeme, BinOps> _binOps;
+    std::map<ZLexeme, UnaryOps> _unaryOps;
 };

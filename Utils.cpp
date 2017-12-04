@@ -74,3 +74,16 @@ std::string toString(BinOps op) {
 		return ">=";
 	}
 }
+
+std::string toString(UnaryOps op) {
+    switch (op) {
+        case UnaryOps::Negation: return "Not";
+        case UnaryOps::BitwiseInvert: return "BitwiseInvert";
+        case UnaryOps::UnaryPlus: return "UnaryPlus";
+        case UnaryOps::UnaryMinus: return "UnaryMinus";
+        case UnaryOps::PreIncrement: return "PreInc";
+        case UnaryOps::PreDecrement: return "PreDec";
+        case UnaryOps::PostIncrement: return "PostInc";
+        case UnaryOps::PostDecrement: return "PostDec";
+    }
+}

@@ -37,3 +37,5 @@ enum UnaryOps {
 std::string toString(ZLexeme lexeme);
 
 std::string toString(BinOps op);
+
+std::string toString(UnaryOps op);
