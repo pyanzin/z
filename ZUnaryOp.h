@@ -24,7 +24,7 @@ public:
     };
 
     void dump(std::ostream& stream, unsigned depth) override {
-        dump(stream, depth);
+        dumpTab(stream, depth);
         stream << toString(_op) << "\n";
         _target->dump(stream, depth + 1);
     }

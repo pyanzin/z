@@ -512,6 +512,7 @@ ZExpr* ZParser::parseUnaryOp() {
     if (_unaryOps.find(next) == _unaryOps.end()) {
         _lexer.backtrackTo(pos);
         ZExpr* target = parseSelector();
+		int afterTargetPos = _lexer.getPos();
         ZLexeme nextToken = _lexer.getNextToken();
         if (nextToken == DOUBLE_PLUS) {
             ZExpr* unaryOp = new ZUnaryOp(target, PostIncrement);
@@ -523,6 +524,7 @@ ZExpr* ZParser::parseUnaryOp() {
             unaryOp->withSourceRange(endRange(sr));
             return unaryOp;
         }
+		_lexer.backtrackTo(afterTargetPos);
         return target;             
     }
 
@@ -676,6 +678,9 @@ ZExpr* ZParser::parseBoolean() {
 	else if (consume(BOOL_FALSE_LIT))
         return new ZBooleanLit(false);
 	return nullptr;
+	//auto pos = endRange(beginRange())->getPosition();
+	//throw std::exception(std::string("Unable to recognize an expression starting with " + toString(_lexer.getNextToken())
+	//	+ " at " + pos).c_str());
 }
 
 std::string* ZParser::val(::ZLexeme lexeme) {
