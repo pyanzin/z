@@ -26,6 +26,7 @@
 #include "ZArrayType.h"
 #include "ZSelector.h"
 #include "ZSizeOf.h"
+#include "ZUnaryOp.h"
 
 using namespace llvm;
 
@@ -280,6 +281,10 @@ Value* LlvmPass::getValue(ZExpr* zexpr, BasicBlock* bb) {
 	if (zbinop)
 		return getValue(zbinop, bb);
 
+	ZUnaryOp* zunaryop = dynamic_cast<ZUnaryOp*>(zexpr);
+	if (zunaryop)
+		return getValue(zunaryop, bb);
+
 	ZIntLit* zintlit = dynamic_cast<ZIntLit*>(zexpr);
 	if (zintlit)
 		return getValue(zintlit);
@@ -393,6 +398,25 @@ Value* LlvmPass::getValue(ZBinOp* zbinop, BasicBlock* bb) {
 		return _builder->CreateICmpSGE(left, right);
 	case More:
 		return _builder->CreateICmpSGT(left, right);
+	default:
+		return nullptr;
+	}
+}
+
+llvm::Value* LlvmPass::getValue(ZUnaryOp* zunaryop, llvm::BasicBlock* bb) {
+	_builder->SetInsertPoint(bb);
+	auto targetValue = getValue(zunaryop->getTarget(), bb);
+
+	switch (zunaryop->getOp()) {
+	case Negation:
+	case BitwiseInvert:
+		return _builder->CreateNeg(targetValue);
+	case UnaryPlus:
+		return targetValue;
+	case UnaryMinus:
+		return _builder->CreateSub(
+			ConstantInt::get(getGlobalContext(), APInt::APInt(32, 0)),
+		    targetValue);
 	default:
 		return nullptr;
 	}

@@ -25,6 +25,8 @@ public:
     void visit(ZCall* zcall) override;
 
 	void visit(ZBinOp* zbinop) override;
+
+	void visit(ZUnaryOp* unaryop) override;
 	void visit(ZSelector* zselector) override;
 	void visit(ZId* zid) override;
 

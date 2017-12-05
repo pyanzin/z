@@ -7,6 +7,7 @@
 #include "ZBlock.h"
 #include "ZCall.h"
 #include "ZBinOp.h"
+#include "ZUnaryOp.h"
 #include "ZId.h"
 #include "ZArg.h"
 #include "ZReturn.h"
@@ -22,6 +23,7 @@
 #include "ZSelector.h"
 #include "ZStructType.h"
 #include "Juxtaposer.h"
+#include "ZNumberType.h"
 
 class ZFuncCast;
 
@@ -199,6 +201,23 @@ void TypingPass::visit(ZBinOp* zbinop) {
 
 	error("Unable to apply operation " + toString(zbinop->getOp()) + " for "
 		+ zbinop->getLeft()->getType()->toString() + " and " + zbinop->getRight()->getType()->toString(), zbinop->getPosition());
+}
+
+void TypingPass::visit(ZUnaryOp* zunaryop) {
+	zunaryop->getTarget()->accept(this);
+
+	UnaryOps op = zunaryop->getOp();
+	ZType* targetType = zunaryop->getTarget()->getType();
+
+	if (op == Negation) {
+		if (!targetType->isEqual(*Boolean))
+			error("Negation operator is only applicable for expression of Boolean type", zunaryop->getPosition());
+		zunaryop->setType(Boolean);
+	} else {
+		if (!dynamic_cast<ZNumberType*>(targetType))
+			error("Operator " + toString(op) + " is only applicable to numeric types", zunaryop->getPosition());
+		zunaryop->setType(targetType);
+	}
 }
 
 void TypingPass::visit(ZSelector* zselector) {

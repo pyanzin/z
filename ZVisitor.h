@@ -19,6 +19,7 @@ class ZLambda;
 class ZFor;
 class ZSelector;
 class ZCast;
+class ZUnaryOp;
 
 class ZVisitor {
 public:
@@ -39,6 +40,8 @@ public:
 	virtual void visit(ZAssign* zassign) { }		
 
 	virtual void visit(ZBinOp* zbinop) { }
+
+	virtual void visit(ZUnaryOp* zunaryop) { }
 
 	virtual void visit(ZSelector* zselector) { }
 
