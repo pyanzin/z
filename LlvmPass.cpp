@@ -406,20 +406,36 @@ Value* LlvmPass::getValue(ZBinOp* zbinop, BasicBlock* bb) {
 llvm::Value* LlvmPass::getValue(ZUnaryOp* zunaryop, llvm::BasicBlock* bb) {
 	_builder->SetInsertPoint(bb);
 	auto targetValue = getValue(zunaryop->getTarget(), bb);
+	UnaryOps op = zunaryop->getOp();
 
-	switch (zunaryop->getOp()) {
+	switch (op) {
 	case Negation:
 	case BitwiseInvert:
-		return _builder->CreateNeg(targetValue);
+		return _builder->CreateNot(targetValue);
 	case UnaryPlus:
 		return targetValue;
 	case UnaryMinus:
-		return _builder->CreateSub(
-			ConstantInt::get(getGlobalContext(), APInt::APInt(32, 0)),
-		    targetValue);
-	default:
-		return nullptr;
+		return _builder->CreateNeg(targetValue);
 	}
+
+	ZType* targetType = zunaryop->getTarget()->getType();
+	bool isDouble = targetType->isEqual(*Double);
+	int valueToAdd = op == PreIncrement || op == PostIncrement
+						? 1 : -1;
+	Value* sum;
+	if (isDouble)
+		sum = _builder->CreateFAdd(targetValue, ConstantFP::get(targetValue->getType(), valueToAdd));
+	else
+		sum = _builder->CreateAdd(targetValue, ConstantInt::get(targetValue->getType(), valueToAdd));
+
+	auto left = getLeftHand(zunaryop->getTarget(), bb);
+	_builder->CreateStore(sum, left);
+
+	if (op == PreIncrement || op == PreDecrement)
+		return getValue(zunaryop->getTarget(), bb);
+	else
+		return targetValue;
+
 }
 
 Value* LlvmPass::getValue(ZStringLit* zstringlit) {
@@ -489,25 +505,25 @@ Value* LlvmPass::getValue(ZCall* zcall, BasicBlock* bb) {
 
 Value* LlvmPass::getValue(ZAssign* zassign, BasicBlock* bb) {
 	Value* rightValue = getValue(zassign->getRight(), bb);
+	_builder->CreateStore(rightValue, getLeftHand(zassign->getLeft(), bb));
+	return rightValue;
+}
 
-    if (dynamic_cast<ZId*>(zassign->getLeft())) {
-        auto alloc = _currentValues->getAlloca(dynamic_cast<ZId*>(zassign->getLeft())->getName());
-        _builder->CreateStore(rightValue, alloc);
-        return rightValue;
-    }
+Value* LlvmPass::getLeftHand(ZExpr* zexpr, BasicBlock* bb) {
+	if (dynamic_cast<ZId*>(zexpr)) {
+		return _currentValues->getAlloca(dynamic_cast<ZId*>(zexpr)->getName());
+	}
 
-    ZSubscript* zsubscript = dynamic_cast<ZSubscript*>(zassign->getLeft());
+	ZSubscript* zsubscript = dynamic_cast<ZSubscript*>(zexpr);
 	if (zsubscript) {
 		Value* targetValue = getValue(zsubscript->getTarget(), bb);
 		Value* indexValue = getValue(zsubscript->getIndex(), bb);
 		auto gep = _builder->CreateGEP(targetValue, indexValue);
 
-		_builder->CreateStore(rightValue, gep);
-
-		return rightValue;
+		return gep;
 	}
 
-	ZSelector* zselector = dynamic_cast<ZSelector*>(zassign->getLeft());
+	ZSelector* zselector = dynamic_cast<ZSelector*>(zexpr);
 	if (zselector) {
 		Value* targetValue = getValue(zselector->getTarget(), bb);
 		int index = zselector->getMemberIndex();
@@ -517,10 +533,10 @@ Value* LlvmPass::getValue(ZAssign* zassign, BasicBlock* bb) {
 		};
 		auto gep = _builder->CreateGEP(targetValue, gepArgs);
 
-		_builder->CreateStore(rightValue, gep);
-
-		return rightValue;
+		return gep;
 	}
+
+	return nullptr;
 }
 
 Value* LlvmPass::getValue(ZLambda* zlambda) {

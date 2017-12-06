@@ -51,6 +51,7 @@ public:
     Value* generateConcrete(ZFunc* func, SymbolRef* symbolRef);
     llvm::Value* getValue(ZCall* zcall, BasicBlock* bb);
 	llvm::Value* getValue(ZAssign* zassign, llvm::BasicBlock* bb);
+	Value* getLeftHand(ZExpr* zexpr, BasicBlock* bb);
 	Value* getValue(ZLambda* zfunc);
     ZType* resolve(ZType* type);
     BasicBlock* makeBB(std::string name);
