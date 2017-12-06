@@ -29,12 +29,18 @@ ZParser::ZParser(ZLexer& lexer, SymbolTable& symTable): _lexer(lexer), _symTable
 	_binOps[MINUS] = Sub;
 	_binOps[ASTERISK] = Mul;
 	_binOps[SLASH] = Div;
+	_binOps[PERCENT] = Mod;
 	_binOps[DOUBLE_EQUAL] = Equal;
 	_binOps[NOT_EQUAL] = NotEqual;
 	_binOps[LESS] = Less;
 	_binOps[LESS_OR_EQUAL] = LessOrEqual;
 	_binOps[MORE] = More;
 	_binOps[MORE_OR_EQUAL] = MoreOrEqual;
+	_binOps[DOUBLE_AMPERSAND] = BooleanAnd;
+	_binOps[DOUBLE_PIPE] = BooleanOr;
+	_binOps[CIRCUMFLEX] = BooleanXor;
+	_binOps[AMPERSAND] = BitwiseAnd;
+	_binOps[PIPE] = BitwiseOr;
 
     _unaryOps[EXCLAM] = Negation;
     _unaryOps[TILDA] = BitwiseInvert;

@@ -187,7 +187,7 @@ void TypingPass::visit(ZBinOp* zbinop) {
 		return;
 	}
 
-	if (zbinop->getOp() >= BinOps::Equal && zbinop->getOp() <= BinOps::MoreOrEqual) {
+	if (zbinop->getOp() >= BinOps::Equal && zbinop->getOp()) {
 		zbinop->setType(Boolean);
 		return;
 	}

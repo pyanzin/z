@@ -386,6 +386,8 @@ Value* LlvmPass::getValue(ZBinOp* zbinop, BasicBlock* bb) {
 		return _builder->CreateMul(left, right);
 	case Div:
 		return _builder->CreateSDiv(left, right);
+	case Mod:
+		return _builder->CreateSRem(left, right);
 	case Equal:
 		return _builder->CreateICmpEQ(left, right);
 	case NotEqual:
@@ -398,6 +400,15 @@ Value* LlvmPass::getValue(ZBinOp* zbinop, BasicBlock* bb) {
 		return _builder->CreateICmpSGE(left, right);
 	case More:
 		return _builder->CreateICmpSGT(left, right);
+	case BooleanOr:
+	case BitwiseOr:
+		return _builder->CreateOr(left, right);
+	case BooleanAnd:
+	case BitwiseAnd:
+		return _builder->CreateAnd(left, right);
+	case BooleanXor:
+		return _builder->CreateXor(left, right);
+
 	default:
 		return nullptr;
 	}

@@ -60,6 +60,8 @@ std::string toString(BinOps op) {
 		return "*";
 	case BinOps::Div:
 		return "/";
+	case BinOps::Mod:
+		return "%";
 	case BinOps::Equal:
 		return "==";
 	case BinOps::NotEqual:
@@ -72,6 +74,16 @@ std::string toString(BinOps op) {
 		return ">";
 	case BinOps::MoreOrEqual:
 		return ">=";
+	case BinOps::BooleanOr:
+		return "||";
+	case BinOps::BooleanAnd:
+		return "&&";	
+	case BinOps::BooleanXor:
+		return "^";
+	case BinOps::BitwiseOr:
+		return "|";
+	case BinOps::BitwiseAnd:
+		return "&";
 	}
 }
 

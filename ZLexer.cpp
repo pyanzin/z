@@ -79,7 +79,7 @@ ZLexeme ZLexer::getNextToken() {
 		backtrackBy(1);
 		return PIPE;
 	case '&':
-		if (getNextChar() == '|')
+		if (getNextChar() == '&')
 			return DOUBLE_AMPERSAND;
 		backtrackBy(1);
 		return AMPERSAND;
