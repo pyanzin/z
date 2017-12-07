@@ -31,7 +31,7 @@ def printLine(s: String): None = {
 
 def reverse(x: String): String = {
    var result = "";
-   for (var i = len(x) - 1; i >= 0; i = i - 1)
+   for (var i = len(x) - 1; i >= 0; --i)
       result = result + char2string(x(i));
 
    return result;
@@ -39,13 +39,13 @@ def reverse(x: String): String = {
 
 def map[A, B](xs: Array[A], f: (A) => B): Array[B] = {
    var result = Array[B](size(xs));
-   for (var i = 0; i < size(xs); i = i + 1)
+   for (var i = 0; i < size(xs); ++i)
       result(i) = f(xs(i));
    return result;
 }
 
 def foreach[T](xs: Array[T], f: (T) => None): None = {
-   for (var i = 0; i < size(xs); i = i + 1)
+   for (var i = 0; i < size(xs); ++i)
       f(xs(i));
 }
 
@@ -57,9 +57,9 @@ def filter[T](xs: Array[T], f: (T) => Boolean): Array[T] = {
    while (i < size(xs)) {
       if (f(xs(i))) {
          result(j) = xs(i);
-         j = j + 1;
+         ++j;
       }
-      i = i + 1;
+      ++i;
    }
 
    return result;
@@ -67,7 +67,7 @@ def filter[T](xs: Array[T], f: (T) => Boolean): Array[T] = {
 
 def count[T](xs: Array[T], f: (T) => Boolean): Int = {
    var result = 0;
-   for (var i = 0; i < size(xs); i = i + 1)
+   for (var i = 0; i < size(xs); ++i)
       if (f(xs(i)))
          result = result + 1;   
    return result;
