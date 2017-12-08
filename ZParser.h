@@ -75,7 +75,7 @@ public:
     std::string* reqVal(ZLexeme lexeme);
 
     void error(std::string errorText) {
-        throw new std::exception(errorText.c_str());
+        throw std::exception(errorText.c_str());
     }
 
     SourceRange* beginRange();

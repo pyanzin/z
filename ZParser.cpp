@@ -304,7 +304,12 @@ ZType* ZParser::parseType() {
 		return new ZArrayType(elemType);
 	}
 
-	return type;
+	if (!consume(FAT_ARROW))
+		return type;
+
+	ZType* retType = parseType();
+
+	return new ZFuncType(retType, std::vector<ZType*>() = { type });
 }
 
 ZBlock* ZParser::parseBlock() {
