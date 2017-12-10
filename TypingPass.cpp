@@ -107,7 +107,8 @@ void TypingPass::visit(ZCall* zcall) {
 	int calleeArgsCount = calleeType->getParamTypes().size();
 
 	if (calleeArgsCount != callerArgsCount)
-		error("Callee requires " + std::to_string(calleeArgsCount) + " arguments, but caller passes " + std::to_string(callerArgsCount));
+		error("Callee requires " + std::to_string(calleeArgsCount) + " arguments, but caller passes " + std::to_string(callerArgsCount), 
+            zcall->getPosition());
 	
 	bool calleeIsGeneric = calleeType->hasGenericDefs();
 
@@ -168,26 +169,18 @@ void TypingPass::visit(ZSubscript* zsubscript) {
         error("Subscript index must have integer type");
 }
 
-
 void TypingPass::visit(ZBinOp* zbinop) {
 	zbinop->getLeft()->accept(this);
 	zbinop->getRight()->accept(this);
 
-	if (zbinop->getOp() == Sum && zbinop->getLeft()->getType() == String && zbinop->getRight()->getType() == String) {
-        auto parent = zbinop->getParent();
-        auto args = new std::vector<ZExpr*>();
-		args->push_back(zbinop->getLeft());
-		args->push_back(zbinop->getRight());
-        auto zid = new ZId(*(new std::string("concat")), zbinop->getRef());
-        zid->withSourceRange(zbinop->getSourceRange());
-        auto concat = new ZCall(zid, *args, new std::vector<ZType*>, zbinop->getRef());
-        concat->withSourceRange(zbinop->getSourceRange());
-        parent->replaceChild(zbinop, concat);
-        concat->accept(this);
-		return;
+    bool isConcat = zbinop->getOp() == BinOps::Sum 
+        && (zbinop->getLeft()->getType()->isEqual(*String) || zbinop->getRight()->getType()->isEqual(*String));
+	if (isConcat) {
+	    replaceWithConcat(zbinop);
+	    return;        
 	}
 
-	if (zbinop->getOp() >= BinOps::Equal && zbinop->getOp()) {
+	if (zbinop->getOp() >= BinOps::Equal) {
 		zbinop->setType(Boolean);
 		return;
 	}
@@ -201,6 +194,45 @@ void TypingPass::visit(ZBinOp* zbinop) {
 
 	error("Unable to apply operation " + toString(zbinop->getOp()) + " for "
 		+ zbinop->getLeft()->getType()->toString() + " and " + zbinop->getRight()->getType()->toString(), zbinop->getPosition());
+}
+
+void TypingPass::replaceWithConcat(ZBinOp* zbinop) {
+    auto parent = zbinop->getParent();
+    std::vector<ZExpr*>* args = new std::vector<ZExpr*>();
+    args->push_back(makeToString(zbinop->getLeft(), zbinop->getRef()));
+    args->push_back(makeToString(zbinop->getRight(), zbinop->getRef()));
+    ZExpr* concat = makeCall("concat", args, zbinop->getRef());
+    parent->replaceChild(zbinop, concat);
+    concat->accept(this);
+}
+
+ZExpr* TypingPass::makeToString(ZExpr* expr, SymbolRef* ref) {
+    ZType* type = expr->getType();
+
+    if (type->isEqual(*String))
+        return expr;
+
+    std::vector<ZExpr*>* args = new std::vector<ZExpr*>();
+    args->push_back(expr);
+
+    std::string funcName;
+    if (type->isEqual(*Int))
+        funcName = "int2string";
+    else if (type->isEqual(*Char))
+        funcName = "char2string";
+    else if (type->isEqual(*Double))
+        funcName = "double2string";
+    else if (type->isEqual(*Boolean))
+        funcName = "boolean2string";
+    else
+        error("Unable to implicitly convert value to string", expr->getPosition());
+
+    return makeCall(funcName, args, ref);   
+}
+
+ZExpr* TypingPass::makeCall(std::string funcName, std::vector<ZExpr*>* args, SymbolRef* ref) {
+    auto zid = new ZId(*(new std::string(funcName)), ref);
+    return new ZCall(zid, *args, new std::vector<ZType*>, ref);
 }
 
 void TypingPass::visit(ZUnaryOp* zunaryop) {

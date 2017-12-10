@@ -39,7 +39,9 @@ public:
 	void visit(ZFor* zfor) override;
 
     void visit(ZSubscript* zsubscript) override;
-
+    void replaceWithConcat(ZBinOp* zbinop);
+    ZExpr* makeToString(ZExpr* expr, SymbolRef* ref);
+    ZExpr* makeCall(std::string funcName, std::vector<ZExpr*>* args, SymbolRef* ref);
 private:
 	ZFunc* _func;
     ZModule* _module;
