@@ -114,6 +114,9 @@
     <ClCompile Include="SymbolScope.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ZCompilerSettings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ZLexer.h">
@@ -277,6 +280,9 @@
     </ClInclude>
     <ClInclude Include="ZUnaryOp.h">
       <Filter>Header Files\AST</Filter>
+    </ClInclude>
+    <ClInclude Include="ZCompilerSettings.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
