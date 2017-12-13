@@ -467,7 +467,7 @@ ZExpr* ZParser::parseAssign() {
 	ZExpr* left = parseSelector();
 
 	if (left && consume(EQUAL)) {
-		auto right = parseAssign();
+		auto right = parseExpr();
 		auto zassign = new ZAssign(left, right);
 		zassign->withSourceRange(endRange(sr));
 		return zassign;

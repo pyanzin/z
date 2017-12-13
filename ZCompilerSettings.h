@@ -10,6 +10,43 @@ public:
 			return;
 		}
 		int i = 1;
+		while (i < argc) {
+			bool isLastArg = i == argc - 1;
+			char* param = args[i];
+			if (param[0] != '-')
+				sources.push_back(std::string(param));
+			else if (strcmp(args[i], "-o0"))
+				optLevel = 0;
+			else if (strcmp(args[i], "-o1"))
+				optLevel = 1;
+			else if (strcmp(args[i], "-dump")) {
+				if (isLastArg)
+					addError("-dump argument requires a value after it");
+				else {
+					char* phases = args[++i];
+					int phaseI = 0;
+					while (char phaseChar = phases[phaseI++]) {
+						switch (phaseChar) {
+						case '0':
+							dumpParserTree = true;
+							break;
+						case '1':
+							dumpTypingTree = true;
+							break;
+						case '2':
+							dumpLlvmBeforeOpt = true;
+							break;
+						case '3':
+							dumpLlvmAfterOpt = true;
+							break;
+						default:
+							addError(std::string("Unknown phase for -dump: '" + phaseChar));
+						}
+					}
+				}
+			}
+			++i;
+		}
 
 	}
 

@@ -45,6 +45,10 @@ char* char2string(char ch) {
 	return res;
 }
 
+int string2int(char* s) {
+	return atoi(s);
+}
+
 void pause(int millis) {
 	Sleep(millis);
 }
