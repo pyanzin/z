@@ -117,6 +117,9 @@
     <ClCompile Include="ZCompilerSettings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ZCompiler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ZLexer.h">
@@ -282,6 +285,9 @@
       <Filter>Header Files\AST</Filter>
     </ClInclude>
     <ClInclude Include="ZCompilerSettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZCompiler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -161,6 +161,7 @@
     <ClCompile Include="ZBlock.cpp" />
     <ClCompile Include="ZCall.cpp" />
     <ClCompile Include="ZCharLit.cpp" />
+    <ClCompile Include="ZCompiler.cpp" />
     <ClCompile Include="ZCompilerSettings.cpp" />
     <ClCompile Include="ZFunc.cpp" />
     <ClCompile Include="ZFuncType.cpp" />
@@ -202,6 +203,7 @@
     <ClInclude Include="ZCall.h" />
     <ClInclude Include="ZCast.h" />
     <ClInclude Include="ZCharLit.h" />
+    <ClInclude Include="ZCompiler.h" />
     <ClInclude Include="ZCompilerSettings.h" />
     <ClInclude Include="ZDelayedType.h" />
     <ClInclude Include="ZExpr.h" />
