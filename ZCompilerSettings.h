@@ -15,11 +15,11 @@ public:
 			char* param = args[i];
 			if (param[0] != '-')
 				sources.push_back(std::string(param));
-			else if (strcmp(args[i], "-o0"))
+			else if (strcmp(args[i], "-o0") == 0)
 				optLevel = 0;
-			else if (strcmp(args[i], "-o1"))
+			else if (strcmp(args[i], "-o1") == 0)
 				optLevel = 1;
-			else if (strcmp(args[i], "-dump")) {
+			else if (strcmp(args[i], "-dump") == 0) {
 				if (isLastArg)
 					addError("-dump argument requires a value after it");
 				else {
@@ -40,7 +40,7 @@ public:
 							dumpLlvmAfterOpt = true;
 							break;
 						default:
-							addError(std::string("Unknown phase for -dump: '" + phaseChar));
+							addError(std::string("Unknown phase for -dump: '") + phaseChar + "'");
 						}
 					}
 				}
