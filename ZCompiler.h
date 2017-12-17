@@ -47,9 +47,20 @@ public:
 
 			TypingPass typingPass;
 			typingPass.visit(mod);
-
+            
 			if (_settings->dumpTypingTree)
 				mod->dump(std::cout, 0);
+
+            int errorsCount = parser.getErrors().size() + typingPass.getErrors().size();
+
+            if (errorsCount > 0) {
+                cout << "Compilation failed, " << errorsCount << " error(s) found:\n";
+                for (auto error : parser.getErrors())
+                    cout << error->text << " at position " << error->sourceRange->getPosition() << "\n";
+                for (auto error : typingPass.getErrors())
+                    cout << error->text << " at position " << error->sourceRange->getPosition() << "\n";
+                return;
+            }
 
 			LlvmPass llvmPass;
 			llvmPass.visit(mod);

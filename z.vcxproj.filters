@@ -290,5 +290,8 @@
     <ClInclude Include="ZCompiler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="StatementError.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

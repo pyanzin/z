@@ -29,8 +29,13 @@ class ZFuncCast;
 
 void TypingPass::visit(ZModule* zmodule) {
     _module = zmodule;
-	for (ZFunc* zf : zmodule->getFunctions())
-		visit(zf);
+    for (ZFunc* zf : zmodule->getFunctions()) {
+        try {
+            visit(zf);
+        } catch (RecoveryException) {
+            
+        }
+    }
 }
 
 void TypingPass::visit(ZFunc* zfunc) {
@@ -60,10 +65,10 @@ void TypingPass::visit(ZAssign* zassign) {
 		assignee = dynamic_cast<ZSelector*>(zassign->getLeft());
 
     if (!assignee)
-        error("Left part of the assignment expression is not suitable for assignment", zassign->getPosition());
+        error("Left part of the assignment expression is not suitable for assignment", zassign->getSourceRange());
 
     if (!dynamic_cast<ZSubscript*>(assignee) && !assignee->getType()->isEqual(*zassign->getRight()->getType()))
-        error("Type of the left hand expression doesn't match the type of right hand expression", assignee->getPosition());
+        error("Type of the left hand expression doesn't match the type of right hand expression", assignee->getSourceRange());
 
 	zassign->setType(zassign->getRight()->getType());
 }
@@ -81,7 +86,7 @@ void TypingPass::visit(ZLambda* zlambda) {
     if (zlambda->getReturnType()->isEqual(*Unknown))
         zlambda->setRetType(bodyType);
     else if (exprBody && !zlambda->getReturnType()->isEqual(*bodyType))
-        error("Return type doesn't match the type of lambda body");
+        error("Return type doesn't match the type of lambda body", zlambda->getSourceRange());
 }
 
 void TypingPass::visit(ZCall* zcall) {
@@ -91,7 +96,7 @@ void TypingPass::visit(ZCall* zcall) {
 
 	if (dynamic_cast<ZArrayType*>(zcall->callee->getType()) || zcall->callee->getType()->isEqual(*String)) {
         if (callerArgsCount != 1)
-            error("Array subsciprt operator requires 1 argument");
+            error("Array subsciprt operator requires 1 argument", zcall->getSourceRange());
 
         ZSubscript* zsubscript = new ZSubscript(zcall->callee, zcall->getArgs()[0]);
         zcall->getParent()->replaceChild(zcall, zsubscript);
@@ -102,13 +107,13 @@ void TypingPass::visit(ZCall* zcall) {
 	ZFuncType* calleeType = dynamic_cast<ZFuncType*>(zcall->callee->getType());
 
 	if (!calleeType)
-		error("Type of calee is not callable");
+		error("Type of calee is not callable", zcall->getSourceRange());
 
 	int calleeArgsCount = calleeType->getParamTypes().size();
 
 	if (calleeArgsCount != callerArgsCount)
 		error("Callee requires " + std::to_string(calleeArgsCount) + " arguments, but caller passes " + std::to_string(callerArgsCount), 
-            zcall->getPosition());
+            zcall->getSourceRange());
 	
 	bool calleeIsGeneric = calleeType->hasGenericDefs();
 
@@ -141,7 +146,7 @@ void TypingPass::visit(ZCall* zcall) {
 			}
 			error("Callee expects argument of type " + calleeArgType->toString()
 				+ ", but received " + callerArgType->toString()
-				+ " at position " + std::to_string(i));
+				+ " at position " + std::to_string(i), zcall->getSourceRange());
 		}       
 	}
 
@@ -161,12 +166,12 @@ void TypingPass::visit(ZSubscript* zsubscript) {
 	else if (target->getType()->isEqual(*String))
 		zsubscript->setType(Char);
 	else
-        error("Subscript operator is only applicable for expressions of array or string type");
+        error("Subscript operator is only applicable for expressions of array or string type", zsubscript->getSourceRange());
 
     ZExpr* index = zsubscript->getIndex();
     index->accept(this);
     if (index->getType() != Int && index->getType() != Char)
-        error("Subscript index must have integer type");
+        error("Subscript index must have integer type", zsubscript->getSourceRange());
 }
 
 void TypingPass::visit(ZBinOp* zbinop) {
@@ -193,7 +198,7 @@ void TypingPass::visit(ZBinOp* zbinop) {
 	// todo: doubles, ints and combinations
 
 	error("Unable to apply operation " + toString(zbinop->getOp()) + " for "
-		+ zbinop->getLeft()->getType()->toString() + " and " + zbinop->getRight()->getType()->toString(), zbinop->getPosition());
+		+ zbinop->getLeft()->getType()->toString() + " and " + zbinop->getRight()->getType()->toString(), zbinop->getSourceRange());
 }
 
 void TypingPass::replaceWithConcat(ZBinOp* zbinop) {
@@ -225,7 +230,7 @@ ZExpr* TypingPass::makeToString(ZExpr* expr, SymbolRef* ref) {
     else if (type->isEqual(*Boolean))
         funcName = "boolean2string";
     else
-        error("Unable to implicitly convert value to string", expr->getPosition());
+        error("Unable to implicitly convert value to string", expr->getSourceRange());
 
     return makeCall(funcName, args, ref);   
 }
@@ -243,11 +248,11 @@ void TypingPass::visit(ZUnaryOp* zunaryop) {
 
 	if (op == Negation) {
 		if (!targetType->isEqual(*Boolean))
-			error("Negation operator is only applicable for expression of Boolean type", zunaryop->getPosition());
+			error("Negation operator is only applicable for expression of Boolean type", zunaryop->getSourceRange());
 		zunaryop->setType(Boolean);
 	} else {
 		if (!dynamic_cast<ZNumberType*>(targetType))
-			error("Operator " + toString(op) + " is only applicable to numeric types", zunaryop->getPosition());
+			error("Operator " + toString(op) + " is only applicable to numeric types", zunaryop->getSourceRange());
 		zunaryop->setType(targetType);
 	}
 }
@@ -258,7 +263,7 @@ void TypingPass::visit(ZSelector* zselector) {
 	ZStructType* structType = dynamic_cast<ZStructType*>(zselector->getTarget()->getType());
 
 	if (!structType)
-		error("Unable to apply selector for non-structural type", zselector->getSourceRange()->getPosition());
+		error("Unable to apply selector for non-structural type", zselector->getSourceRange());
 
 	ZArg* member = structType->getMember(*zselector->getMember());
 	zselector->setType(member->getType());
@@ -267,7 +272,7 @@ void TypingPass::visit(ZSelector* zselector) {
 void TypingPass::visit(ZId* zid) {
     SymbolEntry* definition = zid->getRef()->findSymbolDef(zid->getName());
     if (!definition)
-        error("Symbol '" + zid->getName() + "' is not defined before using", zid->getPosition());
+        error("Symbol '" + zid->getName() + "' is not defined before using", zid->getSourceRange());
         
     zid->setType(definition->getType());
 }
@@ -279,14 +284,14 @@ void TypingPass::visit(ZReturn* zreturn) {
     ZType* retType = zreturn->getExpr() ? zreturn->getExpr()->getType() : Void;
 
 	if (!_func->getReturnType()->isEqual(*retType))
-		error("Type of return statement doesn't match function return type", zreturn->getPosition());
+		error("Type of return statement doesn't match function return type", zreturn->getSourceRange());
 }
 
 void TypingPass::visit(ZIf* zif) {
 	zif->getCondition()->accept(this);
 	
 	if (zif->getCondition()->getType() != Boolean)
-		error("Condition of if statement must be of Boolean type", zif->getPosition());
+		error("Condition of if statement must be of Boolean type", zif->getSourceRange());
 
 	zif->getBody()->accept(this);
 	if (zif->getElseBody())
@@ -297,7 +302,7 @@ void TypingPass::visit(ZWhile* zwhile) {
 	zwhile->getCondition()->accept(this);
 
 	if (zwhile->getCondition()->getType() != Boolean)
-		error("Condition of while statement must be of Boolean type", zwhile->getPosition());	
+		error("Condition of while statement must be of Boolean type", zwhile->getSourceRange());	
 
 	zwhile->getBody()->accept(this);
 }
@@ -308,7 +313,7 @@ void TypingPass::visit(ZFor* zfor) {
 	zfor->getCond()->accept(this);
 
 	if (zfor->getCond()->getType() != Boolean)
-		error("Condition of for statement must be of Boolean type", zfor->getPosition());
+		error("Condition of for statement must be of Boolean type", zfor->getSourceRange());
 
 	if (zfor->getPost())
 		zfor->getPost()->accept(this);
@@ -320,7 +325,7 @@ void TypingPass::visit(ZVarDef* zvardef) {
 	SymbolEntry* alreadyDefined = zvardef->getRef().findSymbolDef(zvardef->getName(), true);
 
 	if (alreadyDefined)
-		error("Variable with name '" + alreadyDefined->getName() + "' already defined in this scope", zvardef->getPosition());	
+		error("Variable with name '" + alreadyDefined->getName() + "' already defined in this scope", zvardef->getSourceRange());	
 
 	auto initExpr = zvardef->getInitExpr();
 
@@ -329,7 +334,7 @@ void TypingPass::visit(ZVarDef* zvardef) {
 	if (!zvardef->getVarType() || zvardef->getVarType()->isEqual(*Unknown))
 		zvardef->setVarType(zvardef->getInitExpr()->getType());
 	else if (!zvardef->getVarType()->isEqual(*initExpr->getType()))
-		error("Type of variable '" + zvardef->getName() + "' doesn't match the type of init expression", zvardef->getPosition());
+		error("Type of variable '" + zvardef->getName() + "' doesn't match the type of init expression", zvardef->getSourceRange());
 			
 }
 

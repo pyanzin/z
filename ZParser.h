@@ -7,6 +7,8 @@
 #include "ZVarDef.h"
 #include "ZLexer.h"
 #include "ZUnaryOp.h"
+#include "ParserError.h"
+#include "StatementError.h"
 
 class SymbolTable;
 class ZArg;
@@ -74,16 +76,24 @@ public:
 
     std::string* reqVal(ZLexeme lexeme);
 
-    void error(std::string errorText) {
-        throw std::exception(errorText.c_str());
+    void error(std::string errorText, SourceRange* sr) {
+        addError(errorText, sr);
+        throw RecoveryException();
     }
 
     SourceRange* beginRange();
 
     SourceRange* endRange(SourceRange* sr);
 
-private:
+    void addError(std::string error, SourceRange* sr) {
+        errors.push_back(new ParserError(error, sr));
+    }
 
+    std::vector<ParserError*> getErrors() {
+        return errors;
+    }
+
+private:
     ZLexer _lexer;
     SymbolTable _symTable;
 
@@ -93,4 +103,6 @@ private:
 
 	std::map<ZLexeme, BinOps> _binOps;
     std::map<ZLexeme, UnaryOps> _unaryOps;
+
+    std::vector<ParserError*> errors;
 };

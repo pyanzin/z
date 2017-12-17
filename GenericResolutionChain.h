@@ -2,10 +2,6 @@
 
 class GenericResolutionChain {
 public:
-	GenericResolutionChain() {
-		
-	}
-
 	ZType* resolve(ZType* type) {
 		int depth = _chain.size() - 1;
 		while (type->containsGenerics()) {

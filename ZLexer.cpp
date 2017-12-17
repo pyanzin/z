@@ -194,4 +194,27 @@ char ZLexer::toEscape(char ch) {
 
 void ZLexer::error(std::string text) {
 	throw new exception(text.c_str());
+}
+
+void ZLexer::recoverToNextStatement() {
+    for (;;) {
+        char c = getNextChar();
+        if (c == ';' || c == '}')
+            break;
+    }
+}
+
+void ZLexer::recoverToTop() {
+    while (!isspace(getNextChar()))
+        ;
+
+    for (;;) {
+        int pos = getPos();
+        ZLexeme token = getNextToken();
+        if (token == EXTERN || token == DEF || token == STRUCT || token == INPUT_END) {
+            backtrackTo(pos);
+            break;
+        }
+    }
+
 };

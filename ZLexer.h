@@ -39,6 +39,10 @@ public:
     SourceRange* endRange(SourceRange* sr);
 
 	void error(std::string text);
+
+    void recoverToNextStatement();
+
+    void recoverToTop();
 	
 private:
     char getNextChar();

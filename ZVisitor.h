@@ -1,5 +1,9 @@
 ﻿#pragma once
 #include <string>
+#include "SourceRange.h"
+#include "ParserError.h"
+#include <vector>
+#include "StatementError.h"
 
 class ZFunc;
 class ZAst;
@@ -61,11 +65,14 @@ public:
 
     virtual void visit(ZSubscript* zsubscript) { };
 
-	void error(std::string text) {
-		throw std::exception(text.c_str());
+	void error(std::string text, SourceRange* sr) {
+        errors.push_back(new ParserError(text, sr));
+        throw RecoveryException();
 	}
 
-	void error(std::string text, std::string position) {
-		error(text + " at " + position);
+    std::vector<ParserError*> getErrors() {
+        return errors;
 	}
+private:
+    std::vector<ParserError*> errors;
 };

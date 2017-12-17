@@ -23,6 +23,7 @@
 #include "ZSelector.h"
 #include "ZCast.h"
 #include "ZSizeOf.h"
+#include "StatementError.h"
 
 ZParser::ZParser(ZLexer& lexer, SymbolTable& symTable): _lexer(lexer), _symTable(symTable) {
 	_binOps[PLUS] = Sum;
@@ -57,7 +58,7 @@ ZParser::ZParser(ZLexer& lexer, SymbolTable& symTable): _lexer(lexer), _symTable
 	_symTable.addType(Void);
 	_symTable.addType(Any);
     _symTable.addType(Ref);
-	_symTable.addType(new ZArrayType(nullptr));
+	_symTable.addType(new ZArrayType(Unknown));
 	_symTable.addType(Wildcard);
 }
 
@@ -66,19 +67,20 @@ ZModule* ZParser::parseModule() {
     _module = new ZModule(*modName);
 
 	while (!isNext(INPUT_END)) {
-
-		if (isNext(DEF) || isNext(EXTERN))
-			_module->addFunction(parseFunc());
-		else if (isNext(STRUCT))
-			parseStruct();
-		else
-			error("Expected function or stuct definition, but found: " + toString(_lexer.getNextToken()));
+        try {
+            if (isNext(DEF) || isNext(EXTERN))
+                _module->addFunction(parseFunc());
+            else if (isNext(STRUCT))
+                parseStruct();
+            else
+                error("Expected function or stuct definition, but found: " + toString(_lexer.getNextToken()), _lexer.beginRange());
+        } catch (RecoveryException error){
+            _lexer.recoverToTop();
+        }
 	}
 
 	return _module;
 }
-
-
 
 void ZParser::parseStruct() {
 	reqConsume(STRUCT);
@@ -320,8 +322,12 @@ ZBlock* ZParser::parseBlock() {
 	reqConsume(OPEN_BRACE);
 
 	while (!consume(CLOSE_BRACE)) {
-		ZAst* stmt = parseBlockOrStatement();
-		stmts->push_back(stmt);
+        try {
+            ZAst* stmt = parseBlockOrStatement();
+            stmts->push_back(stmt);
+        } catch (RecoveryException stmtError) {
+            _lexer.recoverToNextStatement();
+        }
 	}
 
 	auto zblock = new ZBlock(stmts);
@@ -726,8 +732,7 @@ bool ZParser::isNext(::ZLexeme lexeme) {
 
 void ZParser::reqConsume(::ZLexeme lexeme) {
 	if (!consume(lexeme)) {
-		auto pos = _lexer.beginRange()->getPosition();
-		error("Expected: " + toString(lexeme) + ", but found: " + toString(_lexer.getNextToken()) + " at " + pos);
+		error("Expected: " + toString(lexeme) + ", but found: " + toString(_lexer.getNextToken()), _lexer.beginRange());
 	}
 }
 
@@ -736,8 +741,7 @@ std::string* ZParser::reqVal(::ZLexeme lexeme) {
     if (value)
         return value;
 	else {
-		auto pos = _lexer.beginRange()->getPosition();
-		error("Expected: " + toString(lexeme) + ", but found: " + toString(_lexer.getNextToken()) + " at " + pos);
+		error("Expected: " + toString(lexeme) + ", but found: " + toString(_lexer.getNextToken()), _lexer.beginRange());
 	}
 
 }
