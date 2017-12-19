@@ -498,6 +498,9 @@ ZExpr* ZParser::parseBinOp() {
 
 	auto right = parseExpr();
 
+	if (!right)
+		error("Expression expected, but found " + toString(_lexer.getNextToken()), left->getSourceRange());
+
 	auto zbinop = new ZBinOp(left, right, _binOps[next], _symTable.makeRef());
 
 	zbinop->withSourceRange(endRange(sr));
