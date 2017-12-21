@@ -129,7 +129,7 @@ ZLexeme ZLexer::getNextToken() {
 		std::string* s = new std::string;
 		ch = getNextChar();
 		if (ch == '\\')
-			ch = toEscape(ch);
+			ch = toEscape(getNextChar());
 		(*s) += ch;
 		_value = s;
 		if (getNextChar() != '\'')
