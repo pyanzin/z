@@ -66,5 +66,7 @@ public:
 
 	std::vector<std::string> sources;
 
+	std::string defaultHeader = "../zstd.zh";
+
 	std::vector<std::string> errors;
 };
