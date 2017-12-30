@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <llvm/IR/Type.h>
 #include "ZType.h"
+#include "ZBasicType.h"
 
 class ZArrayType : public ZType {
 public:

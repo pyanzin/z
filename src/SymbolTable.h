@@ -7,18 +7,19 @@
 class SymbolTable {
 public:
 	SymbolTable() {
-		storage = new SymbolScope();
+		storage = new SymbolScope(nullptr, false);
 	}
-	void enter() {
-		storage = storage->makeChild();
-	};
+
+	void enter(bool ordered = true) {
+		storage = storage->makeChild(ordered);
+	}
+
 	void exit() {
 		storage = storage->getParent();
 	}
 
 	SymbolRef* addSymbol(ZType* type, std::string* name) {
-		int id = storage->add(new SymbolEntry(type, *name));
-		return new SymbolRef(storage, id);
+		return storage->add(*name, type);
 	}
 
 	SymbolRef* addType(ZType* type) {
@@ -27,7 +28,7 @@ public:
 	}
 
 	SymbolRef* makeRef() {
-		int id = storage->incrementNumber();
+		int id = storage->incrementOrdinal();
 		return new SymbolRef(storage, id);
     }
 

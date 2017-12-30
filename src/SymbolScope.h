@@ -1,17 +1,16 @@
 ﻿#pragma once
 #include <map>
-#include "SymbolEntry.h"
 #include "ZGenericParam.h"
-
-class SymbolRef;
+#include "SymbolRef.h"
 
 class SymbolScope {
 public:
-	SymbolScope(SymbolScope* parent = nullptr) {
+	SymbolScope(SymbolScope* parent = nullptr, bool ordered = true) {
         _parent = parent;
-        _number = 0;
+        _ordered = ordered;
+        _ordinal = 0;
         if (_parent)
-            _parentNumber = _parent->incrementNumber();
+            _parentNumber = _parent->incrementOrdinal();
         else
             _parentNumber = -1;            
     }
@@ -20,49 +19,30 @@ public:
         return _parent;
     }
 
-    int add(SymbolEntry* symbol) {
-        int id = _number++;
-		_symbolEntries[id] = symbol;
-        return id;
-    }
+    SymbolRef* add(std::string name, ZType* type);
 
 	int add(ZType* type) {
-		int id = _number++;
+		int id = _ordinal++;
 		_typeEntries[id] = type;
 		return id;
 	}
 
-    SymbolScope* makeChild() {
-        return new SymbolScope(this);
+    SymbolScope* makeChild(bool ordered = true) {
+        return new SymbolScope(this, ordered);
     }
 
-	bool isTopLevel() {
-		return getParent() == nullptr;
+    bool isOrdered() {
+        return _ordered;
     }
 
-    SymbolEntry* findSymbol(int id, std::string& name, bool onlyCurrentScope = false) {
-        SymbolScope* storage = this;
-        do {
-			auto entries = storage->_symbolEntries;
-			for (auto entry : entries) {
-				if (entry.first >= id && !storage->isTopLevel())
-					break;
-
-				if (name == entry.second->getName())
-					return entry.second;
-			}
-			id = storage->_parentNumber;
-        } while (storage = onlyCurrentScope ? nullptr : storage->getParent());
-
-        return nullptr;
-    }
+    std::vector<SymbolEntry*>* findSymbol(int id, std::string& name, bool onlyCurrentScope = false);
 
 	ZType* findType(int id, std::string& name) {
 		SymbolScope* storage = this;
 		do {
 			auto entries = storage->_typeEntries;
 			for (auto entry : entries) {
-				if (entry.first >= id && !storage->isTopLevel())
+				if (entry.first >= id && !storage->isOrdered())
 					break;
 
 				if (name == entry.second->getName())
@@ -95,12 +75,8 @@ public:
 		return _typeArguments[param];
     }
 
-    std::map<int, SymbolEntry*>& getSymbolEntries() {
-		return _symbolEntries;
-    }
-
-	int incrementNumber() {
-		return _number++;
+	int incrementOrdinal() {
+		return _ordinal++;
 	}
 
 	bool isDefined(int id, ZType* type) {
@@ -108,7 +84,7 @@ public:
 		do {
 			auto entries = storage->_typeEntries;
 			for (auto entry : entries) {
-				if (entry.first >= id && !storage->isTopLevel())
+				if (entry.first >= id && !storage->isOrdered())
 					break;
 
 				if (type == entry.second)
@@ -123,11 +99,12 @@ public:
 	SymbolRef* makeRef();
 
 private:
-    int _number;
+    int _ordinal;
     SymbolScope* _parent;
+    bool _ordered;
     int _parentNumber;
 
-    std::map<int, SymbolEntry*> _symbolEntries;
+    std::map<std::string, std::vector<SymbolEntry*>*> _symbolStorage;
 	std::map<int, ZType*> _typeEntries;
 	std::map<ZGenericParam*, ZType*> _typeArguments;
 };

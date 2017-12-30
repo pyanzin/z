@@ -3,7 +3,7 @@
 #include "SourceRange.h"
 #include "ParserError.h"
 #include <vector>
-#include "StatementError.h"
+#include "RecoveryException.h"
 
 class ZFunc;
 class ZAst;

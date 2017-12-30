@@ -11,7 +11,7 @@ void ZLambda::setType(ZType* type) {
     for (int i = 0; i < _args->size(); ++i) {
         (*_args)[i]->setType(funcType->getParamTypes()[i]);
         std::string* argName = (*_args)[i]->getName();
-        _ref->findSymbolDef(*argName)->setType(funcType->getParamTypes()[i]);
+        _ref->findSymbolDef(*argName)->at(0)->setType(funcType->getParamTypes()[i]);
     }
 
     _retType = funcType->getRetType();

@@ -24,6 +24,7 @@
 #include "ZStructType.h"
 #include "Juxtaposer.h"
 #include "ZNumberType.h"
+#include "SymbolScope.h"
 
 class ZFuncCast;
 
@@ -270,11 +271,11 @@ void TypingPass::visit(ZSelector* zselector) {
 }
 
 void TypingPass::visit(ZId* zid) {
-    SymbolEntry* definition = zid->getRef()->findSymbolDef(zid->getName());
-    if (!definition)
+    auto definition = zid->getRef()->findSymbolDef(zid->getName());
+    if (definition->size() == 0)
         error("Symbol '" + zid->getName() + "' is not defined before using", zid->getSourceRange());
         
-    zid->setType(definition->getType());
+    zid->setType(definition->at(0)->getType());
 }
 
 void TypingPass::visit(ZReturn* zreturn) {
@@ -322,10 +323,10 @@ void TypingPass::visit(ZFor* zfor) {
 }
 
 void TypingPass::visit(ZVarDef* zvardef) {
-	SymbolEntry* alreadyDefined = zvardef->getRef().findSymbolDef(zvardef->getName(), true);
+	auto alreadyDefined = zvardef->getRef().findSymbolDef(zvardef->getName(), true);
 
-	if (alreadyDefined)
-		error("Variable with name '" + alreadyDefined->getName() + "' already defined in this scope", zvardef->getSourceRange());	
+	if (alreadyDefined->size() > 0)
+		error("Variable with name '" + (*alreadyDefined)[0]->getName() + "' already defined in this scope", zvardef->getSourceRange());	
 
 	auto initExpr = zvardef->getInitExpr();
 
@@ -363,7 +364,7 @@ void TypingPass::visit(ZFuncCast* zfunccast) {
 	for (ZType* paramType : targetType->getParamTypes()) {
 		std::string* paramName = new string("__p" + i++);
 		targetParams->push_back(new ZArg(paramType, paramName));
-		newScope->add(new SymbolEntry(paramType, *paramName));
+		newScope->add(*paramName, paramType);
 	}
 
 	int j = 0;

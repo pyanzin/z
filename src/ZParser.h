@@ -8,7 +8,7 @@
 #include "ZLexer.h"
 #include "ZUnaryOp.h"
 #include "ParserError.h"
-#include "StatementError.h"
+#include "RecoveryException.h"
 
 class SymbolTable;
 class ZArg;

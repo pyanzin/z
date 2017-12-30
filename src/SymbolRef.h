@@ -1,82 +1,33 @@
 ﻿#pragma once
-#include "SymbolScope.h"
 #include "ZFuncType.h"
 #include "ZArrayType.h"
 #include "ZDelayedType.h"
 
 class SymbolEntry;
+class SymbolScope;
 
 class SymbolRef {
 public:
-    SymbolRef(SymbolScope* storage, int id) {
-        _storage = storage;
-        _id = id;
-    }
+    SymbolRef(SymbolScope* storage, int id, SymbolEntry* entry = nullptr);    
 
-	SymbolEntry* getEntry() {
-        return _storage->getSymbolEntries()[_id];
-    }
+    SymbolEntry* getEntry();
 
-    SymbolEntry* findSymbolDef(std::string& name, bool onlyCurrentScope = false) {
-        return _storage->findSymbol(_id, name, onlyCurrentScope);
-    }
+    std::vector<SymbolEntry*>* findSymbolDef(std::string& name, bool onlyCurrentScope = false);
 
-	ZType* findTypeDef(std::string& name) {
-		return _storage->findType(_id, name);
-	}
+    ZType* findTypeDef(std::string& name);
 
-    ZType* resolve(ZType* type) {
-		if (dynamic_cast<ZGenericParam*>(type)) {
-			while (dynamic_cast<ZGenericParam*>(type)) {
-				if (_storage->isDefined(_id, type))
-					return type;
+    ZType* resolve(ZType* type);
 
-				type = _storage->resolveGeneric(dynamic_cast<ZGenericParam*>(type));
-			}
+    ZType* findTypeOrDelayed(std::string& name);
 
-			return type;
-        }
+    ZType* resolveIfDelayed(ZType* type);
 
-        ZArrayType* arrayType = dynamic_cast<ZArrayType*>(type);
-        if (arrayType)
-            return new ZArrayType(resolve(arrayType->getElementType()));
+    void addResolution(ZGenericParam* param, ZType* arg);
 
-        ZFuncType* funcType = dynamic_cast<ZFuncType*>(type);
-        if (funcType) {
-            auto resolvedParamTypes = std::vector<ZType*>();
-            for (auto paramType : funcType->getParamTypes())
-                resolvedParamTypes.push_back(resolve(paramType));
+    SymbolScope* getStorage();
 
-            return new ZFuncType(resolve(funcType->getRetType()), resolvedParamTypes);
-        }
-
-        return type;
-    }
-
-	ZType* findTypeOrDelayed(std::string& name) {
-		ZType* type = findTypeDef(name);
-		if (!type)
-			return new ZDelayedType(name);
-		else
-			return type;
-    }
-
-	ZType* resolveIfDelayed(ZType* type) {
-		ZDelayedType* delayed = dynamic_cast<ZDelayedType*>(type);
-		if (delayed)
-			return findTypeDef(delayed->getName());
-		else
-			return type;
-    }
-
-	void addResolution(ZGenericParam* param, ZType* arg) {
-		_storage->addTypeArgument(param, arg);
-    }
-
-	SymbolScope* getStorage() {
-		return _storage;
-    }
 private:
     SymbolScope* _storage;
     int _id;
+    SymbolEntry* _entry;
 };

@@ -1,4 +1,5 @@
-﻿#include "ZType.h"
+﻿#pragma once
+#include "ZType.h"
 
 class GenericResolutionChain {
 public:

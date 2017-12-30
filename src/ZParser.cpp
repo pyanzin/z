@@ -23,7 +23,7 @@
 #include "ZSelector.h"
 #include "ZCast.h"
 #include "ZSizeOf.h"
-#include "StatementError.h"
+#include "RecoveryException.h"
 
 ZParser::ZParser(ZLexer& lexer, SymbolTable& symTable): _lexer(lexer), _symTable(symTable) {
 	_binOps[PLUS] = Sum;

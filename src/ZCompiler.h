@@ -27,7 +27,7 @@ public:
 	}
 
 	void run() {
-		try {
+		//try {
 			std::ifstream srcFile;
 			std::stringstream stream;
 			srcFile.open(_settings->sources[0]);
@@ -125,10 +125,10 @@ public:
 			pass.run(*module);
 			dest.flush();
 
-		}
-		catch (std::exception ex) {
-			cout << "Error: " + std::string(ex.what()) << '\n';
-		}
+		//}
+		//catch (std::exception ex) {
+		//	cout << "Error: " + std::string(ex.what()) << '\n';
+		//}
 	}
 private:
 	ZCompilerSettings* _settings;

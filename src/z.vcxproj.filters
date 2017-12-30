@@ -290,7 +290,7 @@
     <ClInclude Include="ZCompiler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StatementError.h">
+    <ClInclude Include="RecoveryException.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
