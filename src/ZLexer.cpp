@@ -57,7 +57,7 @@ ZLexeme ZLexer::getNextToken() {
 		backtrackBy(1);
 		return PLUS;
     case '-':
-		if (getNextChar() == '+')
+		if (getNextChar() == '-')
 			return DOUBLE_MINUS;
 		backtrackBy(1);
 		return MINUS;
