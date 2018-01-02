@@ -191,6 +191,7 @@
     <ClInclude Include="SymbolRef.h" />
     <ClInclude Include="SymbolScope.h" />
     <ClInclude Include="SymbolTable.h" />
+    <ClInclude Include="SymbolType.h" />
     <ClInclude Include="TypingPass.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="ZArg.h" />

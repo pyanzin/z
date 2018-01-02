@@ -72,8 +72,10 @@ ZModule* ZParser::parseModule() {
                 _module->addFunction(parseFunc());
             else if (isNext(STRUCT))
                 parseStruct();
+            else if (isNext(CLASS))
+                parseClass();
             else
-                error("Expected function or stuct definition, but found: " + toString(_lexer.getNextToken()), _lexer.beginRange());
+                error("Expected function, class or stuct definition, but found: " + toString(_lexer.getNextToken()), _lexer.beginRange());
         } catch (RecoveryException error){
             _lexer.recoverToTop();
         }
@@ -95,7 +97,7 @@ void ZParser::parseStruct() {
 		auto member = parseFullArg();
 		members->push_back(member);
 
-		_symTable.addSymbol(member->getType(), member->getName());
+		_symTable.addSymbol(member->getType(), member->getName(), SymbolType::Field);
 
 		consume(COMMA);
 	}
@@ -107,7 +109,7 @@ void ZParser::parseStruct() {
 	auto objDef = new ZVarDef(*varName, *_symTable.makeRef(), structType, new ZCast(new ZCall(new ZId(*new string("allocate"), _symTable.makeRef()),
 		*new vector<ZExpr*>() = { new ZIntLit(structType->getSize()) }, new std::vector<ZType*>, _symTable.makeRef()), structType, _symTable.makeRef()));
 
-	_symTable.addSymbol(structType, varName);
+	_symTable.addSymbol(structType, varName, SymbolType::StackVar);
 
 	auto stmts = new std::vector<ZAst*>();
 
@@ -125,8 +127,62 @@ void ZParser::parseStruct() {
 	auto ctor = new ZFunc(name, structType, *members, *new vector<ZGenericParam*>(), new ZBlock(stmts));
 
 	_module->addFunction(ctor);
-	_symTable.addSymbol(ctor->getType(), name);
+	_symTable.addSymbol(ctor->getType(), name, SymbolType::GlobalFunc);
 	_symTable.addType(structType);
+}
+
+void ZParser::parseClass() {
+    reqConsume(CLASS);
+    string* name = reqVal(IDENT);
+
+    _symTable.enter(false);
+
+    std::vector<ZGenericParam*>* typeParams = new std::vector<ZGenericParam*>;
+    if (consume(OPEN_BRACKET)) {
+        while (!consume(CLOSE_BRACKET)) {
+            ZGenericParam* typeParam = new ZGenericParam(*reqVal(IDENT));
+            typeParams->push_back(typeParam);
+            _symTable.addType(typeParam);
+            consume(COMMA);
+        }
+    }
+
+    // todo: inheritance stuff here
+
+    auto fields = new std::vector<ZArg*>();
+
+    if (consume(OPEN_BRACE)) {
+        while (!consume(CLOSE_BRACE)) {
+            if (isNext(VAR)) {
+                auto field = parseField();
+                fields->push_back(field);
+            }
+            else if (isNext(DEF))
+                parseFunc();
+        }
+    }
+
+    _symTable.exit();
+
+    auto classType = new ZStructType(name, fields, typeParams);
+
+    _symTable.addType(classType);
+    // todo: make constructors public
+}
+
+ZArg* ZParser::parseField() {
+    auto sr = beginRange();
+
+    reqConsume(VAR);
+    std::string* name = reqVal(IDENT);
+    reqConsume(COLON);
+    ZType* type = parseType();
+    reqConsume(SEMICOLON);
+
+    ZArg* result = new ZArg(type, name);
+    result->withSourceRange(endRange(sr));
+
+    return result;
 }
 
 ZFunc* ZParser::parseFunc() {
@@ -169,7 +225,7 @@ ZFunc* ZParser::parseFunc() {
     std::vector<ZType*>* argTypes = new std::vector<ZType*>();
 	for (ZArg* arg : *args) {
 		argTypes->push_back(arg->getType());
-		_symTable.addSymbol(arg->getType(), arg->getName());
+		_symTable.addSymbol(arg->getType(), arg->getName(), SymbolType::StackVar);
 	}
 
     ZType* funcType = new ZFuncType(retType, *argTypes, typeParams);
@@ -180,7 +236,7 @@ ZFunc* ZParser::parseFunc() {
 
 	_symTable.exit();
 
-	_symTable.addSymbol(funcType, name);
+	_symTable.addSymbol(funcType, name, SymbolType::GlobalFunc);
 	
     auto zfunc = new ZFunc(name, retType, *args, *typeParams, body, isExtern);
     zfunc->setType(funcType);
@@ -235,7 +291,7 @@ ZExpr* ZParser::parseLambda() {
     _symTable.enter();
 
     for (ZArg* arg : *args)
-        _symTable.addSymbol(arg->getType(), arg->getName());
+        _symTable.addSymbol(arg->getType(), arg->getName(), SymbolType::StackVar);
 
     ZAst* body;
     if (isNext(OPEN_BRACE))
@@ -297,13 +353,18 @@ ZType* ZParser::parseType() {
 		return new ZFuncType(retType, *argTypes);
 	}
 
-	auto type = _symTable.makeRef()->findTypeDef(*reqVal(IDENT));
+    auto typeName = *reqVal(IDENT);
+	auto type = _symTable.makeRef()->findTypeDef(typeName);
 
-	if (dynamic_cast<ZArrayType*>(type)) {
+	if (type->getTypeParams()->size() > 0) {
+        // todo: check count of type params
+        auto typeWithGenerics = type->copyStem();
 		reqConsume(OPEN_BRACKET);
-		auto elemType = parseType();
-		reqConsume(CLOSE_BRACKET);
-		return new ZArrayType(elemType);
+        int i = 0;
+        while (!consume(CLOSE_BRACKET)) {
+            typeWithGenerics->setTypeParam(i++, parseType());
+        }		
+		return typeWithGenerics;
 	}
 
 	if (!consume(FAT_ARROW))
@@ -456,7 +517,7 @@ ZVarDef* ZParser::parseVarDef() {
     if (consume(EQUAL))
         initExpr = parseExpr();
 
-    auto ref = _symTable.addSymbol(type, name);
+    auto ref = _symTable.addSymbol(type, name, SymbolType::StackVar);
 
 	ZVarDef* zvardef = new ZVarDef(*name, *ref, type, initExpr);
 

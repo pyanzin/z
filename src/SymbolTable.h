@@ -18,8 +18,8 @@ public:
 		storage = storage->getParent();
 	}
 
-	SymbolRef* addSymbol(ZType* type, std::string* name) {
-		return storage->add(*name, type);
+	SymbolRef* addSymbol(ZType* type, std::string* name, SymbolType symbolType) {
+		return storage->add(*name, type, symbolType);
 	}
 
 	SymbolRef* addType(ZType* type) {

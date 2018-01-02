@@ -4,6 +4,8 @@ enum ZLexeme {
     IDENT,
     DEF,
     STRUCT,
+    CLASS,
+    TRAIT,
 	EXTERN,
     VAR,
 	RETURN,

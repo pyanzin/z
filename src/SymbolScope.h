@@ -2,6 +2,7 @@
 #include <map>
 #include "ZGenericParam.h"
 #include "SymbolRef.h"
+#include "SymbolType.h"
 
 class SymbolScope {
 public:
@@ -19,7 +20,7 @@ public:
         return _parent;
     }
 
-    SymbolRef* add(std::string name, ZType* type);
+    SymbolRef* add(std::string name, ZType* type, SymbolType symbolType);
 
 	int add(ZType* type) {
 		int id = _ordinal++;

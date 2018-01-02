@@ -25,6 +25,10 @@ public:
 
 	void parseStruct();
 
+    void parseClass();
+
+    ZArg * parseField();
+
     ZFunc* parseFunc();
 	ZExpr* parseLambda();
 	ZArg* parseFullArg();

@@ -1,18 +1,19 @@
 ﻿#include "SymbolScope.h"
 #include "SymbolRef.h"
 #include "SymbolEntry.h"
+#include "SymbolType.h"
 
 SymbolRef* SymbolScope::makeRef() {
 	int id = incrementOrdinal();
 	return new SymbolRef(this, id);
 }
 
-SymbolRef* SymbolScope::add(std::string name, ZType* type) {
+SymbolRef* SymbolScope::add(std::string name, ZType* type, SymbolType symbolType) {
     int id = _ordinal++;
     if (_symbolStorage.find(name) == _symbolStorage.end())
         _symbolStorage[name] = new std::vector<SymbolEntry*>();
 
-    auto entry = new SymbolEntry(type, name, id);
+    auto entry = new SymbolEntry(type, name, id, symbolType);
     _symbolStorage[name]->push_back(entry);
     return new SymbolRef(this, id, entry);
 }

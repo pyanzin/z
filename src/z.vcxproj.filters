@@ -293,5 +293,8 @@
     <ClInclude Include="RecoveryException.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SymbolType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

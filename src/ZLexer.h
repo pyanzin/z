@@ -65,6 +65,9 @@ private:
         _keywords.insert(std::make_pair("struct", STRUCT));
         _keywords.insert(std::make_pair("sizeof", SIZEOF));
         _keywords.insert(std::make_pair("as", AS));
+        _keywords.insert(std::make_pair("class", CLASS));
+        _keywords.insert(std::make_pair("trait", TRAIT));
+        
     }
 };
 

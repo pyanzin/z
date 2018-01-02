@@ -364,7 +364,7 @@ void TypingPass::visit(ZFuncCast* zfunccast) {
 	for (ZType* paramType : targetType->getParamTypes()) {
 		std::string* paramName = new string("__p" + i++);
 		targetParams->push_back(new ZArg(paramType, paramName));
-		newScope->add(*paramName, paramType);
+		newScope->add(*paramName, paramType, SymbolType::GlobalFunc);
 	}
 
 	int j = 0;
