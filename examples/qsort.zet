@@ -1,0 +1,42 @@
+def main(): None = {
+   var xs = string2array(readline());
+
+   qsort(xs, (a, b) => a < b);
+
+   foreach(xs, x => print(char2string(x)));
+   
+   print("\n");
+}
+
+def qsort[T](xs: Array[T], less: (T, T) => Boolean): None = {
+   qsort1(xs, 0, size(xs) - 1, less);
+}
+
+def qsort1[T](xs: Array[T], lo: Int, hi: Int, less: (T, T) => Boolean): None = {
+   if (lo < hi) {
+      var p = partition(xs, lo, hi, less);
+      qsort1(xs, lo, p, less);
+      qsort1(xs, p + 1, hi, less);
+   }   
+}
+
+def partition[T](xs: Array[T], lo: Int, hi: Int, less: (T, T) => Boolean): Int = {
+   var pivot = xs(lo);
+   var i = lo - 1;
+   var j = hi + 1;
+   while (true) {
+      while (less(xs(++i), pivot))
+         ;
+
+      while (less(pivot, xs(--j)))
+         ;
+
+      if (i >= j)
+         return j;
+
+      var tmp = xs(i);
+      xs(i) = xs(j);
+      xs(j) = tmp;
+   }
+   return j;
+}

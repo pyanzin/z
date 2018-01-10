@@ -51,7 +51,7 @@ def join(xs: Array[String], delim: String): String = {
    return result;
 }
 
-def foreach[T](xs: Array[T], f: (T) => None): None = {
+def foreach[T](xs: Array[T], f: T => None): None = {
    for (var i = 0; i < size(xs); i = i + 1)
       f(xs(i));
 }
@@ -64,7 +64,7 @@ def reduce[T, R](xs: Array[T], z: R, f: (R, T) => R): R = {
    return result;
 }
 
-def count[T](xs: Array[T], f: (T) => Boolean): Int = {
+def count[T](xs: Array[T], f: T => Boolean): Int = {
    var result = 0;
 
    for (var i = 0; i < size(xs); i = i + 1)
@@ -76,7 +76,7 @@ def count[T](xs: Array[T], f: (T) => Boolean): Int = {
    return result;
 }
 
-def any[T](xs: Array[T], f: (T) => Boolean): Boolean = {
+def any[T](xs: Array[T], f: T => Boolean): Boolean = {
    for (var i = 0; i < size(xs); i = i + 1) {
       if (f(xs(i)))
          return true;
@@ -84,7 +84,7 @@ def any[T](xs: Array[T], f: (T) => Boolean): Boolean = {
    return false;
 }
 
-def filter[T](xs: Array[T], f: (T) => Boolean): Array[T] = {
+def filter[T](xs: Array[T], f: T => Boolean): Array[T] = {
    var result = Array[T](count[T](xs, f));
 
    var i = 0;
@@ -100,7 +100,7 @@ def filter[T](xs: Array[T], f: (T) => Boolean): Array[T] = {
    return result;
 }
 
-def map[A, B](xs: Array[A], f: (A) => B): Array[B] = {
+def map[A, B](xs: Array[A], f: A => B): Array[B] = {
    var result = Array[B](size(xs));
    var i = 0;
    while (i < size(xs)) {
