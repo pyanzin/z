@@ -43,6 +43,23 @@ ZParser::ZParser(ZLexer& lexer, SymbolTable& symTable): _lexer(lexer), _symTable
 	_binOps[AMPERSAND] = BitwiseAnd;
 	_binOps[PIPE] = BitwiseOr;
 
+	_binOpPriority[Mul] = 100;
+	_binOpPriority[Div] = 100;
+	_binOpPriority[Mod] = 100;
+	_binOpPriority[Sum] = 90;
+	_binOpPriority[Sub] = 90;
+	_binOpPriority[Less] = 80;
+	_binOpPriority[LessOrEqual] = 80;
+	_binOpPriority[More] = 80;
+	_binOpPriority[MoreOrEqual] = 80;
+	_binOpPriority[Equal] = 70;
+	_binOpPriority[NotEqual] = 70;
+	_binOpPriority[BitwiseAnd] = 60;
+	_binOpPriority[BooleanXor] = 50;
+	_binOpPriority[BitwiseOr] = 40;
+	_binOpPriority[BooleanAnd] = 30;
+	_binOpPriority[BooleanOr] = 20;
+
     _unaryOps[EXCLAM] = Negation;
     _unaryOps[TILDA] = BitwiseInvert;
     _unaryOps[PLUS] = UnaryPlus;
@@ -549,24 +566,58 @@ ZExpr* ZParser::parseBinOp() {
 
 	auto sr = beginRange();
 
-	ZExpr* left = parseAsCast();
-	auto next = _lexer.getNextToken();
+	std::vector<ZExpr*> operands;
+	std::vector<BinOps> operators;
 
-	if (_binOps.find(next) == _binOps.end()) {
-		_lexer.backtrackTo(pos);
-		return parseAsCast();
+	for(;;) {
+		ZExpr* operand = parseAsCast();
+		operands.push_back(operand);
+
+		int prePos = _lexer.getPos();
+		auto next = _lexer.getNextToken();
+		if (_binOps.find(next) == _binOps.end()) {
+			_lexer.backtrackTo(prePos);
+			break;
+		}
+
+		BinOps op = _binOps[next];
+
+		if (operators.size() > 0)
+			if (priority(op) < priority(*operators.rbegin())) {
+				ZExpr* right = *operands.rbegin();
+				operands.pop_back();
+				ZExpr* left = *operands.rbegin();
+				operands.pop_back();
+
+				BinOps oldOperator = *operators.rbegin();
+				operators.pop_back();
+
+				auto newExpr = new ZBinOp(left, right, oldOperator, _symTable.makeRef());
+				operands.push_back(newExpr);
+			}
+
+		operators.push_back(op);
+	}
+	
+	while (operands.size() > 1) {
+		ZExpr* right = *operands.rbegin();
+		operands.pop_back();
+		ZExpr* left = *operands.rbegin();
+		operands.pop_back();
+
+		BinOps oldOperator = *operators.rbegin();
+		operators.pop_back();
+
+		auto newExpr = new ZBinOp(left, right, oldOperator, _symTable.makeRef());
+		operands.push_back(newExpr);
+		
 	}
 
-	auto right = parseExpr();
+	auto result = operands[0];
 
-	if (!right)
-		error("Expression expected, but found " + toString(_lexer.getNextToken()), left->getSourceRange());
+	result->withSourceRange(endRange(sr));
 
-	auto zbinop = new ZBinOp(left, right, _binOps[next], _symTable.makeRef());
-
-	zbinop->withSourceRange(endRange(sr));
-
-	return zbinop;
+	return result;
 }
 
 ZExpr* ZParser::parseAsCast() {

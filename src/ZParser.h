@@ -80,6 +80,10 @@ public:
 
     std::string* reqVal(ZLexeme lexeme);
 
+	int priority(BinOps op) {
+		return _binOpPriority[op];
+	}
+
     void error(std::string errorText, SourceRange* sr) {
         addError(errorText, sr);
         throw RecoveryException();
@@ -106,6 +110,7 @@ private:
 	std::map<std::string, ZType*> _types;
 
 	std::map<ZLexeme, BinOps> _binOps;
+	std::map<BinOps, int> _binOpPriority;
     std::map<ZLexeme, UnaryOps> _unaryOps;
 
     std::vector<ParserError*> errors;
