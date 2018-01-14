@@ -25,11 +25,21 @@
 #include "Juxtaposer.h"
 #include "ZNumberType.h"
 #include "SymbolScope.h"
+#include "ZClassDef.h"
 
 class ZFuncCast;
 
 void TypingPass::visit(ZModule* zmodule) {
     _module = zmodule;
+    for (ZClassDef* zc : zmodule->classes) {
+        try {
+            visit(zc);
+        }
+        catch (RecoveryException) {
+
+        }
+    }
+
     for (ZFunc* zf : zmodule->getFunctions()) {
         try {
             visit(zf);
@@ -39,8 +49,21 @@ void TypingPass::visit(ZModule* zmodule) {
     }
 }
 
+void TypingPass::visit(ZClassDef* zclassdef) {
+    for (ZFunc* zf : zclassdef->methods) {
+        try {
+            zf->addThisParam(zclassdef->getType());
+            visit(zf);
+        }
+        catch (RecoveryException) {
+            
+        }       
+    }
+}
+
 void TypingPass::visit(ZFunc* zfunc) {
 	_func = zfunc;
+        
 	for (auto arg : zfunc->getArgs())
 		arg->accept(this);
 
@@ -271,11 +294,21 @@ void TypingPass::visit(ZSelector* zselector) {
 }
 
 void TypingPass::visit(ZId* zid) {
-    auto definition = zid->getRef()->findSymbolDef(zid->getName());
-    if (definition->size() == 0)
+    auto definitions = zid->getRef()->findSymbolDef(zid->getName());
+
+    if (definitions->size() == 0)
         error("Symbol '" + zid->getName() + "' is not defined before using", zid->getSourceRange());
+
+    auto definition = (*definitions)[0];
+    if (definition->symbolType == Field) {
+        auto thisSelector = new ZSelector(new ZId(*new std::string("this"), zid->getRef()), new std::string(zid->getName()));
+        thisSelector->withSourceRange(zid->getSourceRange());
+        zid->getParent()->replaceChild(zid, thisSelector);
+        visit(thisSelector);
+        return;
+    }
         
-    zid->setType(definition->at(0)->getType());
+    zid->setType(definitions->at(0)->getType());
 }
 
 void TypingPass::visit(ZReturn* zreturn) {

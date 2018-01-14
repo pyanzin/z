@@ -205,6 +205,8 @@
     <ClInclude Include="ZCall.h" />
     <ClInclude Include="ZCast.h" />
     <ClInclude Include="ZCharLit.h" />
+    <ClInclude Include="ZClassDef.h" />
+    <ClInclude Include="ZClassType.h" />
     <ClInclude Include="ZCompiler.h" />
     <ClInclude Include="ZCompilerSettings.h" />
     <ClInclude Include="ZDelayedType.h" />

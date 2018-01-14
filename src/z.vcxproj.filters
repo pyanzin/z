@@ -296,5 +296,11 @@
     <ClInclude Include="SymbolType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ZClassType.h">
+      <Filter>Header Files\Types</Filter>
+    </ClInclude>
+    <ClInclude Include="ZClassDef.h">
+      <Filter>Header Files\AST</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

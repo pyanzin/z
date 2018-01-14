@@ -20,7 +20,7 @@ public:
         return _parent;
     }
 
-    SymbolRef* add(std::string name, ZType* type, SymbolType symbolType);
+    SymbolRef* add(std::string name, ZType* type, SymbolType symbolType, bool outOfOrder = false);
 
 	int add(ZType* type) {
 		int id = _ordinal++;

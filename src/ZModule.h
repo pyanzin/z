@@ -2,6 +2,7 @@
 #include "ZAst.h"
 #include <vector>
 #include "ZFunc.h"
+#include "ZClassDef.h"
 
 class ZFunc;
 
@@ -34,6 +35,11 @@ public:
 		
     }
 
-	std::string& name;
+    void ZModule::addClass(ZClassDef* zclassdef) {
+        classes.push_back(zclassdef);
+    }
+
+    std::string& name;
     std::vector<ZFunc*> functions;
+    std::vector<ZClassDef*> classes;
 };

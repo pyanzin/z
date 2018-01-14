@@ -17,6 +17,7 @@
 #include "ZArrayType.h"
 #include "ZGenericParam.h"
 #include "ZFuncType.h"
+#include "ZClassType.h"
 #include "ZLambda.h"
 #include "ZFor.h"
 #include "ZStructType.h"
@@ -24,6 +25,7 @@
 #include "ZCast.h"
 #include "ZSizeOf.h"
 #include "RecoveryException.h"
+#include "ZClassDef.h"
 
 ZParser::ZParser(ZLexer& lexer, SymbolTable& symTable): _lexer(lexer), _symTable(symTable) {
 	_binOps[PLUS] = Sum;
@@ -114,7 +116,7 @@ void ZParser::parseStruct() {
 		auto member = parseFullArg();
 		members->push_back(member);
 
-		_symTable.addSymbol(member->getType(), member->getName(), SymbolType::Field);
+		_symTable.addSymbol(member->getType(), member->getName(), StackVar);
 
 		consume(COMMA);
 	}
@@ -139,9 +141,11 @@ void ZParser::parseStruct() {
 
 	stmts->push_back(new ZReturn(new ZId(*varName, _symTable.makeRef())));
 
+    SymbolRef* scopeRef = _symTable.makeRef();
+
 	_symTable.exit();
 
-	auto ctor = new ZFunc(name, structType, *members, *new vector<ZGenericParam*>(), new ZBlock(stmts));
+	auto ctor = new ZFunc(name, structType, *members, *new vector<ZGenericParam*>(), new ZBlock(stmts), scopeRef);
 
 	_module->addFunction(ctor);
 	_symTable.addSymbol(ctor->getType(), name, SymbolType::GlobalFunc);
@@ -167,24 +171,32 @@ void ZParser::parseClass() {
     // todo: inheritance stuff here
 
     auto fields = new std::vector<ZArg*>();
+    auto methods = new std::vector<ZFunc*>();
 
     if (consume(OPEN_BRACE)) {
         while (!consume(CLOSE_BRACE)) {
             if (isNext(VAR)) {
                 auto field = parseField();
                 fields->push_back(field);
+                _symTable.addSymbol(field->getType(), field->getName(), Field);
             }
-            else if (isNext(DEF))
-                parseFunc();
+            else if (isNext(DEF)) {
+                auto method = parseFunc(true);
+                methods->push_back(method);
+            }
         }
     }
 
+    SymbolRef* classScope = _symTable.makeRef();
+
     _symTable.exit();
 
-    auto classType = new ZStructType(name, fields, typeParams);
+    auto classType = new ZClassType(name, fields, classScope, typeParams);
 
     _symTable.addType(classType);
     // todo: make constructors public
+
+    _module->addClass(new ZClassDef(*name, classType, *methods));
 }
 
 ZArg* ZParser::parseField() {
@@ -202,7 +214,7 @@ ZArg* ZParser::parseField() {
     return result;
 }
 
-ZFunc* ZParser::parseFunc() {
+ZFunc* ZParser::parseFunc(bool isMethod) {
 	auto sr = beginRange();
 
 	bool isExtern = consume(EXTERN);
@@ -251,11 +263,13 @@ ZFunc* ZParser::parseFunc() {
 	if (!isExtern)
 		body = parseBlock();
 
+    SymbolRef* scopeRef = _symTable.makeRef();
+
 	_symTable.exit();
 
-	_symTable.addSymbol(funcType, name, SymbolType::GlobalFunc);
+	_symTable.addSymbol(funcType, name, isMethod ? Method : GlobalFunc);
 	
-    auto zfunc = new ZFunc(name, retType, *args, *typeParams, body, isExtern);
+    auto zfunc = new ZFunc(name, retType, *args, *typeParams, body, scopeRef, isExtern);
     zfunc->setType(funcType);
 
 	zfunc->withSourceRange(endRange(sr));
@@ -548,7 +562,7 @@ ZExpr* ZParser::parseAssign() {
 
 	int pos = _lexer.getPos();
 
-	ZExpr* left = parseSelector();
+	ZExpr* left = parseCall();
 
 	if (left && consume(EQUAL)) {
 		auto right = parseExpr();
@@ -643,7 +657,7 @@ ZExpr* ZParser::parseUnaryOp() {
 
     if (_unaryOps.find(next) == _unaryOps.end()) {
         _lexer.backtrackTo(pos);
-        ZExpr* target = parseSelector();
+        ZExpr* target = parseCall();
 		int afterTargetPos = _lexer.getPos();
         ZLexeme nextToken = _lexer.getNextToken();
         if (nextToken == DOUBLE_PLUS) {
@@ -660,16 +674,58 @@ ZExpr* ZParser::parseUnaryOp() {
         return target;             
     }
 
-    auto unaryOp = new ZUnaryOp(parseSelector(), _unaryOps[next]);
+    auto unaryOp = new ZUnaryOp(parseCall(), _unaryOps[next]);
     unaryOp->withSourceRange(endRange(sr));
     return unaryOp;
 }
 
+ZExpr* ZParser::parseCall() {
+    int pos = _lexer.getPos();
+    // TODO: use expr here
+
+    auto sr = beginRange();
+
+    ZExpr* callee = parseSelector();
+
+    _symTable.enter();
+
+    vector<ZType*>* typeParams = new vector<ZType*>;
+    if (consume(OPEN_BRACKET)) {
+        while (!consume(CLOSE_BRACKET)) {
+            ZType* typeParam = parseType();
+            typeParams->push_back(typeParam);
+            consume(COMMA);
+        }
+    }
+
+    if (!consume(OPEN_PAREN)) {
+        _lexer.backtrackTo(pos);
+        _symTable.exit();
+        return parseSelector();
+    }
+
+    std::vector<ZExpr*>* args = new std::vector<ZExpr*>();
+    while (!consume(CLOSE_PAREN)) {
+        ZExpr* arg = parseExpr();
+        consume(COMMA);
+        args->push_back(arg);
+    }
+
+    SymbolRef* ref = _symTable.makeRef();
+
+    _symTable.exit();
+
+    ZCall* zcall = new ZCall(callee, *args, typeParams, ref);
+
+    zcall->withSourceRange(endRange(sr));
+
+    return zcall;
+}
 
 ZExpr* ZParser::parseSelector() {
 	auto sr = beginRange();
 
-	auto target = parseCall();
+	auto target = parseId();
 	if (!consume(DOT))
 		return target;
 	auto member = reqVal(IDENT);
@@ -677,49 +733,6 @@ ZExpr* ZParser::parseSelector() {
 	auto selector = new ZSelector(target, member);
 	selector->withSourceRange(endRange(sr));
 	return selector;	
-}
-
-ZExpr* ZParser::parseCall() {
-	int pos = _lexer.getPos();
-	// TODO: use expr here
-
-	auto sr = beginRange();
-
-	ZExpr* callee = parseId();
-
-	_symTable.enter();
-
-	vector<ZType*>* typeParams = new vector<ZType*>;
-	if (consume(OPEN_BRACKET)) {
-		while (!consume(CLOSE_BRACKET)) {
-			ZType* typeParam = parseType();
-			typeParams->push_back(typeParam);
-			consume(COMMA);
-		}
-	}
-
-	if (!consume(OPEN_PAREN)) {
-		_lexer.backtrackTo(pos);
-		_symTable.exit();
-		return parseId();
-	}
-
-	std::vector<ZExpr*>* args = new std::vector<ZExpr*>();
-	while (!consume(CLOSE_PAREN)) {
-		ZExpr* arg = parseExpr();
-		consume(COMMA);
-		args->push_back(arg);
-	}
-
-	SymbolRef* ref = _symTable.makeRef();
-
-	_symTable.exit();
-
-	ZCall* zcall = new ZCall(callee, *args, typeParams, ref);
-
-	zcall->withSourceRange(endRange(sr));
-
-	return zcall;
 }
 
 ZExpr* ZParser::parseId() {

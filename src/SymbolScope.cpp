@@ -8,8 +8,8 @@ SymbolRef* SymbolScope::makeRef() {
 	return new SymbolRef(this, id);
 }
 
-SymbolRef* SymbolScope::add(std::string name, ZType* type, SymbolType symbolType) {
-    int id = _ordinal++;
+SymbolRef* SymbolScope::add(std::string name, ZType* type, SymbolType symbolType, bool outOfOrder) {
+    int id = outOfOrder ? -1 : _ordinal++;
     if (_symbolStorage.find(name) == _symbolStorage.end())
         _symbolStorage[name] = new std::vector<SymbolEntry*>();
 

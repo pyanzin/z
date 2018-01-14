@@ -23,10 +23,16 @@ public:
 
 	void replaceChild(ZAst* oldChild, ZAst* newChild) override {
 		adopt(newChild);
+
+        if (callee == oldChild) {
+            callee = dynamic_cast<ZExpr*>(newChild);
+            return;
+        }
+
 		for (int i = 0; i < args.size(); ++i) {
 			auto arg = args[i];
 			if (arg == oldChild) {
-				args[i] = static_cast<ZExpr*>(newChild);
+				args[i] = dynamic_cast<ZExpr*>(newChild);
 				return;
 			}
 		}

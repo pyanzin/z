@@ -29,7 +29,7 @@ public:
 
     ZArg * parseField();
 
-    ZFunc* parseFunc();
+    ZFunc* parseFunc(bool isMethod = false);
 	ZExpr* parseLambda();
 	ZArg* parseFullArg();
     ZArg* parseVagueArg();

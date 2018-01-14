@@ -5,6 +5,7 @@
 #include "ZSelector.h"
 #include "ZCast.h"
 #include "ZFuncCast.h"
+#include "ZClassDef.h"
 
 class SymbolRef;
 class ZIf;
@@ -12,8 +13,8 @@ class ZIf;
 class TypingPass : public ZVisitor {
 public:
 	void visit(ZModule* zmodule) override;
-
-	void visit(ZFunc* zfunc) override;
+    void visit(ZClassDef* zclassdef) override;
+    void visit(ZFunc* zfunc) override;
 
 	void visit(ZBlock* zblock) override;
 

@@ -5,17 +5,21 @@
 #include "ZArg.h"
 #include "ZGenericParam.h"
 #include "ZFuncType.h"
+#include "SymbolRef.h"
+#include "SymbolScope.h"
 
 class ZArg;
 
 class ZFunc : public ZExpr {
 public:	
-	ZFunc(std::string* name, ZType* returnType, vector<ZArg*>& args, vector<ZGenericParam*>& typeParams, ZAst* body, bool isExtern = false) : _args(args) {
+	ZFunc(std::string* name, ZType* returnType, vector<ZArg*>& args, 
+        vector<ZGenericParam*>& typeParams, ZAst* body, SymbolRef* ref, bool isExtern = false) : _args(args) {
         _name = name;
         _returnType = returnType;
 		_typeParams = typeParams;
         _body = body;
 		_isExtern = isExtern;
+        _ref = ref;
 
 		std::vector<ZType*>* argTypes = new std::vector<ZType*>();
 		for (ZArg* arg : args) {
@@ -49,8 +53,19 @@ public:
         return _body;
 	}
 
+    SymbolRef* getScopeRef() {
+        return _ref;
+	}
+
 	std::vector<ZGenericParam*> getTypeParams() {
 		return _typeParams;
+	}
+
+    void addThisParam(ZType* type) {
+        _args.insert(_args.begin(), new ZArg(type, new std::string("this")));
+
+        auto scope = _ref->getStorage();
+        scope->add("this", type, StackVar, true);
 	}
 
 	void accept(ZVisitor* visitor);
@@ -76,4 +91,5 @@ private:
 	std::vector<ZGenericParam*> _typeParams;
 	ZAst* _body;
 	bool _isExtern;
+    SymbolRef* _ref;
 };

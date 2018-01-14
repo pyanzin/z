@@ -9,6 +9,7 @@ class ZFunc;
 class ZAst;
 class ZArg;
 class ZModule;
+class ZClassDef;
 class ZBlock;
 class ZBinOp;
 class ZId;
@@ -32,6 +33,8 @@ public:
 	virtual void visit(ZModule* zmodule) { }
 
 	virtual void visit(ZFunc* zfunc) { }
+
+    virtual void visit(ZClassDef* zclassdef) { }
 
 	virtual void visit(ZArg* zarg) { }
 
