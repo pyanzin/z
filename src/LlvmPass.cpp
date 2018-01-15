@@ -41,6 +41,14 @@ void LlvmPass::visit(ZModule* zmodule) {
 	_module = new Module("test", getGlobalContext());
 	_diBuilder = new DIBuilder(*_module);
 
+	for (ZClassDef* c : zmodule->classes)
+		for (auto method : c->methods)
+			addFuncDef(method);
+
+	for (ZClassDef* c : zmodule->classes)
+		for (auto method : c->methods)
+			generate(method);
+
 	for (ZFunc* func : zmodule->getFunctions())
 		if (!func->isGeneric())
 			addFuncDef(func);
