@@ -19,7 +19,6 @@ public:
 		_typeParams = typeParams;
         _body = body;
 		_isExtern = isExtern;
-        _ref = ref;
 
 		std::vector<ZType*>* argTypes = new std::vector<ZType*>();
 		for (ZArg* arg : args) {
@@ -31,6 +30,8 @@ public:
 
 		if (body)
 			adopt(body);
+
+        setRef(ref);
     }
 
 	bool isGeneric() {
@@ -91,5 +92,4 @@ private:
 	std::vector<ZGenericParam*> _typeParams;
 	ZAst* _body;
 	bool _isExtern;
-    SymbolRef* _ref;
 };

@@ -4,11 +4,12 @@
 
 class ZAssign : public ZExpr {
 public:
-	ZAssign(ZExpr* left, ZExpr* right) {
+	ZAssign(ZExpr* left, ZExpr* right, SymbolRef* ref) {
 		_left = left;		
 		_right = right;
 		adopt(left);
 		adopt(right);
+        setRef(ref);
 	}
 
 	void replaceChild(ZAst* oldChild, ZAst* newChild) override {

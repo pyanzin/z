@@ -6,7 +6,7 @@ public:
     ZFuncCast(ZExpr* expr, ZFuncType* targetType, SymbolRef* ref) {
         _expr = expr;
         _targetType = targetType;
-		_ref = ref;
+        setRef(ref);
     }
 
     void replaceChild(ZAst* oldChild, ZAst* newChild) override {
@@ -27,12 +27,7 @@ public:
         return _targetType;
     }
 
-	SymbolRef* getRef() {
-		return _ref;
-    }
-
 private:
     ZExpr* _expr;
     ZFuncType* _targetType;
-	SymbolRef* _ref;
 };

@@ -135,7 +135,10 @@ void ZParser::parseStruct() {
 	stmts->push_back(objDef);
 
 	for (auto member : *members) {
-		auto init = new ZAssign(new ZSelector(new ZId(*varName, _symTable.makeRef()), member->getName()), new ZId(*member->getName(), _symTable.makeRef()));
+		auto init = new ZAssign(
+            new ZSelector(new ZId(*varName, _symTable.makeRef()), member->getName(), _symTable.makeRef()), 
+            new ZId(*member->getName(), _symTable.makeRef()), 
+            _symTable.makeRef());
 		stmts->push_back(init);
 	}
 
@@ -566,7 +569,7 @@ ZExpr* ZParser::parseAssign() {
 
 	if (left && consume(EQUAL)) {
 		auto right = parseExpr();
-		auto zassign = new ZAssign(left, right);
+		auto zassign = new ZAssign(left, right, _symTable.makeRef());
 		zassign->withSourceRange(endRange(sr));
 		return zassign;
 	}
@@ -730,7 +733,7 @@ ZExpr* ZParser::parseSelector() {
 		return target;
 	auto member = reqVal(IDENT);
 
-	auto selector = new ZSelector(target, member);
+	auto selector = new ZSelector(target, member, _symTable.makeRef());
 	selector->withSourceRange(endRange(sr));
 	return selector;	
 }

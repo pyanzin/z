@@ -22,30 +22,23 @@ ZType* SymbolRef::findTypeDef(std::string& name) {
 
 ZType* SymbolRef::resolve(ZType* type) {
     if (dynamic_cast<ZGenericParam*>(type)) {
-        while (dynamic_cast<ZGenericParam*>(type)) {
-            if (_storage->isDefined(_id, type))
-                return type;
+        if (_storage->isDefined(_id, type))
+            return type;
+        auto resolved = _storage->resolveGeneric(dynamic_cast<ZGenericParam*>(type));  
+        return resolved;
+    }
 
-            type = _storage->resolveGeneric(dynamic_cast<ZGenericParam*>(type));
-        }
-
+    if (!type->containsGenerics())
         return type;
+
+    auto resolved = type->copyStem();
+
+    auto typeParams = type->getTypeParams();
+    for (int i = 0; i < typeParams->size(); ++i) {
+        resolved->setTypeParam(i, resolve((*typeParams)[i]));
     }
 
-    ZArrayType* arrayType = dynamic_cast<ZArrayType*>(type);
-    if (arrayType)
-        return new ZArrayType(resolve(arrayType->getElementType()));
-
-    ZFuncType* funcType = dynamic_cast<ZFuncType*>(type);
-    if (funcType) {
-        auto resolvedParamTypes = std::vector<ZType*>();
-        for (auto paramType : funcType->getParamTypes())
-            resolvedParamTypes.push_back(resolve(paramType));
-
-        return new ZFuncType(resolve(funcType->getRetType()), resolvedParamTypes);
-    }
-
-    return type;
+    return resolved;
 }
 
 ZType* SymbolRef::findTypeOrDelayed(std::string& name) {

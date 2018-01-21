@@ -12,11 +12,11 @@ public:
         _args = args;
         _retType = retType;
         _body = body;
-        _ref = ref;
         
         adopt(_body);
         for (auto arg : *_args)
             adopt(arg);
+        setRef(ref);
     }
 
     ZType* getType() override {
@@ -71,11 +71,7 @@ public:
     ZType* getReturnType() {
         return _retType;
     }
-
-    SymbolRef* getRef() {
-        return _ref;
-    }
-
+    
     void setRetType(ZType* retType) {
         _retType = retType;
     }
@@ -83,5 +79,4 @@ private:
     vector<ZArg*>* _args;
     ZType* _retType;
     ZAst* _body;
-    SymbolRef* _ref;
 };

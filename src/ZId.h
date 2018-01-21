@@ -7,7 +7,7 @@
 class ZId : public ZExpr {
 public:
     ZId(std::string& name, SymbolRef* ref) : _name(name) {
-        _ref = ref;
+        setRef(ref);
     }
 
 	virtual void accept(ZVisitor* visitor) override {
@@ -18,10 +18,6 @@ public:
 		return _name;
     }
 
-    SymbolRef* getRef() {
-        return _ref;
-    }
-
 	void dump(std::ostream& stream, unsigned depth) override {
 		dumpTab(stream, depth);
 
@@ -30,5 +26,4 @@ public:
 
 private:
     std::string& _name;
-    SymbolRef* _ref;
 };

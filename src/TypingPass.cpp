@@ -92,7 +92,7 @@ void TypingPass::visit(ZAssign* zassign) {
         error("Left part of the assignment expression is not suitable for assignment", zassign->getSourceRange());
 
     if (!dynamic_cast<ZSubscript*>(assignee) && !assignee->getType()->isEqual(*zassign->getRight()->getType()))
-        error("Type of the left hand expression doesn't match the type of right hand expression", assignee->getSourceRange());
+        error("Type of the left-hand expression doesn't match the type of right-hand expression", assignee->getSourceRange());
 
 	zassign->setType(zassign->getRight()->getType());
 }
@@ -120,7 +120,7 @@ void TypingPass::visit(ZCall* zcall) {
 
 	if (dynamic_cast<ZArrayType*>(zcall->callee->getType()) || zcall->callee->getType()->isEqual(*String)) {
         if (callerArgsCount != 1)
-            error("Array subsciprt operator requires 1 argument", zcall->getSourceRange());
+            error("Array subscript operator requires 1 argument", zcall->getSourceRange());
 
         ZSubscript* zsubscript = new ZSubscript(zcall->callee, zcall->getArgs()[0]);
         zcall->getParent()->replaceChild(zcall, zsubscript);
@@ -301,14 +301,14 @@ void TypingPass::visit(ZId* zid) {
 
     auto definition = (*definitions)[0];
     if (definition->symbolType == Field) {
-        auto thisSelector = new ZSelector(new ZId(*new std::string("this"), zid->getRef()), new std::string(zid->getName()));
+        auto thisSelector = new ZSelector(new ZId(*new std::string("this"), zid->getRef()), new std::string(zid->getName()), zid->getRef());
         thisSelector->withSourceRange(zid->getSourceRange());
         zid->getParent()->replaceChild(zid, thisSelector);
         visit(thisSelector);
         return;
     }
         
-    zid->setType(definitions->at(0)->getType());
+    zid->setType((*definitions)[0]->getType());
 }
 
 void TypingPass::visit(ZReturn* zreturn) {

@@ -10,11 +10,11 @@ class ZCall : public ZExpr {
 public:
 	ZCall(ZExpr* callee, std::vector<ZExpr*>& args, std::vector<ZType*>* typeParams, SymbolRef* ref) : args(args) {
 		this->callee = callee;
-		_ref = ref;
 		_typeArgs = typeParams;
 		adopt(callee);
 		for (auto arg : args)
 			adopt(arg);
+        setRef(ref);
     }
 
 	void accept(ZVisitor* visitor) override {
@@ -43,10 +43,6 @@ public:
         return args;
     }
 
-	SymbolRef* getRef() {
-		return _ref;
-	}
-
 	std::vector<ZType*>* getTypeArgs() {
 		return _typeArgs;
 	}
@@ -54,7 +50,6 @@ public:
     ZExpr* callee;
     std::vector<ZExpr*>& args;
 	std::vector<ZType*>* _typeArgs;
-	SymbolRef* _ref;
 
 	void dump(std::ostream& stream, unsigned depth) override {
 		dumpTab(stream, depth);

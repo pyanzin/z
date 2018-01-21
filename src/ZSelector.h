@@ -4,10 +4,11 @@
 
 class ZSelector : public ZExpr {
 public:
-	ZSelector(ZExpr* target, std::string* member) {
+	ZSelector(ZExpr* target, std::string* member, SymbolRef* ref) {
 		adopt(target);
 		_target = target;
 		_member = member;
+        setRef(ref);
 	}
 
 	void accept(ZVisitor* visitor) override {

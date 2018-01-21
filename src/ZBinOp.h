@@ -11,10 +11,10 @@ public:
 		_left = a;
 		_right = b;
 		_op = op;
-        _ref = ref;
 
 		adopt(a);
 		adopt(b);
+        setRef(ref);
 	}
 
 	void replaceChild(ZAst* oldChild, ZAst* newChild) override {
@@ -34,14 +34,10 @@ public:
 
 	void dump(std::ostream& stream, unsigned depth) override;
 
-    SymbolRef* getRef() {
-        return _ref;
-    }
 private:
 	ZExpr* _left;
 	ZExpr* _right;
 	BinOps _op;
-    SymbolRef* _ref;
 };
 
 #endif

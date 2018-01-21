@@ -7,8 +7,8 @@ public:
 		_expr = expr;
 		setType(targetType);
 		_targetType = targetType;
-        _ref = ref;
 		adopt(expr);
+        setRef(ref);
 	}
 
 	void replaceChild(ZAst* oldChild, ZAst* newChild) override {
@@ -32,10 +32,6 @@ public:
 	ZType* getTargetType() {
 		return _targetType;
 	}
-
-    SymbolRef* getRef() {
-        return _ref;
-    }
 
 private:
 	ZExpr* _expr;
