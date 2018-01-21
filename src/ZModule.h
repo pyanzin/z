@@ -30,9 +30,11 @@ public:
 		dumpTab(stream, depth);
 
 		stream << "module " << name.c_str() << "\n";
+		for (ZClassDef* c : classes)
+			c->dump(stream, depth + 1);
+
 		for (ZFunc* func : functions)
-			func->dump(stream, depth + 1);
-		
+			func->dump(stream, depth + 1);		
     }
 
     void ZModule::addClass(ZClassDef* zclassdef) {

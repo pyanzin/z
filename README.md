@@ -37,19 +37,19 @@ def reverse(x: String): String = {
    return result;
 }
 
-def map[A, B](xs: Array[A], f: (A) => B): Array[B] = {
+def map[A, B](xs: Array[A], f: A => B): Array[B] = {
    var result = Array[B](size(xs));
    for (var i = 0; i < size(xs); ++i)
       result(i) = f(xs(i));
    return result;
 }
 
-def foreach[T](xs: Array[T], f: (T) => None): None = {
+def foreach[T](xs: Array[T], f: T => None): None = {
    for (var i = 0; i < size(xs); ++i)
       f(xs(i));
 }
 
-def filter[T](xs: Array[T], f: (T) => Boolean): Array[T] = {
+def filter[T](xs: Array[T], f: T => Boolean): Array[T] = {
    var result = Array[T](count(xs, f));
 
    var i = 0;
@@ -65,7 +65,7 @@ def filter[T](xs: Array[T], f: (T) => Boolean): Array[T] = {
    return result;
 }
 
-def count[T](xs: Array[T], f: (T) => Boolean): Int = {
+def count[T](xs: Array[T], f: T => Boolean): Int = {
    var result = 0;
    for (var i = 0; i < size(xs); ++i)
       if (f(xs(i)))

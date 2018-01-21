@@ -114,6 +114,30 @@ void TypingPass::visit(ZLambda* zlambda) {
 }
 
 void TypingPass::visit(ZCall* zcall) {
+	auto zselector = dynamic_cast<ZSelector*>(zcall->callee);
+	if (zselector) {
+		auto target = zselector->getTarget();
+		target->accept(this);
+
+		std::string* methodName = zselector->getMember();
+
+		auto classType = dynamic_cast<ZClassType*>(target->getType());
+
+		std::vector<ZExpr*>* newArgs = new std::vector<ZExpr*>();
+
+		newArgs->push_back(target);
+
+		for (auto arg : zcall->getArgs())
+			newArgs->push_back(arg);
+
+		auto newCall = new ZCall(new ZId(*methodName, zcall->getRef()), *newArgs, zcall->getTypeArgs(), zcall->getRef());
+
+		zcall->getParent()->replaceChild(zcall, newCall);
+
+		newCall->accept(this);
+		return;
+	}
+
 	zcall->callee->accept(this);
 
     int callerArgsCount = zcall->getArgs().size();
