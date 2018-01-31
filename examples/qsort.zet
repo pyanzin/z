@@ -1,3 +1,19 @@
+extern def allocate(size: Int): Ref
+extern def allocateArray(count: Int, elemSize: Int): Ref
+extern def concat(s1: String, s2: String): String
+extern def print(s: String): None
+extern def readline(): String
+extern def getchar(): Char
+extern def len(s: String): Int
+extern def char2string(ch: Char): String
+extern def size(xs: Array[_]): Int
+extern def string2int(s: String): Int
+extern def string2array(s: String): Array
+
+def Array[T](size: Int): Array[T] = {
+   return allocateArray(size, sizeof[T]) as Array[T];
+}
+
 def main(): None = {
    var xs = string2array(readline());
 

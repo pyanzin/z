@@ -157,13 +157,28 @@ ZLexeme ZLexer::getNextToken() {
     }
 
 	if (isdigit(ch)) {
+		backtrackBy(1);
 		std::string value;
-		value += ch;
 		while (isalnum(ch = getNextChar()))
 			value += ch;
-		backtrackBy(1);
-		_value = new std::string(value);
-		return INT_LIT;
+        if (ch == '.') {
+            if (isdigit(getNextChar())) {
+                backtrackBy(1);
+                value += ch;
+                while (isalnum(ch = getNextChar()))
+                    value += ch;
+                _value = new std::string(value);
+                return DOUBLE_LIT;
+            } else {
+                backtrackBy(1);
+                _value = new std::string(value);
+                return INT_LIT;
+            }
+        } else {
+            backtrackBy(1);
+            _value = new std::string(value);
+            return INT_LIT;
+        }
 	}
 
     error("Unable to recognize a token starting with: " + ch);
