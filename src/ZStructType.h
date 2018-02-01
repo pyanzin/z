@@ -4,6 +4,7 @@
 #include "ZArg.h"
 #include <llvm/IR/DerivedTypes.h>
 #include <llvm/IR/LLVMContext.h>
+#include "Utils.h"
 
 class ZStructType : public ZType {
 public:
@@ -21,7 +22,7 @@ public:
 		for (ZArg* member : *_members)
 			memberLlvmTypes->push_back(member->getType()->toLlvmType());
 
-		auto type = llvm::StructType::create(llvm::getGlobalContext(), *memberLlvmTypes);
+		auto type = llvm::StructType::create(getLlvmContext(), *memberLlvmTypes);
 		return type;
 	}
 

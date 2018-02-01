@@ -15,6 +15,7 @@ enum ZLexeme {
 	FOR,
     STRING_LIT,
 	INT_LIT,
+    DOUBLE_LIT,
 	CHAR_LIT,
     BOOL_TRUE_LIT,
 	BOOL_FALSE_LIT,

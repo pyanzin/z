@@ -31,14 +31,14 @@
 using namespace llvm;
 
 LlvmPass::LlvmPass() {
-	_builder = new IRBuilder<>(getGlobalContext());
+	_builder = new IRBuilder<>(getLlvmContext());
 	_currentValues = new LlvmTable;
     _lambdaCounter = 0;
 }
 
 void LlvmPass::visit(ZModule* zmodule) {
     _zmodule = zmodule;
-	_module = new Module("test", getGlobalContext());
+	_module = new Module("test", getLlvmContext());
 	_diBuilder = new DIBuilder(*_module);
 
 	for (ZClassDef* c : zmodule->classes)
@@ -97,8 +97,8 @@ void LlvmPass::generate(ZFunc* zfunc, string* name) {
 
 	generate(zfunc->getBody());
 
-    if (resolve(zfunc->getReturnType()) == Void)
-    {
+    if (resolve(zfunc->getReturnType()) == Void) {
+        auto size = _func->getBasicBlockList().size();
         auto bb = _func->getBasicBlockList().end()->getPrevNode();
         _builder->SetInsertPoint(bb);
         _builder->CreateRetVoid();
@@ -344,7 +344,7 @@ llvm::Value* LlvmPass::getValue(ZSizeOf* zsizeof, llvm::BasicBlock* bb) {
     auto resolvedType = resolve(zsizeof->getWrappedType())->toLlvmType();
     DataLayout dataLayout = DataLayout(_module);
     int typeSize = dataLayout.getTypeAllocSize(resolvedType);
-    return ConstantInt::get(getGlobalContext(), APInt(32, typeSize));
+    return ConstantInt::get(getLlvmContext(), APInt(32, typeSize));
 }
 
 Value* LlvmPass::getValue(ZId* zid) {
@@ -372,8 +372,8 @@ Value* LlvmPass::getValue(ZSelector* zselector, BasicBlock* bb) {
 	int index = zselector->getMemberIndex();
 
 	auto gepArgs = vector<Value*>() = { 
-		ConstantInt::get(getGlobalContext(), APInt(32, 0)), 
-		ConstantInt::get(getGlobalContext(), APInt(32, index)) 
+		ConstantInt::get(getLlvmContext(), APInt(32, 0)), 
+		ConstantInt::get(getLlvmContext(), APInt(32, index)) 
 	};
 
 	auto gep = _builder->CreateGEP(targetValue, gepArgs);
@@ -462,15 +462,15 @@ Value* LlvmPass::getValue(ZStringLit* zstringlit) {
 }
 
 Value* LlvmPass::getValue(ZIntLit* zintlit) {
-	return ConstantInt::get(getGlobalContext(), APInt::APInt(32, zintlit->getValue()));
+	return ConstantInt::get(getLlvmContext(), APInt::APInt(32, zintlit->getValue()));
 }
 
 Value* LlvmPass::getValue(ZCharLit* zcharlit) {
-	return ConstantInt::get(getGlobalContext(), APInt::APInt(8, zcharlit->getValue()));
+	return ConstantInt::get(getLlvmContext(), APInt::APInt(8, zcharlit->getValue()));
 }
 
 Value* LlvmPass::getValue(ZBooleanLit* zbooleanlit) {
-    return ConstantInt::get(getGlobalContext(), APInt::APInt(1, zbooleanlit->getValue() ? 1 : 0));
+    return ConstantInt::get(getLlvmContext(), APInt::APInt(1, zbooleanlit->getValue() ? 1 : 0));
 }
 
 Value* LlvmPass::generateConcrete(ZFunc* func, SymbolRef* symbolRef) {
@@ -547,8 +547,8 @@ Value* LlvmPass::getLeftHand(ZExpr* zexpr, BasicBlock* bb) {
 		Value* targetValue = getValue(zselector->getTarget(), bb);
 		int index = zselector->getMemberIndex();
 		auto gepArgs = vector<Value*>() = {
-			ConstantInt::get(getGlobalContext(), APInt(32, 0)),
-			ConstantInt::get(getGlobalContext(), APInt(32, index))
+			ConstantInt::get(getLlvmContext(), APInt(32, 0)),
+			ConstantInt::get(getLlvmContext(), APInt(32, index))
 		};
 		auto gep = _builder->CreateGEP(targetValue, gepArgs);
 
@@ -617,11 +617,11 @@ ZType* LlvmPass::resolve(ZType* type) {
 }
 
 BasicBlock* LlvmPass::makeBB(std::string name) {
-    return _lastBB = BasicBlock::Create(getGlobalContext(), name, _func);
+    return _lastBB = BasicBlock::Create(getLlvmContext(), name, _func);
 }
 
 BasicBlock* LlvmPass::makeNopBB(std::string name) {
-    auto bb = BasicBlock::Create(getGlobalContext(), name, _func);
+    auto bb = BasicBlock::Create(getLlvmContext(), name, _func);
 
     _builder->SetInsertPoint(bb);
 

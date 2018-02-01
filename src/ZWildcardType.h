@@ -5,12 +5,13 @@
 #include <llvm/IR/Type.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/DerivedTypes.h>
+#include "Utils.h"
 
 class ZWildcardType : public ZType {
 
 public:
 	virtual llvm::Type* toLlvmType() {
-		return llvm::IntegerType::get(llvm::getGlobalContext(), 8);
+		return llvm::IntegerType::get(getLlvmContext(), 8);
 	}
 
 	virtual std::string& getName() {

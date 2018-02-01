@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <string>
+#include <llvm/IR/LLVMContext.h>
 
 enum ZLexeme;
 enum BinOps;
@@ -39,3 +40,10 @@ std::string toString(ZLexeme lexeme);
 std::string toString(BinOps op);
 
 std::string toString(UnaryOps op);
+
+static llvm::LLVMContext ZContext;
+
+inline llvm::LLVMContext& getLlvmContext()
+{
+    return ZContext;
+}

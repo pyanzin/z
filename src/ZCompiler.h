@@ -2,7 +2,7 @@
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/IR/LLVMContext.h"
 #include "llvm/IR/Module.h"
-#include <cstdio>
+#include <fstream>
 #include <iostream>
 #include "ZLexer.h"
 #include "ZParser.h"
@@ -19,6 +19,8 @@
 #include <fstream>
 #include <sstream>
 #include "ZCompilerSettings.h"
+
+using namespace llvm;
 
 class ZCompiler {
 public:
@@ -74,7 +76,7 @@ public:
 				fpm->add(llvm::createPromoteMemoryToRegisterPass());
 				fpm->add(llvm::createInstructionCombiningPass());
 				fpm->add(llvm::createReassociatePass());
-				fpm->add(llvm::createGVNPass());
+				fpm->add(llvm::createNewGVNPass());
 				fpm->add(llvm::createCFGSimplificationPass());
 
 				fpm->doInitialization();
@@ -107,7 +109,7 @@ public:
 
 			auto Filename = "output.obj";
 			std::error_code EC;
-			raw_fd_ostream dest(Filename, EC, sys::fs::F_None);
+            raw_fd_ostream dest(Filename, EC, sys::fs::OpenFlags());
 
 			if (EC) {
 				errs() << "Could not open file: " << EC.message();
