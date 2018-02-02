@@ -243,6 +243,11 @@ void TypingPass::visit(ZBinOp* zbinop) {
 		return;
 	}
 
+    if (zbinop->getLeft()->getType() == Double && zbinop->getRight()->getType() == Double) {
+        zbinop->setType(Double);
+        return;
+    }
+
 	// todo: doubles, ints and combinations
 
 	error("Unable to apply operation " + toString(zbinop->getOp()) + " for "

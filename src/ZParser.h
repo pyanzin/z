@@ -69,10 +69,11 @@ public:
 
 	ZExpr* parseString();
 
-	ZExpr* parseNumber();
+	ZExpr* parseInt();
     ZExpr* parseBoolean();
     ZExpr* parseChar();
-	void reqConsume(ZLexeme lexeme);
+    ZExpr* parseDouble();
+    void reqConsume(ZLexeme lexeme);
 
     bool consume(ZLexeme lexeme);
 	bool isNext(::ZLexeme lexeme);

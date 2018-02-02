@@ -211,6 +211,7 @@
     <ClInclude Include="ZCompiler.h" />
     <ClInclude Include="ZCompilerSettings.h" />
     <ClInclude Include="ZDelayedType.h" />
+    <ClInclude Include="ZDoubleLit.h" />
     <ClInclude Include="ZExpr.h" />
     <ClInclude Include="ZFor.h" />
     <ClInclude Include="ZFunc.h" />

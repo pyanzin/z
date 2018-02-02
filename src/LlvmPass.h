@@ -12,6 +12,7 @@
 #include "SymbolRef.h"
 #include <stack>
 #include "GenericResolutionChain.h"
+#include "ZDoubleLit.h"
 
 class ZSizeOf;
 class ZCast;
@@ -46,7 +47,8 @@ public:
 	llvm::Value* getValue(ZUnaryOp* zunaryop, llvm::BasicBlock* bb);
 	Value* getValue(ZStringLit* zstringlit);
 	llvm::Value* getValue(ZIntLit* zintlit);
-	Value* getValue(ZCharLit* zintlit);
+    Value* getValue(ZDoubleLit* zdoublelit);
+    Value* getValue(ZCharLit* zintlit);
     Value* getValue(ZBooleanLit* zbooleanlit);
     Value* generateConcrete(ZFunc* func, SymbolRef* symbolRef);
     llvm::Value* getValue(ZCall* zcall, BasicBlock* bb);

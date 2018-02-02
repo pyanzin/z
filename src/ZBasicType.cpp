@@ -19,7 +19,7 @@ ZType* Any = new ZBasicType(llvm::IntegerType::get(getLlvmContext(), 8), "Any");
 ZType* Unknown = new ZBasicType(llvm::Type::getVoidTy(getLlvmContext()), "Unknown");
 
 
-ZType* Double = new ZNumberType(llvm::Type::getFloatTy(getLlvmContext()), "Double", *new std::vector<ZType*>());
+ZType* Double = new ZNumberType(llvm::Type::getDoubleTy(getLlvmContext()), "Double", *new std::vector<ZType*>());
 ZType* Int = new ZNumberType(llvm::IntegerType::get(getLlvmContext(), 32), "Int", *new std::vector<ZType*>() = {Double});
 ZType* Char = new ZNumberType(llvm::IntegerType::get(getLlvmContext(), 8), "Char", *new std::vector<ZType*>() = { Double, Int });
 ZType* Boolean = new ZBasicType(llvm::IntegerType::get(getLlvmContext(), 1), "Boolean");

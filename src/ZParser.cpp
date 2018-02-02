@@ -26,6 +26,7 @@
 #include "ZSizeOf.h"
 #include "RecoveryException.h"
 #include "ZClassDef.h"
+#include "ZDoubleLit.h"
 
 ZParser::ZParser(ZLexer& lexer, SymbolTable& symTable): _lexer(lexer), _symTable(symTable) {
 	_binOps[PLUS] = Sum;
@@ -615,7 +616,7 @@ ZExpr* ZParser::parseBinOp() {
 
 		operators.push_back(op);
 	}
-	
+
 	while (operands.size() > 1) {
 		ZExpr* right = *operands.rbegin();
 		operands.pop_back();
@@ -786,7 +787,7 @@ ZExpr* ZParser::parseChar() {
 	auto sr = beginRange();
 
 	if (!isNext(CHAR_LIT))
-		return parseNumber();
+		return parseDouble();
 	
 
 	std::string* value = val(CHAR_LIT);
@@ -800,7 +801,21 @@ ZExpr* ZParser::parseChar() {
 	return zcharlit;
 }
 
-ZExpr* ZParser::parseNumber() {
+ZExpr* ZParser::parseDouble() {
+    auto sr = beginRange();
+
+    std::string* value = val(DOUBLE_LIT);
+    if (!value)
+        return parseInt();
+
+    auto zdoublelit = new ZDoubleLit(std::stod((*value).c_str()));
+
+    zdoublelit->withSourceRange(endRange(sr));
+
+    return zdoublelit;
+}
+
+ZExpr* ZParser::parseInt() {
 	auto sr = beginRange();
 
 	if (consume(OPEN_PAREN)) {

@@ -27,6 +27,7 @@
 #include "ZSelector.h"
 #include "ZSizeOf.h"
 #include "ZUnaryOp.h"
+#include "ZDoubleLit.h"
 
 using namespace llvm;
 
@@ -98,9 +99,17 @@ void LlvmPass::generate(ZFunc* zfunc, string* name) {
 	generate(zfunc->getBody());
 
     if (resolve(zfunc->getReturnType()) == Void) {
-        auto size = _func->getBasicBlockList().size();
-        auto bb = _func->getBasicBlockList().end()->getPrevNode();
-        _builder->SetInsertPoint(bb);
+        BasicBlock* lastBb;
+
+        
+        auto iter = _func->getBasicBlockList().begin();
+        auto end = _func->getBasicBlockList().end();
+
+        do {
+            lastBb = &(*iter);
+        } while ((++iter) != end);
+
+        _builder->SetInsertPoint(lastBb);
         _builder->CreateRetVoid();
     }
 
@@ -297,6 +306,10 @@ Value* LlvmPass::getValue(ZExpr* zexpr, BasicBlock* bb) {
 	if (zintlit)
 		return getValue(zintlit);
 
+    ZDoubleLit* zdoublelit = dynamic_cast<ZDoubleLit*>(zexpr);
+    if (zdoublelit)
+        return getValue(zdoublelit);
+
 	ZCharLit* zcharlit = dynamic_cast<ZCharLit*>(zexpr);
 	if (zcharlit)
 		return getValue(zcharlit);
@@ -385,6 +398,34 @@ Value* LlvmPass::getValue(ZBinOp* zbinop, BasicBlock* bb) {
 	auto left = getValue(zbinop->getLeft(), bb);
 	auto right = getValue(zbinop->getRight(), bb);
 
+    if (zbinop->getLeft()->getType()->isEqual(*Double)) {
+        switch (zbinop->getOp()) {
+        case Sum:
+            return _builder->CreateFAdd(left, right);
+        case Sub:
+            return _builder->CreateFSub(left, right);
+        case Mul:
+            return _builder->CreateFMul(left, right);
+        case Div:
+            return _builder->CreateFDiv(left, right);
+        case Mod:
+            return _builder->CreateFRem(left, right);
+        case Equal:
+            return _builder->CreateFCmpOEQ(left, right);
+        case NotEqual:
+            return _builder->CreateFCmpONE(left, right);
+        case LessOrEqual:
+            return _builder->CreateFCmpOLE(left, right);
+        case Less:
+            return _builder->CreateFCmpOLT(left, right);
+        case MoreOrEqual:
+            return _builder->CreateFCmpOGE(left, right);
+        case More:
+            return _builder->CreateFCmpOGT(left, right);
+        default:
+            return nullptr;
+        }
+    }
 	switch (zbinop->getOp()) {
 	case Sum:
 		return _builder->CreateAdd(left, right);
@@ -463,6 +504,10 @@ Value* LlvmPass::getValue(ZStringLit* zstringlit) {
 
 Value* LlvmPass::getValue(ZIntLit* zintlit) {
 	return ConstantInt::get(getLlvmContext(), APInt::APInt(32, zintlit->getValue()));
+}
+
+Value* LlvmPass::getValue(ZDoubleLit* zdoublelit) {
+    return ConstantFP::get(getLlvmContext(), APFloat::APFloat(zdoublelit->getValue()));
 }
 
 Value* LlvmPass::getValue(ZCharLit* zcharlit) {

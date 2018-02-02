@@ -1,5 +1,4 @@
-﻿#ifndef ZINTCONST
-#define ZINTCONST
+﻿#pragma once
 #include "ZExpr.h"
 
 class ZIntLit : public ZExpr {
@@ -25,7 +24,3 @@ public:
 private:
     int _value;
 };
-
-
-
-#endif

@@ -167,6 +167,7 @@ ZLexeme ZLexer::getNextToken() {
                 value += ch;
                 while (isalnum(ch = getNextChar()))
                     value += ch;
+                backtrackBy(1);
                 _value = new std::string(value);
                 return DOUBLE_LIT;
             } else {
