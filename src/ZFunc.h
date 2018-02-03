@@ -47,7 +47,10 @@ public:
 	}
 
     ZType* getReturnType() {
+        if (_ref)
+            _returnType = _ref->resolveIfDelayed(_returnType);
         return _returnType;
+
 	}
 
     ZAst* getBody() {

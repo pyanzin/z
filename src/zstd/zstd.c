@@ -38,6 +38,12 @@ char* int2string(int i) {
 	return buf;
 }
 
+char* double2string(double d) {
+  char* buf = malloc(64);
+  sprintf(buf, "%f", d);
+  return buf;
+}
+
 char* char2string(char ch) {
 	char* res = malloc(2);
 	*res = ch;

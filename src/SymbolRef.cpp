@@ -1,6 +1,8 @@
 ﻿#include "SymbolRef.h"
 #include "SymbolEntry.h"
 #include "SymbolScope.h"
+#include "ZType.h"
+#include "CompilerException.h"
 
 SymbolRef::SymbolRef(SymbolScope* storage, int id, SymbolEntry* entry) {
     _storage = storage;
@@ -50,11 +52,25 @@ ZType* SymbolRef::findTypeOrDelayed(std::string& name) {
 }
 
 ZType* SymbolRef::resolveIfDelayed(ZType* type) {
-    ZDelayedType* delayed = dynamic_cast<ZDelayedType*>(type);
-    if (delayed)
-        return findTypeDef(delayed->getName());
-    else
+    if (!type->hasDelayedParts())
         return type;
+
+    ZType* result;
+    if (type->isDelayed()) {
+        ZType* resolved = findTypeDef(type->getName());
+        if (!resolved)
+            throw CompilerException(std::string("Type " + type->getName() + " not found"));
+        result = resolved->copyStem();
+    } else
+        result = type->copyStem();
+
+    auto params = type->getTypeParams();
+    for (int i = 0; i < params->size(); ++i) {
+        ZType* resolvedParam = resolveIfDelayed((*params)[i]);
+        result->setTypeParam(i, resolvedParam);
+    }
+
+    return result;
 }
 
 void SymbolRef::addResolution(ZGenericParam* param, ZType* arg) {

@@ -76,7 +76,7 @@ public:
 				fpm->add(llvm::createPromoteMemoryToRegisterPass());
 				fpm->add(llvm::createInstructionCombiningPass());
 				fpm->add(llvm::createReassociatePass());
-				fpm->add(llvm::createNewGVNPass());
+				fpm->add(llvm::createGVNPass());
 				fpm->add(llvm::createCFGSimplificationPass());
 
 				fpm->doInitialization();

@@ -389,25 +389,22 @@ ZType* ZParser::parseType() {
 	}
 
     auto typeName = *reqVal(IDENT);
-	auto type = _symTable.makeRef()->findTypeDef(typeName);
+	auto type = _symTable.makeRef()->findTypeOrDelayed(typeName);
 
-	if (type->getTypeParams()->size() > 0) {
-        // todo: check count of type params
-        auto typeWithGenerics = type->copyStem();
-		reqConsume(OPEN_BRACKET);
-        int i = 0;
-        while (!consume(CLOSE_BRACKET)) {
-            typeWithGenerics->setTypeParam(i++, parseType());
-        }		
-		return typeWithGenerics;
-	}
+
+  auto typeWithGenerics = type->copyStem();
+  if (consume(OPEN_BRACKET)) {
+      int i = 0;
+      while (!consume(CLOSE_BRACKET))
+          typeWithGenerics->setTypeParam(i++, parseType());
+  }
 
 	if (!consume(FAT_ARROW))
-		return type;
+		return typeWithGenerics;
 
 	ZType* retType = parseType();
 
-	return new ZFuncType(retType, std::vector<ZType*>() = { type });
+	return new ZFuncType(retType, std::vector<ZType*>() = { typeWithGenerics });
 }
 
 ZBlock* ZParser::parseBlock() {

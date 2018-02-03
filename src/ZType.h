@@ -16,6 +16,21 @@ public:
 
     virtual ZType* copyStem();
 
+    virtual bool isDelayed() {
+        return false;
+    }
+
+    bool hasDelayedParts() {
+        if (isDelayed())
+            return true;
+
+        for (auto param : *_typeParams)
+            if (param->hasDelayedParts())
+                return true;
+
+        return false;
+    }
+
     std::vector<ZType*>* getTypeParams() {
         return _typeParams;
     }

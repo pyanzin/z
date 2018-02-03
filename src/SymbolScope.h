@@ -43,13 +43,9 @@ public:
 		do {
 			auto entries = storage->_typeEntries;
 			for (auto entry : entries) {
-				if (entry.first >= id && !storage->isOrdered())
-					break;
-
 				if (name == entry.second->getName())
 					return entry.second;
 			}
-			id = storage->_parentNumber;
 		} while (storage = storage->getParent());
 
 		return nullptr;

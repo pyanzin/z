@@ -22,7 +22,7 @@
     <ProjectGuid>{E18CCD16-8945-4F6F-8392-6E9D3C1D1BAF}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>z</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.10586.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -179,6 +179,7 @@
     <ClCompile Include="ZWhile.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CompilerException.h" />
     <ClInclude Include="GenericResolutionChain.h" />
     <ClInclude Include="Juxtaposer.h" />
     <ClInclude Include="JuxtaposeResult.h" />

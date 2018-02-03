@@ -8,7 +8,7 @@ public:
 	}
 
 	std::string& getName() override {
-		return *new std::string("DelayedType(" + _delayedName + ")");
+		return *new std::string(_delayedName);
 	}
 	std::string& toString() override {
 		return *new std::string("DelayedType(" + _delayedName + ")");
@@ -17,6 +17,10 @@ public:
 	bool isEqual(ZType& other) override {
 		return false;
 	}
+
+    bool isDelayed() override {
+        return true;
+    }
 
 	std::string& getDelayedName() {
 		return _delayedName;

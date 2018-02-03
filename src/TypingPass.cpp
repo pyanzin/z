@@ -35,6 +35,9 @@ void TypingPass::visit(ZModule* zmodule) {
         try {
             visit(zc);
         }
+        catch (CompilerException ex) {
+            
+        }
         catch (RecoveryException) {
 
         }

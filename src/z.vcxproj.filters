@@ -305,5 +305,8 @@
     <ClInclude Include="ZDoubleLit.h">
       <Filter>Header Files\AST</Filter>
     </ClInclude>
+    <ClInclude Include="CompilerException.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
