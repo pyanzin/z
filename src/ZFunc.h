@@ -22,7 +22,7 @@ public:
 
 		std::vector<ZType*>* argTypes = new std::vector<ZType*>();
 		for (ZArg* arg : args) {
-			argTypes->push_back(arg->getType());
+			argTypes->push_back(arg->getRawType());
 			adopt(arg);
 		}
 		ZFuncType* funcType = new ZFuncType(returnType, *argTypes);
@@ -66,7 +66,7 @@ public:
 	}
 
     void addThisParam(ZType* type) {
-        _args.insert(_args.begin(), new ZArg(type, new std::string("this")));
+        _args.insert(_args.begin(), new ZArg(type, new std::string("this"), _ref));
 
         auto scope = _ref->getStorage();
         scope->add("this", type, StackVar, true);

@@ -212,7 +212,7 @@ ZArg* ZParser::parseField() {
     ZType* type = parseType();
     reqConsume(SEMICOLON);
 
-    ZArg* result = new ZArg(type, name);
+    ZArg* result = new ZArg(type, name, _symTable.makeRef());
     result->withSourceRange(endRange(sr));
 
     return result;
@@ -257,8 +257,8 @@ ZFunc* ZParser::parseFunc(bool isMethod) {
 
     std::vector<ZType*>* argTypes = new std::vector<ZType*>();
 	for (ZArg* arg : *args) {
-		argTypes->push_back(arg->getType());
-		_symTable.addSymbol(arg->getType(), arg->getName(), SymbolType::StackVar);
+		argTypes->push_back(arg->getRawType());
+		_symTable.addSymbol(arg->getRawType(), arg->getName(), SymbolType::StackVar);
 	}
 
     ZType* funcType = new ZFuncType(retType, *argTypes, typeParams);
@@ -315,7 +315,7 @@ ZExpr* ZParser::parseLambda() {
             retType = Unknown;
     } else {
         string* id = val(IDENT);
-        args->push_back(new ZArg(Unknown, id));
+        args->push_back(new ZArg(Unknown, id, _symTable.makeRef()));
     }
 
     if (!consume(FAT_ARROW)) {
@@ -356,7 +356,7 @@ ZArg* ZParser::parseFullArg() {
 
 	ZType* type = parseType();
 
-	return new ZArg(type, name);
+	return new ZArg(type, name, _symTable.makeRef());
 }
 
 ZArg* ZParser::parseVagueArg() {
@@ -370,7 +370,7 @@ ZArg* ZParser::parseVagueArg() {
     else
         type = Unknown;
 
-    return new ZArg(type, name);
+    return new ZArg(type, name, _symTable.makeRef());
 }
 
 ZType* ZParser::parseType() {
