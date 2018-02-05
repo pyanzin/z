@@ -8,7 +8,6 @@ extern def len(s: String): Int
 extern def char2string(ch: Char): String
 extern def size(xs: Array[_]): Int
 extern def string2int(s: String): Int
-extern def string2array(s: String): Array
 
 def Array[T](size: Int): Array[T] = {
    return allocateArray(size, sizeof[T]) as Array[T];
@@ -22,6 +21,18 @@ def main(): None = {
    foreach(xs, x => print(char2string(x)));
    
    print("\n");
+}
+
+def foreach[T](xs: Array[T], f: T => None): None = {
+   for (var i = 0; i < size(xs); ++i)
+      f(xs(i));
+}
+
+def string2array(s: String): Array[Char] = {
+   var result = Array[Char](len(s));
+   for (var i = 0; i < len(s); ++i)
+      result(i) = s(i);
+   return result;
 }
 
 def qsort[T](xs: Array[T], less: (T, T) => Boolean): None = {
