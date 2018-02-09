@@ -28,7 +28,7 @@ void print(char* s) {
 char* readline() {
 	char* result = malloc(0xFF);
 
-	scanf("%s", result);
+	scanf("%[^\n]", result);
 	return result;
 }
 
