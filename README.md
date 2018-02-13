@@ -106,11 +106,8 @@ def filter[T](xs: Array[T], f: T => Boolean): Array[T] = {
 
 def map[A, B](xs: Array[A], f: A => B): Array[B] = {
    var result = Array[B](size(xs));
-   var i = 0;
-   while (i < size(xs)) {
-      result(i) = f(xs(i));
-      ++i;
-   }
+   for(var i = 0; i < size(xs); ++i)
+      result(i) = f(xs(i));      
 
    return result;
 }
