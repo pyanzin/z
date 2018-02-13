@@ -81,9 +81,7 @@ def count[T](xs: Array[T], f: T => Boolean): Int = {
 
    for (var i = 0; i < size(xs); ++i)
       if (f(xs(i)))
-         result = result + 1;   
-
-   print(int2string(result));
+         result = result + 1;
 
    return result;
 }
