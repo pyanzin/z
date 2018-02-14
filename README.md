@@ -81,9 +81,7 @@ def count[T](xs: Array[T], f: T => Boolean): Int = {
 
    for (var i = 0; i < size(xs); ++i)
       if (f(xs(i)))
-         result = result + 1;   
-
-   print(int2string(result));
+         result = result + 1;
 
    return result;
 }
@@ -106,11 +104,8 @@ def filter[T](xs: Array[T], f: T => Boolean): Array[T] = {
 
 def map[A, B](xs: Array[A], f: A => B): Array[B] = {
    var result = Array[B](size(xs));
-   var i = 0;
-   while (i < size(xs)) {
-      result(i) = f(xs(i));
-      ++i;
-   }
+   for(var i = 0; i < size(xs); ++i)
+      result(i) = f(xs(i));      
 
    return result;
 }
