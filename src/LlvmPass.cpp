@@ -354,7 +354,12 @@ llvm::Value* LlvmPass::getValue(ZCast* zcast, BasicBlock* bb) {
 
 llvm::Value* LlvmPass::getValue(ZSizeOf* zsizeof, llvm::BasicBlock* bb) {
     _builder->SetInsertPoint(bb);
-    auto resolvedType = resolve(zsizeof->getWrappedType())->toLlvmType();
+
+    Type* resolvedType;
+    if (zsizeof->isComplex)
+        resolvedType = dynamic_cast<ZStructType*>(zsizeof->getWrappedType())->getStructType();    
+    else
+        resolvedType = resolve(zsizeof->getWrappedType())->toLlvmType();
     DataLayout dataLayout = DataLayout(_module);
     int typeSize = dataLayout.getTypeAllocSize(resolvedType);
     return ConstantInt::get(getLlvmContext(), APInt(32, typeSize));

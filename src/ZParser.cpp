@@ -127,7 +127,7 @@ void ZParser::parseStruct() {
 	auto varName = new string("__constructee");
 
 	auto objDef = new ZVarDef(*varName, *_symTable.makeRef(), structType, new ZCast(new ZCall(new ZId(*new string("allocate"), _symTable.makeRef()),
-		*new vector<ZExpr*>() = { new ZIntLit(structType->getSize()) }, new std::vector<ZType*>, _symTable.makeRef()), structType, _symTable.makeRef()));
+		*new vector<ZExpr*>() = { new ZSizeOf(structType, true) }, new std::vector<ZType*>, _symTable.makeRef()), structType, _symTable.makeRef()));
 
 	_symTable.addSymbol(structType, varName, SymbolType::StackVar);
 

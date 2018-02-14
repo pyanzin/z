@@ -5,6 +5,7 @@
 #include <llvm/IR/DerivedTypes.h>
 #include <llvm/IR/LLVMContext.h>
 #include "Utils.h"
+#include <llvm-c/Target.h>
 
 class ZStructType : public ZType {
 public:
@@ -34,10 +35,6 @@ public:
 		_structType = llvm::PointerType::get(type, 0);
 
 		return _structType;
-	}
-
-	int getSize() {
-		return getStructType()->getPrimitiveSizeInBits() / 8;
 	}
 
 	int indexOfMember(std::string& name) {
