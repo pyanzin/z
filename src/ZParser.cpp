@@ -307,12 +307,9 @@ ZExpr* ZParser::parseLambda() {
         
         std::vector<ZType*>* argTypes = new std::vector<ZType*>();
         for (ZArg* arg : *args)
-            argTypes->push_back(arg->getType());        
-                
-        if (consume(COLON))
-            retType = parseType();
-        else
-            retType = Unknown;
+            argTypes->push_back(arg->getType());
+
+        retType = Unknown;
     } else {
         string* id = val(IDENT);
         args->push_back(new ZArg(Unknown, id, _symTable.makeRef()));
@@ -329,8 +326,10 @@ ZExpr* ZParser::parseLambda() {
         _symTable.addSymbol(arg->getType(), arg->getName(), SymbolType::StackVar);
 
     ZAst* body;
-    if (isNext(OPEN_BRACE))
+    if (isNext(OPEN_BRACE)) {
         body = parseBlock();
+        retType = Void;
+    }
     else
         body = parseExpr();
     
