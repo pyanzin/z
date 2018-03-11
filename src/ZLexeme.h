@@ -6,6 +6,7 @@ enum ZLexeme {
     STRUCT,
     CLASS,
     TRAIT,
+    NEW,
 	EXTERN,
     VAR,
 	RETURN,

@@ -67,7 +67,7 @@ private:
         _keywords.insert(std::make_pair("as", AS));
         _keywords.insert(std::make_pair("class", CLASS));
         _keywords.insert(std::make_pair("trait", TRAIT));
-        
+        _keywords.insert(std::make_pair("new", NEW));        
     }
 };
 
