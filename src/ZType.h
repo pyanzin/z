@@ -4,15 +4,15 @@
 
 class ZType {
 public:
-	virtual llvm::Type* toLlvmType() = 0;
+    virtual llvm::Type* toLlvmType() = 0;
 
-	virtual std::string& getName() = 0;
+    virtual std::string& getName() = 0;
 
-	virtual std::string& toString() = 0;
+    virtual std::string& toString() = 0;
 
-	virtual bool isEqual(ZType& other) = 0;
+    virtual bool isEqual(ZType& other) = 0;
 
-	virtual bool canBeCastedTo(ZType* other);
+    virtual bool canBeCastedTo(ZType* other);
 
     virtual ZType* copyStem();
 
@@ -39,7 +39,7 @@ public:
         (*_typeParams)[n] = type;
     }
 
-	bool containsGenerics();
+    bool containsGenerics();
 protected:
     std::vector<ZType*>* _typeParams = new std::vector<ZType*>();
 };

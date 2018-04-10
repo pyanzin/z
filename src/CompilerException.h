@@ -4,9 +4,9 @@
 
 class CompilerException {
 public:
-  CompilerException(std::string text) {
-    this->text = text;
-  }
+    CompilerException(std::string text) {
+        this->text = text;
+    }
 
-  std::string text;
+    std::string text;
 };

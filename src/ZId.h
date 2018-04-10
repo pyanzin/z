@@ -10,18 +10,18 @@ public:
         setRef(ref);
     }
 
-	virtual void accept(ZVisitor* visitor) override {
-		visitor->visit(this);
-	}
-
-	std::string& getName() {
-		return _name;
+    virtual void accept(ZVisitor* visitor) override {
+        visitor->visit(this);
     }
 
-	void dump(std::ostream& stream, unsigned depth) override {
-		dumpTab(stream, depth);
+    std::string& getName() {
+        return _name;
+    }
 
-		stream << "id(" << _name << ") : "<< getType()->toString() << "\n";
+    void dump(std::ostream& stream, unsigned depth) override {
+        dumpTab(stream, depth);
+
+        stream << "id(" << _name << ") : " << getType()->toString() << "\n";
     }
 
 private:

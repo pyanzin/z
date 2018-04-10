@@ -4,20 +4,20 @@
 
 class ZStringLit : public ZExpr {
 public:
-	ZStringLit(std::string& value) : _value(value) {
-		setType(String);
-	}
+    ZStringLit(std::string& value) : _value(value) {
+        setType(String);
+    }
 
-	virtual void accept(ZVisitor* visitor);
+    virtual void accept(ZVisitor* visitor);
 
-	std::string& getValue() {
-		return _value;
-	}
+    std::string& getValue() {
+        return _value;
+    }
 
-	void dump(std::ostream& stream, unsigned depth) override {
-		dumpTab(stream, depth);
-		stream << "string(\'" << _value << "\') : " << getType()->toString() << "\n";
-	}
+    void dump(std::ostream& stream, unsigned depth) override {
+        dumpTab(stream, depth);
+        stream << "string(\'" << _value << "\') : " << getType()->toString() << "\n";
+    }
 
-	std::string& _value;
+    std::string& _value;
 };

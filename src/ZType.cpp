@@ -3,9 +3,9 @@
 #include "ZGenericParam.h"
 
 bool ZType::canBeCastedTo(ZType* other) {
-	if (other->isEqual(*Wildcard) || other->isEqual(*Void) || other->isEqual(*Any))
-		return true;
-	return false;
+    if (other->isEqual(*Wildcard) || other->isEqual(*Void) || other->isEqual(*Any))
+        return true;
+    return false;
 }
 
 ZType* ZType::copyStem() {
@@ -13,10 +13,10 @@ ZType* ZType::copyStem() {
 }
 
 bool ZType::containsGenerics() {
-	if (dynamic_cast<ZGenericParam*>(this))
-		return true;
-	for (ZType* tp : *_typeParams)
-		if (tp->containsGenerics())
-			return true;
-	return false;
+    if (dynamic_cast<ZGenericParam*>(this))
+        return true;
+    for (ZType* tp : *_typeParams)
+        if (tp->containsGenerics())
+            return true;
+    return false;
 }

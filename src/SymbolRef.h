@@ -8,7 +8,7 @@ class SymbolScope;
 
 class SymbolRef {
 public:
-    SymbolRef(SymbolScope* storage, int id, SymbolEntry* entry = nullptr);    
+    SymbolRef(SymbolScope* storage, int id, SymbolEntry* entry = nullptr);
 
     SymbolEntry* getEntry();
 

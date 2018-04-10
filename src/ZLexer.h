@@ -6,12 +6,11 @@
 enum ZLexeme;
 class SourceRange;
 
-class ZLexer
-{
+class ZLexer {
 public:
     ZLexeme getNextToken();
-	char toEscape(char ch);
-	ZLexer(std::string* src);
+    char toEscape(char ch);
+    ZLexer(std::string* src);
     ~ZLexer();
 
     int getPos() {
@@ -38,12 +37,12 @@ public:
 
     SourceRange* endRange(SourceRange* sr);
 
-	void error(std::string text);
+    void error(std::string text);
 
     void recoverToNextStatement();
 
     void recoverToTop();
-	
+
 private:
     char getNextChar();
     std::string* _src;
@@ -54,11 +53,11 @@ private:
     void init() {
         _keywords.insert(std::make_pair("def", DEF));
         _keywords.insert(std::make_pair("var", VAR));
-		_keywords.insert(std::make_pair("return", RETURN));
-		_keywords.insert(std::make_pair("while", WHILE));
-		_keywords.insert(std::make_pair("if", IF));
-		_keywords.insert(std::make_pair("else", ELSE));
-		_keywords.insert(std::make_pair("extern", EXTERN));
+        _keywords.insert(std::make_pair("return", RETURN));
+        _keywords.insert(std::make_pair("while", WHILE));
+        _keywords.insert(std::make_pair("if", IF));
+        _keywords.insert(std::make_pair("else", ELSE));
+        _keywords.insert(std::make_pair("extern", EXTERN));
         _keywords.insert(std::make_pair("true", BOOL_TRUE_LIT));
         _keywords.insert(std::make_pair("false", BOOL_FALSE_LIT));
         _keywords.insert(std::make_pair("for", FOR));
@@ -67,7 +66,6 @@ private:
         _keywords.insert(std::make_pair("as", AS));
         _keywords.insert(std::make_pair("class", CLASS));
         _keywords.insert(std::make_pair("trait", TRAIT));
-        _keywords.insert(std::make_pair("new", NEW));        
+        _keywords.insert(std::make_pair("new", NEW));
     }
 };
-

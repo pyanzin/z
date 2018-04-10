@@ -5,7 +5,8 @@
 
 class ZClassType : public ZStructType {
 public:
-    ZClassType(std::string* name, std::vector<ZArg*>* members, SymbolRef* scopeRef, std::vector<ZGenericParam*>* genericDefs = nullptr)
+    ZClassType(std::string* name, std::vector<ZArg*>* members, SymbolRef* scopeRef,
+               std::vector<ZGenericParam*>* genericDefs = nullptr)
         : ZStructType(name, members, genericDefs) {
         this->scopeRef = scopeRef;
     }

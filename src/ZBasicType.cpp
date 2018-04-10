@@ -6,11 +6,11 @@
 #include "ZNumberType.h"
 
 inline llvm::Type* ZBasicType::toLlvmType() {
-	return _type;
+    return _type;
 }
 
 inline std::string& ZBasicType::toString() {
-	return _name;
+    return _name;
 }
 
 // todo: fill all basic types
@@ -20,8 +20,10 @@ ZType* Unknown = new ZBasicType(llvm::Type::getVoidTy(getLlvmContext()), "Unknow
 
 
 ZType* Double = new ZNumberType(llvm::Type::getDoubleTy(getLlvmContext()), "Double", *new std::vector<ZType*>());
-ZType* Int = new ZNumberType(llvm::IntegerType::get(getLlvmContext(), 32), "Int", *new std::vector<ZType*>() = {Double});
-ZType* Char = new ZNumberType(llvm::IntegerType::get(getLlvmContext(), 8), "Char", *new std::vector<ZType*>() = { Double, Int });
+ZType* Int = new ZNumberType(llvm::IntegerType::get(getLlvmContext(), 32), "Int",
+                             *new std::vector<ZType*>() = {Double});
+ZType* Char = new ZNumberType(llvm::IntegerType::get(getLlvmContext(), 8), "Char",
+                              *new std::vector<ZType*>() = {Double, Int});
 ZType* Boolean = new ZBasicType(llvm::IntegerType::get(getLlvmContext(), 1), "Boolean");
 ZType* String = new ZBasicType(llvm::Type::getInt8PtrTy(getLlvmContext()), "String");
 

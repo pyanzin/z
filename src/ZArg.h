@@ -15,7 +15,7 @@ public:
         _ref = ref;
     }
 
-	ZType* getType() {
+    ZType* getType() {
         if (_ref)
             _type = _ref->resolveIfDelayed(_type);
         return _type;
@@ -33,9 +33,9 @@ public:
         return _name;
     }
 
-	virtual void accept(ZVisitor* visitor);
+    virtual void accept(ZVisitor* visitor);
 private:
-	ZType* _type;
+    ZType* _type;
     std::string* _name;
     SymbolRef* _ref;
 };

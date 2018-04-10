@@ -36,7 +36,7 @@ public:
 
         dumpTab(stream, depth);
         stream << "index\n";
-        _index->dump(stream, depth + 1);        
+        _index->dump(stream, depth + 1);
     }
 
     ZExpr* getTarget() {
@@ -46,6 +46,7 @@ public:
     ZExpr* getIndex() {
         return _index;
     }
+
 private:
     ZExpr* _target;
     ZExpr* _index;

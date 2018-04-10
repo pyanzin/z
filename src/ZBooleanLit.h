@@ -12,10 +12,11 @@ public:
         return _value;
     }
 
-	void dump(std::ostream& stream, unsigned depth) override {
-		dumpTab(stream, depth);
-		stream << (_value ? "true" : "false") << "\n";
-	}
+    void dump(std::ostream& stream, unsigned depth) override {
+        dumpTab(stream, depth);
+        stream << (_value ? "true" : "false") << "\n";
+    }
+
 private:
     bool _value;
 };

@@ -10,19 +10,19 @@
 class ZWildcardType : public ZType {
 
 public:
-	virtual llvm::Type* toLlvmType() {
-		return llvm::IntegerType::get(getLlvmContext(), 8);
-	}
+    virtual llvm::Type* toLlvmType() {
+        return llvm::IntegerType::get(getLlvmContext(), 8);
+    }
 
-	virtual std::string& getName() {
-		return *new std::string("_");
-	}
+    virtual std::string& getName() {
+        return *new std::string("_");
+    }
 
-	virtual std::string& toString() {
-		return *new std::string("Wildcard");
-	}
+    virtual std::string& toString() {
+        return *new std::string("Wildcard");
+    }
 
-	bool isEqual(ZType& other) override {
-		return dynamic_cast<ZWildcardType*>(&other);
-	}
+    bool isEqual(ZType& other) override {
+        return dynamic_cast<ZWildcardType*>(&other);
+    }
 };

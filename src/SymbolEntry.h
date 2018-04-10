@@ -5,7 +5,7 @@
 
 class SymbolEntry {
 public:
-	SymbolEntry(ZType* type, std::string& name, int ordinal, SymbolType symbolType) : _name(name) {
+    SymbolEntry(ZType* type, std::string& name, int ordinal, SymbolType symbolType) : _name(name) {
         _type = type;
         _ordinal = ordinal;
         this->symbolType = symbolType;
@@ -13,15 +13,15 @@ public:
 
     ZType* getType() {
         return _type;
-	}
+    }
 
     std::string& getName() {
         return _name;
-	}
+    }
 
-	void setType(ZType* type) {
-		_type = type;
-	};
+    void setType(ZType* type) {
+        _type = type;
+    };
 
     int getOrdinal() {
         return _ordinal;
@@ -29,7 +29,7 @@ public:
 
     SymbolType symbolType;
 private:
-	ZType* _type;
+    ZType* _type;
     std::string& _name;
     int _ordinal;
 };

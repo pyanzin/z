@@ -4,8 +4,8 @@
 #include "SymbolType.h"
 
 SymbolRef* SymbolScope::makeRef() {
-	int id = incrementOrdinal();
-	return new SymbolRef(this, id);
+    int id = incrementOrdinal();
+    return new SymbolRef(this, id);
 }
 
 SymbolRef* SymbolScope::add(std::string name, ZType* type, SymbolType symbolType, bool outOfOrder) {
@@ -37,7 +37,8 @@ std::vector<SymbolEntry*>* SymbolScope::findSymbol(int id, std::string& name, bo
                 result->push_back(entry);
         }
         id = scope->_parentNumber;
-    } while (scope = onlyCurrentScope ? nullptr : scope->getParent());
+    }
+    while (scope = onlyCurrentScope ? nullptr : scope->getParent());
 
     return result;
 }

@@ -28,6 +28,7 @@ public:
     SymbolRef* getRef() {
         return _ref;
     }
+
 protected:
     SymbolRef* _ref = nullptr;
 private:

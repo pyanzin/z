@@ -12,9 +12,9 @@ public:
         _type = type;
     }
 
-	std::string& getName() override {
-		return _name;
-	}
+    std::string& getName() override {
+        return _name;
+    }
 
     llvm::Type* toLlvmType() override;
 

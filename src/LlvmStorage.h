@@ -4,36 +4,37 @@
 
 class LlvmStorage {
 public:
-	LlvmStorage(LlvmStorage* parent = nullptr) {
-		_parent = parent;
-	}
+    LlvmStorage(LlvmStorage* parent = nullptr) {
+        _parent = parent;
+    }
 
-	LlvmStorage* getParent() {
-		return _parent;
-	}
+    LlvmStorage* getParent() {
+        return _parent;
+    }
 
-	void add(std::string& key, llvm::Value* value) {
-		_entries[key] = value;
-	};
+    void add(std::string& key, llvm::Value* value) {
+        _entries[key] = value;
+    };
 
-	LlvmStorage* makeChild() {
-		return new LlvmStorage(this);
-	}
+    LlvmStorage* makeChild() {
+        return new LlvmStorage(this);
+    }
 
-	llvm::Value* get(std::string& key) {
-		LlvmStorage* storage = this;
-		do {
-			auto entries = storage->_entries;			
-			auto value = entries[key];
-			if (value)
-				return  value;
-		} while (storage = storage->getParent());
+    llvm::Value* get(std::string& key) {
+        LlvmStorage* storage = this;
+        do {
+            auto entries = storage->_entries;
+            auto value = entries[key];
+            if (value)
+                return value;
+        }
+        while (storage = storage->getParent());
 
-		return nullptr;
-	}
+        return nullptr;
+    }
 
 private:
-	LlvmStorage* _parent;
+    LlvmStorage* _parent;
 
-	std::map<std::string, llvm::Value*> _entries;
+    std::map<std::string, llvm::Value*> _entries;
 };

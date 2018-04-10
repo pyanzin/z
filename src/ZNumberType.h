@@ -15,7 +15,7 @@ public:
         for (ZType* candidate : _canBeCastedTo)
             if (other->isEqual(*candidate))
                 return true;
-        
+
         return false;
     }
 

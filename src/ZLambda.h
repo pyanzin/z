@@ -12,7 +12,7 @@ public:
         _args = args;
         _retType = retType;
         _body = body;
-        
+
         adopt(_body);
         for (auto arg : *_args)
             adopt(arg);
@@ -21,9 +21,9 @@ public:
 
     ZType* getType() override {
         std::vector<ZType*>* argTypes = new std::vector<ZType*>();
-        for (ZArg* arg : *_args) 
+        for (ZArg* arg : *_args)
             argTypes->push_back(arg->getType());
-        
+
         return new ZFuncType(_retType, *argTypes);
     }
 
@@ -42,6 +42,7 @@ public:
 
         throw exception("wrong call to replaceChild in ZLambda");
     }
+
     void dump(std::ostream& stream, unsigned depth) override {
         dumpTab(stream, depth);
 
@@ -71,10 +72,11 @@ public:
     ZType* getReturnType() {
         return _retType;
     }
-    
+
     void setRetType(ZType* retType) {
         _retType = retType;
     }
+
 private:
     vector<ZArg*>* _args;
     ZType* _retType;

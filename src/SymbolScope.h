@@ -6,14 +6,14 @@
 
 class SymbolScope {
 public:
-	SymbolScope(SymbolScope* parent = nullptr, bool ordered = true) {
+    SymbolScope(SymbolScope* parent = nullptr, bool ordered = true) {
         _parent = parent;
         _ordered = ordered;
         _ordinal = 0;
         if (_parent)
             _parentNumber = _parent->incrementOrdinal();
         else
-            _parentNumber = -1;            
+            _parentNumber = -1;
     }
 
     SymbolScope* getParent() {
@@ -22,11 +22,11 @@ public:
 
     SymbolRef* add(std::string name, ZType* type, SymbolType symbolType, bool outOfOrder = false);
 
-	int add(ZType* type) {
-		int id = _ordinal++;
-		_typeEntries[id] = type;
-		return id;
-	}
+    int add(ZType* type) {
+        int id = _ordinal++;
+        _typeEntries[id] = type;
+        return id;
+    }
 
     SymbolScope* makeChild(bool ordered = true) {
         return new SymbolScope(this, ordered);
@@ -38,62 +38,65 @@ public:
 
     std::vector<SymbolEntry*>* findSymbol(int id, std::string& name, bool onlyCurrentScope = false);
 
-	ZType* findType(int id, std::string& name) {
-		SymbolScope* storage = this;
-		do {
-			auto entries = storage->_typeEntries;
-			for (auto entry : entries) {
-				if (name == entry.second->getName())
-					return entry.second;
-			}
-		} while (storage = storage->getParent());
+    ZType* findType(int id, std::string& name) {
+        SymbolScope* storage = this;
+        do {
+            auto entries = storage->_typeEntries;
+            for (auto entry : entries) {
+                if (name == entry.second->getName())
+                    return entry.second;
+            }
+        }
+        while (storage = storage->getParent());
 
-		return nullptr;
+        return nullptr;
     }
 
-	ZType* resolveGeneric(ZGenericParam* param) {
-		SymbolScope* storage = this;
-		do {
-			auto entries = storage->_typeArguments;
-			for (auto entry : entries) {				
-				if (param->isEqual(*entry.first))
-					return entry.second;
-			}
-		} while (storage = storage->getParent());
+    ZType* resolveGeneric(ZGenericParam* param) {
+        SymbolScope* storage = this;
+        do {
+            auto entries = storage->_typeArguments;
+            for (auto entry : entries) {
+                if (param->isEqual(*entry.first))
+                    return entry.second;
+            }
+        }
+        while (storage = storage->getParent());
 
-		return Unknown;
-	}
-
-	void addTypeArgument(ZGenericParam* param, ZType* arg) {
-		_typeArguments[param] = arg;
+        return Unknown;
     }
 
-	ZType* resolve(ZGenericParam* param) {
-		return _typeArguments[param];
+    void addTypeArgument(ZGenericParam* param, ZType* arg) {
+        _typeArguments[param] = arg;
     }
 
-	int incrementOrdinal() {
-		return _ordinal++;
-	}
+    ZType* resolve(ZGenericParam* param) {
+        return _typeArguments[param];
+    }
 
-	bool isDefined(int id, ZType* type) {
-		SymbolScope* storage = this;
-		do {
-			auto entries = storage->_typeEntries;
-			for (auto entry : entries) {
-				if (entry.first >= id && !storage->isOrdered())
-					break;
+    int incrementOrdinal() {
+        return _ordinal++;
+    }
 
-				if (type == entry.second)
-					return true;
-			}
-			id = storage->_parentNumber;
-		} while (storage = storage->getParent());
+    bool isDefined(int id, ZType* type) {
+        SymbolScope* storage = this;
+        do {
+            auto entries = storage->_typeEntries;
+            for (auto entry : entries) {
+                if (entry.first >= id && !storage->isOrdered())
+                    break;
 
-		return false;
-	}
+                if (type == entry.second)
+                    return true;
+            }
+            id = storage->_parentNumber;
+        }
+        while (storage = storage->getParent());
 
-	SymbolRef* makeRef();
+        return false;
+    }
+
+    SymbolRef* makeRef();
 
 private:
     int _ordinal;
@@ -102,6 +105,6 @@ private:
     int _parentNumber;
 
     std::map<std::string, std::vector<SymbolEntry*>*> _symbolStorage;
-	std::map<int, ZType*> _typeEntries;
-	std::map<ZGenericParam*, ZType*> _typeArguments;
+    std::map<int, ZType*> _typeEntries;
+    std::map<ZGenericParam*, ZType*> _typeArguments;
 };

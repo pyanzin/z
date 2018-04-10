@@ -10,29 +10,29 @@ enum BinOps {
     Sub,
     Mul,
     Div,
-	Mod,
-	Equal,
-	NotEqual,
-	Less,
-	LessOrEqual,
-	More,
-	MoreOrEqual,
-	BooleanOr,
-	BooleanAnd,
-	BooleanXor,
-	BitwiseOr,
-	BitwiseAnd
+    Mod,
+    Equal,
+    NotEqual,
+    Less,
+    LessOrEqual,
+    More,
+    MoreOrEqual,
+    BooleanOr,
+    BooleanAnd,
+    BooleanXor,
+    BitwiseOr,
+    BitwiseAnd
 };
 
 enum UnaryOps {
-	Negation,
-	BitwiseInvert,
-	UnaryPlus,
-	UnaryMinus,
-	PreIncrement,
-	PreDecrement,
-	PostIncrement,
-	PostDecrement
+    Negation,
+    BitwiseInvert,
+    UnaryPlus,
+    UnaryMinus,
+    PreIncrement,
+    PreDecrement,
+    PostIncrement,
+    PostDecrement
 };
 
 std::string toString(ZLexeme lexeme);
@@ -43,7 +43,6 @@ std::string toString(UnaryOps op);
 
 static llvm::LLVMContext ZContext;
 
-inline llvm::LLVMContext& getLlvmContext()
-{
+inline llvm::LLVMContext& getLlvmContext() {
     return ZContext;
 }

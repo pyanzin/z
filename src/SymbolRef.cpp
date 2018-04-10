@@ -26,7 +26,7 @@ ZType* SymbolRef::resolve(ZType* type) {
     if (dynamic_cast<ZGenericParam*>(type)) {
         if (_storage->isDefined(_id, type))
             return type;
-        auto resolved = _storage->resolveGeneric(dynamic_cast<ZGenericParam*>(type));  
+        auto resolved = _storage->resolveGeneric(dynamic_cast<ZGenericParam*>(type));
         return resolved;
     }
 
@@ -61,7 +61,8 @@ ZType* SymbolRef::resolveIfDelayed(ZType* type) {
         if (!resolved)
             throw CompilerException(std::string("Type " + type->getName() + " not found"));
         result = resolved->copyStem();
-    } else
+    }
+    else
         result = type->copyStem();
 
     auto params = type->getTypeParams();

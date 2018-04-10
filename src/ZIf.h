@@ -5,19 +5,19 @@
 
 class ZIf : public ZAst {
 public:
-	ZIf(ZExpr* cond, ZAst* body, ZAst* elseBody = nullptr) {
-		_cond = cond;
-		_body = body;
-		_elseBody = elseBody;
+    ZIf(ZExpr* cond, ZAst* body, ZAst* elseBody = nullptr) {
+        _cond = cond;
+        _body = body;
+        _elseBody = elseBody;
         adopt(cond);
         adopt(body);
         if (elseBody)
             adopt(elseBody);
-	}
+    }
 
-	void accept(ZVisitor* visitor) override {
-		visitor->visit(this);
-	}
+    void accept(ZVisitor* visitor) override {
+        visitor->visit(this);
+    }
 
     void replaceChild(ZAst* oldChild, ZAst* newChild) override {
         adopt(newChild);
@@ -39,35 +39,35 @@ public:
         throw exception("wrong call to replaceChild in ZIf");
     }
 
-	ZExpr* getCondition() {
-		return _cond;
-	}
+    ZExpr* getCondition() {
+        return _cond;
+    }
 
-	ZAst* getBody() {
-		return _body;
-	}
+    ZAst* getBody() {
+        return _body;
+    }
 
-	ZAst* getElseBody() {
-		return _elseBody;
-	}
+    ZAst* getElseBody() {
+        return _elseBody;
+    }
 
-	void dump(std::ostream& stream, unsigned depth) override {
-		dumpTab(stream, depth);
-		stream << "if\n";
-		_cond->dump(stream, depth + 1);
+    void dump(std::ostream& stream, unsigned depth) override {
+        dumpTab(stream, depth);
+        stream << "if\n";
+        _cond->dump(stream, depth + 1);
 
-		dumpTab(stream, depth);
-		stream << "then\n";
-		_body->dump(stream, depth + 1);
-		if (_elseBody) {
-			dumpTab(stream, depth);
-			stream << "else\n";
-			_elseBody->dump(stream, depth + 1);
-		}
-	}
+        dumpTab(stream, depth);
+        stream << "then\n";
+        _body->dump(stream, depth + 1);
+        if (_elseBody) {
+            dumpTab(stream, depth);
+            stream << "else\n";
+            _elseBody->dump(stream, depth + 1);
+        }
+    }
 
 private:
-	ZExpr* _cond;
-	ZAst* _body;
-	ZAst* _elseBody;
+    ZExpr* _cond;
+    ZAst* _body;
+    ZAst* _elseBody;
 };

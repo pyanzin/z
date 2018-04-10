@@ -23,67 +23,67 @@ public:
 
     ZModule* parseModule();
 
-	void parseStruct();
+    void parseStruct();
 
     void parseClass();
 
-    ZArg * parseField();
+    ZArg* parseField();
 
     ZFunc* parseFunc(bool isMethod = false);
-	ZExpr* parseLambda();
-	ZArg* parseFullArg();
+    ZExpr* parseLambda();
+    ZArg* parseFullArg();
     ZArg* parseVagueArg();
     ZType* parseType();
 
-	ZBlock* parseBlock();
-	ZAst* parseBlockOrStatement();
-	ZAst* parseReturn();
+    ZBlock* parseBlock();
+    ZAst* parseBlockOrStatement();
+    ZAst* parseReturn();
 
-	ZAst* parseIf();
+    ZAst* parseIf();
 
-	ZAst* parseWhile();
+    ZAst* parseWhile();
 
-	ZAst* parseFor();
+    ZAst* parseFor();
 
-	ZAst* parseStatement();
+    ZAst* parseStatement();
 
-	ZVarDef* parseVarDef();
+    ZVarDef* parseVarDef();
 
     ZExpr* parseExpr() {
-        return parseLambda();  
+        return parseLambda();
     }
 
-	ZExpr* parseAssign();
+    ZExpr* parseAssign();
 
-	ZExpr* parseBinOp();
+    ZExpr* parseBinOp();
 
-	ZExpr* parseCall();
+    ZExpr* parseCall();
 
     ZExpr* parseUnaryOp();
 
-	ZExpr* parseSelector();
-	ZExpr* parseId();
+    ZExpr* parseSelector();
+    ZExpr* parseId();
 
     ZExpr* parseSizeOf();
     ZExpr* parseAsCast();
 
-	ZExpr* parseString();
+    ZExpr* parseString();
 
-	ZExpr* parseInt();
+    ZExpr* parseInt();
     ZExpr* parseBoolean();
     ZExpr* parseChar();
     ZExpr* parseDouble();
     void reqConsume(ZLexeme lexeme);
 
     bool consume(ZLexeme lexeme);
-	bool isNext(::ZLexeme lexeme);
-	std::string* val(ZLexeme lexeme);
+    bool isNext(::ZLexeme lexeme);
+    std::string* val(ZLexeme lexeme);
 
     std::string* reqVal(ZLexeme lexeme);
 
-	int priority(BinOps op) {
-		return _binOpPriority[op];
-	}
+    int priority(BinOps op) {
+        return _binOpPriority[op];
+    }
 
     void error(std::string errorText, SourceRange* sr) {
         addError(errorText, sr);
@@ -106,12 +106,12 @@ private:
     ZLexer _lexer;
     SymbolTable _symTable;
 
-	ZModule* _module;
+    ZModule* _module;
 
-	std::map<std::string, ZType*> _types;
+    std::map<std::string, ZType*> _types;
 
-	std::map<ZLexeme, BinOps> _binOps;
-	std::map<BinOps, int> _binOpPriority;
+    std::map<ZLexeme, BinOps> _binOps;
+    std::map<BinOps, int> _binOpPriority;
     std::map<ZLexeme, UnaryOps> _unaryOps;
 
     std::vector<ParserError*> errors;
