@@ -682,5 +682,5 @@ BasicBlock* LlvmPass::makeNopBB(std::string name) {
 }
 
 string& LlvmPass::getNextLambdaName() {
-    return *(new string("__lambda" + to_string(_lambdaCounter)));
+    return *(new string("__lambda" + to_string(_lambdaCounter++)));
 }
